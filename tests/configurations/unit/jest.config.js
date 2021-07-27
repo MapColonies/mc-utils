@@ -11,6 +11,9 @@ module.exports = {
   setupFiles: ['<rootDir>/tests/configurations/jest.setup.js'],
   preset: 'ts-jest',
   testEnvironment: 'node',
+  moduleNameMapper: {
+    mockService: '<rootDir>/tests/__mocks__',
+  },
   reporters: [
     'default',
     ['jest-html-reporters', { multipleReportsUnitePath: './reports', pageTitle: 'unit', publicPath: './reports', filename: 'unit.html' }],

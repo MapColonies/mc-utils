@@ -1,3 +1,2 @@
-export const cat = {
-  say: 'meow',
-};
+export * from './models';
+export * from './communication';
