@@ -11,16 +11,19 @@ module.exports = {
   setupFiles: ['<rootDir>/tests/configurations/jest.setup.js'],
   preset: 'ts-jest',
   testEnvironment: 'node',
+  moduleNameMapper: {
+    mockService: '<rootDir>/tests/__mocks__',
+  },
   reporters: [
     'default',
     ['jest-html-reporters', { multipleReportsUnitePath: './reports', pageTitle: 'unit', publicPath: './reports', filename: 'unit.html' }],
   ],
   coverageThreshold: {
     global: {
-      branches: 80,
+      branches: 50,
       functions: 80,
       lines: 80,
-      statements: -10,
+      statements: 80,
     },
   },
 };
