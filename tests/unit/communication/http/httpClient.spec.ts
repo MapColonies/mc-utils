@@ -44,7 +44,7 @@ describe('HttpClient', function () {
 
   beforeEach(() => {
     initAxiosMock();
-    client = new TestClient(loggerMock);
+    client = new TestClient(loggerMock, 'baseUrl', 'Unit tests');
   });
 
   afterEach(() => {
