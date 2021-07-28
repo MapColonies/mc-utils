@@ -3,8 +3,8 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>@map-colonies/mc-utiles</title>
-	<meta name="description" content="Documentation for @map-colonies/mc-utiles">
+	<title>@map-colonies/mc-utils</title>
+	<meta name="description" content="Documentation for @map-colonies/mc-utils">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="assets/css/main.css">
 	<script async src="assets/js/search.js" id="search-script"></script>
@@ -23,7 +23,7 @@
 						<li class="state loading">Preparing search index...</li>
 						<li class="state failure">The search index is not available</li>
 					</ul>
-					<a href="index.html" class="title">@map-colonies/mc-utiles</a>
+					<a href="index.html" class="title">@map-colonies/mc-utils</a>
 				</div>
 				<div class="table-cell" id="tsd-widgets">
 					<div id="tsd-filter">
@@ -50,7 +50,7 @@
 	</div>
 	<div class="tsd-page-title">
 		<div class="container">
-			<h1>@map-colonies/mc-utiles</h1>
+			<h1>@map-colonies/mc-utils</h1>
 		</div>
 	</div>
 </header>
@@ -58,14 +58,88 @@
 	<div class="row">
 		<div class="col-8 col-content">
 			<div class="tsd-panel tsd-typography">
-				<a href="#mc-utiles" id="mc-utiles" style="color: inherit; text-decoration: none;">
-					<h1>mc-utiles</h1>
+				<a href="#mc-utils" id="mc-utils" style="color: inherit; text-decoration: none;">
+					<h1>mc-utils</h1>
 				</a>
-				<p>After cloning this template, please do the following:</p>
-				<ol>
-					<li>insert secrets to repo secrets for the github actions.</li>
-					<li>replace every string &quot;mc-utiles&quot; with your package name.</li>
-				</ol>
+				<p>this is general utilities for usage in Map Colonies project.</p>
+				<a href="#included-components" id="included-components" style="color: inherit; text-decoration: none;">
+					<h1>included components</h1>
+				</a>
+				<ul>
+					<li><a href="#http-client">http client</a></li>
+				</ul>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h1>usage</h1>
+				</a>
+				<a href="#http-client" id="http-client" style="color: inherit; text-decoration: none;">
+					<h2>http client</h2>
+				</a>
+				<p> this is abstract base class for sending http request with logging and request retries.</p>
+				<p> this class constructor requires the following parameters:</p>
+				<ul>
+					<li><a href="#ilogger">ILogger</a> instance.</li>
+					<li>base url to use for all requests.</li>
+					<li>optional name for target service to be used in logs.</li>
+					<li>optional <a href="#ihttpretryconfig">retry configuration</a>.</li>
+				</ul>
+				<p> the class have the following protected attributes
+				-<code>axiosOptions</code> the options used by axios when sending requests</p>
+				<p> the class have the protected methods for sending http requests:</p>
+				<ul>
+					<li><code>protected async get&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
+					<li><code>protected async post&lt;T&gt;(url: string, body?: unknown, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
+					<li><code>protected async put&lt;T&gt;(url: string, body?: unknown, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
+					<li><code>protected async delete&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
+					<li><code>protected async head&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
+					<li><code>protected async options&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
+					<li><code>protected async patch&lt;T&gt;(url: string, body?: unknown, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
+				</ul>
+				<p>function parameters list:</p>
+				<ul>
+					<li><code>url</code>: url path to send the request to (not including the base url).</li>
+					<li><code>body</code>: optional object to be used as request body (in relevant request types).</li>
+					<li><code>queryParams</code>: optional dictionary with query parameters and value.</li>
+					<li><code>retryConfig</code>: optional override to the class retry configuration.</li>
+				</ul>
+				<p>usage example:</p>
+				<pre><code class="language-typescript"><span style="color: #0000FF">class</span><span style="color: #000000"> </span><span style="color: #267F99">myServiceClient</span><span style="color: #000000"> </span><span style="color: #0000FF">extends</span><span style="color: #000000"> </span><span style="color: #267F99">HttpClient</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  </span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">constructor</span><span style="color: #000000">(</span><span style="color: #001080">logger</span><span style="color: #000000">: </span><span style="color: #267F99">ILogger</span><span style="color: #000000">){</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">super</span><span style="color: #000000">(</span><span style="color: #001080">logger</span><span style="color: #000000">,</span><span style="color: #A31515">&#039;https://myService.com&#039;</span><span style="color: #000000">,</span><span style="color: #A31515">&#039;myService&#039;</span><span style="color: #000000">,{</span>
+<span style="color: #000000">      </span><span style="color: #001080">attempts:</span><span style="color: #000000"> </span><span style="color: #098658">3</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">delay:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;exponential&#039;</span><span style="color: #000000">,</span>
+<span style="color: #000000">      </span><span style="color: #001080">shouldResetTimeout:</span><span style="color: #000000"> </span><span style="color: #0000FF">true</span>
+<span style="color: #000000">    })</span>
+<span style="color: #000000">  }</span>
+
+<span style="color: #000000">  </span><span style="color: #0000FF">public</span><span style="color: #000000"> </span><span style="color: #0000FF">async</span><span style="color: #000000"> </span><span style="color: #795E26">getName</span><span style="color: #000000">(): </span><span style="color: #267F99">string</span><span style="color: #000000"> {</span>
+<span style="color: #000000">    </span><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">name</span><span style="color: #000000"> = </span><span style="color: #AF00DB">await</span><span style="color: #000000"> </span><span style="color: #0000FF">this</span><span style="color: #000000">.</span><span style="color: #795E26">get</span><span style="color: #000000">&lt;</span><span style="color: #267F99">string</span><span style="color: #000000">&gt;(</span><span style="color: #A31515">&#039;api/name&#039;</span><span style="color: #000000">,{</span><span style="color: #001080">queryParam1:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;name&#039;</span><span style="color: #000000">});</span>
+<span style="color: #000000">    </span><span style="color: #AF00DB">return</span><span style="color: #000000"> </span><span style="color: #001080">name</span><span style="color: #000000">;</span>
+<span style="color: #000000">  }</span>
+<span style="color: #000000">}</span>
+</code></pre>
+				<a href="#models" id="models" style="color: inherit; text-decoration: none;">
+					<h1>models</h1>
+				</a>
+				<a href="#ilogger" id="ilogger" style="color: inherit; text-decoration: none;">
+					<h2>ILogger</h2>
+				</a>
+				<p>logger interface
+				with the flowing log methods</p>
+				<ul>
+					<li><code>error(message:string)</code></li>
+					<li><code>warn(message:string)</code></li>
+					<li><code>info(message: string)</code> </li>
+					<li><code>debug(message: string)</code></li>
+				</ul>
+				<a href="#ihttpretryconfig" id="ihttpretryconfig" style="color: inherit; text-decoration: none;">
+					<h2>IHttpRetryConfig</h2>
+				</a>
+				<p>http requests retry configuration interface with the following attributes:</p>
+				<ul>
+					<li><code>attempts</code> - the number of request to send until valid response (not 500+ status code). this value must be integer and greater then 0.</li>
+					<li><code>delay</code> - the amount of time in ms to wait between attempts (for constant delay) or <code>&#39;exponential&#39;</code> for exponential backoff.</li>
+					<li><code>shouldResetTimeout</code> boolean value to indicate if the request timeout should be for each request (true) or global for all attempts (false) </li>
+				</ul>
 			</div>
 		</div>
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
@@ -78,8 +152,14 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
-					<li class=" tsd-kind-variable">
-						<a href="modules.html#cat" class="tsd-kind-icon">cat</a>
+					<li class=" tsd-kind-class">
+						<a href="classes/httpclient.html" class="tsd-kind-icon">Http<wbr>Client</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ihttpretryconfig.html" class="tsd-kind-icon">IHttp<wbr>Retry<wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ilogger.html" class="tsd-kind-icon">ILogger</a>
 					</li>
 				</ul>
 			</nav>
@@ -90,6 +170,19 @@
 	<div class="container">
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+			</ul>
 		</div>
 	</div>
 </footer>
