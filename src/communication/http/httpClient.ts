@@ -1,6 +1,7 @@
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import HttpStatus from 'http-status-codes';
 import axiosRetry, { exponentialDelay, IAxiosRetryConfig } from 'axios-retry';
+import { get as readProperty } from 'lodash';
 import {
   BadRequestError,
   ConflictError,
@@ -19,13 +20,13 @@ export interface IHttpRetryConfig {
 }
 
 export abstract class HttpClient {
-  protected targetService = '';
   protected axiosOptions: AxiosRequestConfig = {};
-  protected axiosClient: AxiosInstance;
+  private readonly axiosClient: AxiosInstance;
 
-  public constructor(protected readonly logger: ILogger, retryConfig?: IHttpRetryConfig) {
+  public constructor(protected readonly logger: ILogger, baseUrl: string, private readonly targetService = '', retryConfig?: IHttpRetryConfig) {
     this.axiosClient = axios.create();
 
+    this.axiosOptions.baseURL = baseUrl;
     const axiosRetryConfig: IAxiosRetryConfig = retryConfig
       ? this.parseConfig(retryConfig)
       : {
@@ -125,6 +126,7 @@ export abstract class HttpClient {
   }
 
   private wrapError(url: string, err: AxiosError, body?: unknown): HttpError {
+    const message = readProperty(err, 'response.data.message', undefined) as string | undefined;
     switch (err.response?.status) {
       case HttpStatus.BAD_REQUEST:
         if (body !== undefined) {
@@ -133,19 +135,19 @@ export abstract class HttpClient {
         } else {
           this.logger.debug(`invalid request sent to ${this.targetService} at ${url}. error: ${err.message}`);
         }
-        return new BadRequestError(err);
+        return new BadRequestError(err, message);
       case HttpStatus.NOT_FOUND:
         this.logger.debug(`request url not found for service ${this.targetService}, target url: ${url}, error: ${err.message}`);
-        return new NotFoundError(err);
+        return new NotFoundError(err, message);
       case HttpStatus.CONFLICT:
         this.logger.debug(`request url conflicted, for service ${this.targetService}, target url: ${url}, error: ${err.message}`);
-        return new ConflictError(err);
+        return new ConflictError(err, message);
       case HttpStatus.FORBIDDEN:
         this.logger.debug(`forbidden request sent service ${this.targetService}, target url: ${url}, error: ${err.message}`);
-        throw new ForbiddenError(err);
+        throw new ForbiddenError(err, message);
       case HttpStatus.UNAUTHORIZED:
         this.logger.debug(`unauthorized request sent service ${this.targetService}, target url: ${url}, error: ${err.message}`);
-        throw new UnauthorizedError(err);
+        throw new UnauthorizedError(err, message);
       default:
         if (body !== undefined) {
           body = JSON.stringify(body);
