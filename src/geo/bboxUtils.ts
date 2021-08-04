@@ -8,6 +8,12 @@ const snapMinCordToTileGrid = (cord: number, tileRes: number): number => {
   return newCord;
 };
 
+/**
+ * rounds bbox to grid
+ * @param bbox original bbox
+ * @param zoomLevel target tiles grid zoom level
+ * @returns bbox that contains the original bbox and match tile grid lines
+ */
 export const snapBBoxToTileGrid = (bbox: BBox2d, zoomLevel: number): BBox2d => {
   const minLon = Math.min(bbox[0], bbox[2]);
   const minLat = Math.min(bbox[1], bbox[3]);
@@ -29,6 +35,12 @@ export const snapBBoxToTileGrid = (bbox: BBox2d, zoomLevel: number): BBox2d => {
   return bbox;
 };
 
+/**
+ * create bbox from tile grid coordinates
+ * @param minTile corner tile for bbox with minimal x,y values
+ * @param maxTile corner tile for bbox with maximal x,y values
+ * @returns
+ */
 export const bboxFromTiles = (minTile: ITile, maxTile: ITile): BBox2d => {
   if (minTile.zoom !== maxTile.zoom) {
     throw new Error(`Could not calcualte bbox from tiles due to not matching zoom levels`);

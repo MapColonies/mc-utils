@@ -49,6 +49,11 @@ function* geoHash(
   }
 }
 
+/**
+ * converts geohash string to its bbox in wgs84 degrees
+ * @param geohash geohash string
+ * @returns bbox of the supplied geohash
+ */
 export const decodeGeoHash = (geohash: string): BBox2d => {
   const bboxFromGeohash = ngeohash.decode_bbox(geohash);
   // ngeohash.decode_bbox gives a lat-lon array. we change it to lon-lat so @turf can use it.
@@ -56,6 +61,12 @@ export const decodeGeoHash = (geohash: string): BBox2d => {
   return lonLatBbox;
 };
 
+/**
+ * generates optimized geohash iterator for given polygon and target zoom level
+ * @param polygon polygon to cover with geohashes
+ * @param maxTileZoom target zoom level
+ * @returns generator that yields the matching geohashes
+ */
 export const createGeoHashGenerator = (polygon: Polygon | Feature<Polygon | MultiPolygon>, maxTileZoom = MAX_STANDARD_ZOOM): Generator<string> => {
   let bbox = polygonToBbox(polygon) as BBox2d;
   bbox = snapBBoxToTileGrid(bbox, maxTileZoom);
@@ -72,6 +83,12 @@ export const createGeoHashGenerator = (polygon: Polygon | Feature<Polygon | Mult
   return geoHash(1, zoomPrecision, polygon, bbox);
 };
 
+/**
+ * generate all tiles in supplied polygon
+ * @param polygon polygon to cover with tiles
+ * @param tileZoom target tiles zoom level
+ * @param origin target tiles grid origin location (default ll)
+ */
 export function* tileGenerator(
   polygon: Polygon | Feature<Polygon | MultiPolygon>,
   tileZoom: number,
