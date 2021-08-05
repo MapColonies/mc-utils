@@ -10,7 +10,8 @@
     "declaration": true,
     "declarationMap": true,
     "noEmit": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "downlevelIteration": true,
   },
   "include": ["src", "tests"],
   "exclude": ["dist", "node_modules"]

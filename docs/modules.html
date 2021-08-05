@@ -62,6 +62,12 @@
 				<section class="tsd-panel tsd-index-panel">
 					<div class="tsd-index-content">
 						<section class="tsd-index-section ">
+							<h3>Enumerations</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-enum"><a href="enums/tileorigin.html" class="tsd-kind-icon">Tile<wbr>Origin</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-class"><a href="classes/httpclient.html" class="tsd-kind-icon">Http<wbr>Client</a></li>
@@ -72,9 +78,428 @@
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-interface"><a href="interfaces/ihttpretryconfig.html" class="tsd-kind-icon">IHttp<wbr>Retry<wbr>Config</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/ilogger.html" class="tsd-kind-icon">ILogger</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/ipoint.html" class="tsd-kind-icon">IPoint</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/itile.html" class="tsd-kind-icon">ITile</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Functions</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-function"><a href="modules.html#bboxfromtiles" class="tsd-kind-icon">bbox<wbr>From<wbr>Tiles</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#creategeohashgenerator" class="tsd-kind-icon">create<wbr>Geo<wbr>Hash<wbr>Generator</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#decodegeohash" class="tsd-kind-icon">decode<wbr>Geo<wbr>Hash</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#degreesperpixel" class="tsd-kind-icon">degrees<wbr>Per<wbr>Pixel</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#degreesperpixeltozoomlevel" class="tsd-kind-icon">degrees<wbr>Per<wbr>Pixel<wbr>ToZoom<wbr>Level</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#degreespertile" class="tsd-kind-icon">degrees<wbr>Per<wbr>Tile</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#degreestotile" class="tsd-kind-icon">degrees<wbr>ToTile</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#flipyaxis" class="tsd-kind-icon">flipYAxis</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#snapbboxtotilegrid" class="tsd-kind-icon">snapBBox<wbr>ToTile<wbr>Grid</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#tilegenerator" class="tsd-kind-icon">tile<wbr>Generator</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#tiletodegrees" class="tsd-kind-icon">tile<wbr>ToDegrees</a></li>
 							</ul>
 						</section>
 					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Functions</h2>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="bboxfromtiles" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> bbox<wbr>From<wbr>Tiles</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">bbox<wbr>From<wbr>Tiles<span class="tsd-signature-symbol">(</span>minTile<span class="tsd-signature-symbol">: </span><a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a>, maxTile<span class="tsd-signature-symbol">: </span><a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BBox2d</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/bboxUtils.ts#L44">geo/bboxUtils.ts:44</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>create bbox from tile grid coordinates</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>minTile: <a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>corner tile for bbox with minimal x,y values</p>
+									</div>
+								</li>
+								<li>
+									<h5>maxTile: <a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>corner tile for bbox with maximal x,y values</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">BBox2d</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="creategeohashgenerator" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> create<wbr>Geo<wbr>Hash<wbr>Generator</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">create<wbr>Geo<wbr>Hash<wbr>Generator<span class="tsd-signature-symbol">(</span>polygon<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Feature</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiPolygon</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Properties</span><span class="tsd-signature-symbol">&gt;</span>, maxTileZoom<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/geoHash.ts#L70">geo/geoHash.ts:70</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>generates optimized geohash iterator for given polygon and target zoom level</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>polygon: <span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Feature</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiPolygon</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Properties</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>polygon to cover with geohashes</p>
+									</div>
+								</li>
+								<li>
+									<h5>maxTileZoom: <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> = ...</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>target zoom level</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
+							<p>generator that yields the matching geohashes</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="decodegeohash" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> decode<wbr>Geo<wbr>Hash</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">decode<wbr>Geo<wbr>Hash<span class="tsd-signature-symbol">(</span>geohash<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BBox2d</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/geoHash.ts#L57">geo/geoHash.ts:57</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>converts geohash string to its bbox in wgs84 degrees</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>geohash: <span class="tsd-signature-type">string</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>geohash string</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">BBox2d</span></h4>
+							<p>bbox of the supplied geohash</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="degreesperpixel" class="tsd-anchor"></a>
+					<h3>degrees<wbr>Per<wbr>Pixel</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">degrees<wbr>Per<wbr>Pixel<span class="tsd-signature-symbol">(</span>zoomLevel<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/tiles.ts#L18">geo/tiles.ts:18</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>returns pixel size (resolution) in degrees</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>zoomLevel: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>tile zoom level of returned tile pixel size</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>pixel size (resolution) in degrees</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="degreesperpixeltozoomlevel" class="tsd-anchor"></a>
+					<h3>degrees<wbr>Per<wbr>Pixel<wbr>ToZoom<wbr>Level</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">degrees<wbr>Per<wbr>Pixel<wbr>ToZoom<wbr>Level<span class="tsd-signature-symbol">(</span>resolution<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/tiles.ts#L43">geo/tiles.ts:43</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>converts pixel size (resolution) in degrees to matching zoom level (rounded up)</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>resolution: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>pixel size (resolution) in degrees</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>zoom level for given pixel size</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="degreespertile" class="tsd-anchor"></a>
+					<h3>degrees<wbr>Per<wbr>Tile</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">degrees<wbr>Per<wbr>Tile<span class="tsd-signature-symbol">(</span>zoomLevel<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/tiles.ts#L8">geo/tiles.ts:8</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>calculates tile size (resolution) in degrees</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>zoomLevel: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>zoom level of returned tile size</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">number</span></h4>
+							<p>tile size (resolution) in degrees</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="degreestotile" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> degrees<wbr>ToTile</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">degrees<wbr>ToTile<span class="tsd-signature-symbol">(</span>point<span class="tsd-signature-symbol">: </span><a href="interfaces/ipoint.html" class="tsd-signature-type" data-tsd-kind="Interface">IPoint</a>, zoomLevel<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, origin<span class="tsd-signature-symbol">?: </span><a href="enums/tileorigin.html" class="tsd-signature-type" data-tsd-kind="Enumeration">TileOrigin</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/geoConvertor.ts#L13">geo/geoConvertor.ts:13</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>converts point on WGS84 projection (with degree coordinates) to tile coordinates</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>point: <a href="interfaces/ipoint.html" class="tsd-signature-type" data-tsd-kind="Interface">IPoint</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>coordinates to convert to matching tile</p>
+									</div>
+								</li>
+								<li>
+									<h5>zoomLevel: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>matching tile zoom level</p>
+									</div>
+								</li>
+								<li>
+									<h5>origin: <a href="enums/tileorigin.html" class="tsd-signature-type" data-tsd-kind="Enumeration">TileOrigin</a><span class="tsd-signature-symbol"> = ...</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>tile grid origin location (default ll)</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h4>
+							<p>tile that contains the given point.</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="flipyaxis" class="tsd-anchor"></a>
+					<h3>flipYAxis</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">flipYAxis<span class="tsd-signature-symbol">(</span>tile<span class="tsd-signature-symbol">: </span><a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/tiles.ts#L29">geo/tiles.ts:29</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>coverts tile coordinates between ll and ul</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tile: <a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>source tile</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h4>
+							<p>converted tile</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="snapbboxtotilegrid" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> snapBBox<wbr>ToTile<wbr>Grid</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">snapBBox<wbr>ToTile<wbr>Grid<span class="tsd-signature-symbol">(</span>bbox<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BBox2d</span>, zoomLevel<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BBox2d</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/bboxUtils.ts#L17">geo/bboxUtils.ts:17</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>rounds bbox to grid</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>bbox: <span class="tsd-signature-type">BBox2d</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>original bbox</p>
+									</div>
+								</li>
+								<li>
+									<h5>zoomLevel: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>target tiles grid zoom level</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">BBox2d</span></h4>
+							<p>bbox that contains the original bbox and match tile grid lines</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="tilegenerator" class="tsd-anchor"></a>
+					<h3>tile<wbr>Generator</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">tile<wbr>Generator<span class="tsd-signature-symbol">(</span>polygon<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Feature</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiPolygon</span><span class="tsd-signature-symbol">&gt;</span>, tileZoom<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, origin<span class="tsd-signature-symbol">?: </span><a href="enums/tileorigin.html" class="tsd-signature-type" data-tsd-kind="Enumeration">TileOrigin</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/geoHash.ts#L92">geo/geoHash.ts:92</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>generate all tiles in supplied polygon</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>polygon: <span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Feature</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiPolygon</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>polygon to cover with tiles</p>
+									</div>
+								</li>
+								<li>
+									<h5>tileZoom: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>target tiles zoom level</p>
+									</div>
+								</li>
+								<li>
+									<h5>origin: <a href="enums/tileorigin.html" class="tsd-signature-type" data-tsd-kind="Enumeration">TileOrigin</a><span class="tsd-signature-symbol"> = ...</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>target tiles grid origin location (default ll)</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="tiletodegrees" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> tile<wbr>ToDegrees</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">tile<wbr>ToDegrees<span class="tsd-signature-symbol">(</span>tile<span class="tsd-signature-symbol">: </span><a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a>, origin<span class="tsd-signature-symbol">?: </span><a href="enums/tileorigin.html" class="tsd-signature-type" data-tsd-kind="Enumeration">TileOrigin</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/ipoint.html" class="tsd-signature-type" data-tsd-kind="Interface">IPoint</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/d752dca/src/geo/geoConvertor.ts#L36">geo/geoConvertor.ts:36</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>return the coordinates of the minimal corner of the given tile</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tile: <a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>tile to convert</p>
+									</div>
+								</li>
+								<li>
+									<h5>origin: <a href="enums/tileorigin.html" class="tsd-signature-type" data-tsd-kind="Enumeration">TileOrigin</a><span class="tsd-signature-symbol"> = ...</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>tile grid origin location (default ll)</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/ipoint.html" class="tsd-signature-type" data-tsd-kind="Interface">IPoint</a></h4>
+							<p>point with the coordinates of the tile corner</p>
+						</li>
+					</ul>
 				</section>
 			</section>
 		</div>
@@ -88,6 +513,9 @@
 			</nav>
 			<nav class="tsd-navigation secondary menu-sticky">
 				<ul class="before-current">
+					<li class=" tsd-kind-enum">
+						<a href="enums/tileorigin.html" class="tsd-kind-icon">Tile<wbr>Origin</a>
+					</li>
 					<li class=" tsd-kind-class">
 						<a href="classes/httpclient.html" class="tsd-kind-icon">Http<wbr>Client</a>
 					</li>
@@ -96,6 +524,45 @@
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ilogger.html" class="tsd-kind-icon">ILogger</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/ipoint.html" class="tsd-kind-icon">IPoint</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/itile.html" class="tsd-kind-icon">ITile</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#bboxfromtiles" class="tsd-kind-icon">bbox<wbr>From<wbr>Tiles</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#creategeohashgenerator" class="tsd-kind-icon">create<wbr>Geo<wbr>Hash<wbr>Generator</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#decodegeohash" class="tsd-kind-icon">decode<wbr>Geo<wbr>Hash</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#degreesperpixel" class="tsd-kind-icon">degrees<wbr>Per<wbr>Pixel</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#degreesperpixeltozoomlevel" class="tsd-kind-icon">degrees<wbr>Per<wbr>Pixel<wbr>ToZoom<wbr>Level</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#degreespertile" class="tsd-kind-icon">degrees<wbr>Per<wbr>Tile</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#degreestotile" class="tsd-kind-icon">degrees<wbr>ToTile</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#flipyaxis" class="tsd-kind-icon">flipYAxis</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#snapbboxtotilegrid" class="tsd-kind-icon">snapBBox<wbr>ToTile<wbr>Grid</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#tilegenerator" class="tsd-kind-icon">tile<wbr>Generator</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#tiletodegrees" class="tsd-kind-icon">tile<wbr>ToDegrees</a>
 					</li>
 				</ul>
 			</nav>
