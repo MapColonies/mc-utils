@@ -71,6 +71,7 @@
 							<h3>Classes</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-class"><a href="classes/httpclient.html" class="tsd-kind-icon">Http<wbr>Client</a></li>
+								<li class="tsd-kind-class"><a href="classes/tileranger.html" class="tsd-kind-icon">Tile<wbr>Ranger</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
@@ -80,12 +81,14 @@
 								<li class="tsd-kind-interface"><a href="interfaces/ilogger.html" class="tsd-kind-icon">ILogger</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/ipoint.html" class="tsd-kind-icon">IPoint</a></li>
 								<li class="tsd-kind-interface"><a href="interfaces/itile.html" class="tsd-kind-icon">ITile</a></li>
+								<li class="tsd-kind-interface"><a href="interfaces/itilerange.html" class="tsd-kind-icon">ITile<wbr>Range</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Functions</h3>
 							<ul class="tsd-index-list">
 								<li class="tsd-kind-function"><a href="modules.html#bboxfromtiles" class="tsd-kind-icon">bbox<wbr>From<wbr>Tiles</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#bboxtotilerange" class="tsd-kind-icon">bbox<wbr>ToTile<wbr>Range</a></li>
 								<li class="tsd-kind-function"><a href="modules.html#creategeohashgenerator" class="tsd-kind-icon">create<wbr>Geo<wbr>Hash<wbr>Generator</a></li>
 								<li class="tsd-kind-function"><a href="modules.html#decodegeohash" class="tsd-kind-icon">decode<wbr>Geo<wbr>Hash</a></li>
 								<li class="tsd-kind-function"><a href="modules.html#degreesperpixel" class="tsd-kind-icon">degrees<wbr>Per<wbr>Pixel</a></li>
@@ -95,6 +98,7 @@
 								<li class="tsd-kind-function"><a href="modules.html#flipyaxis" class="tsd-kind-icon">flipYAxis</a></li>
 								<li class="tsd-kind-function"><a href="modules.html#snapbboxtotilegrid" class="tsd-kind-icon">snapBBox<wbr>ToTile<wbr>Grid</a></li>
 								<li class="tsd-kind-function"><a href="modules.html#tilegenerator" class="tsd-kind-icon">tile<wbr>Generator</a></li>
+								<li class="tsd-kind-function"><a href="modules.html#tiletobbox" class="tsd-kind-icon">tile<wbr>ToBbox</a></li>
 								<li class="tsd-kind-function"><a href="modules.html#tiletodegrees" class="tsd-kind-icon">tile<wbr>ToDegrees</a></li>
 							</ul>
 						</section>
@@ -113,7 +117,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/bboxUtils.ts#L44">geo/bboxUtils.ts:44</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/bboxUtils.ts#L48">geo/bboxUtils.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -141,6 +145,41 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="bboxtotilerange" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagConst">Const</span> bbox<wbr>ToTile<wbr>Range</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">bbox<wbr>ToTile<wbr>Range<span class="tsd-signature-symbol">(</span>bbox<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BBox2d</span>, zoom<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/bboxUtils.ts#L69">geo/bboxUtils.ts:69</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>coverts bbox to covering tile range of specified zoom level</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>bbox: <span class="tsd-signature-type">BBox2d</span></h5>
+								</li>
+								<li>
+									<h5>zoom: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>target zoom level</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a></h4>
+							<p>covering tile range</p>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
 					<a name="creategeohashgenerator" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> create<wbr>Geo<wbr>Hash<wbr>Generator</h3>
 					<ul class="tsd-signatures tsd-kind-function">
@@ -150,7 +189,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/geoHash.ts#L70">geo/geoHash.ts:70</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/geoHash.ts#L70">geo/geoHash.ts:70</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -188,7 +227,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/geoHash.ts#L57">geo/geoHash.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/geoHash.ts#L57">geo/geoHash.ts:57</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -220,7 +259,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/tiles.ts#L18">geo/tiles.ts:18</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tiles.ts#L20">geo/tiles.ts:20</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -252,7 +291,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/tiles.ts#L43">geo/tiles.ts:43</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tiles.ts#L45">geo/tiles.ts:45</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -284,7 +323,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/tiles.ts#L8">geo/tiles.ts:8</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tiles.ts#L10">geo/tiles.ts:10</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -316,7 +355,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/geoConvertor.ts#L13">geo/geoConvertor.ts:13</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/geoConvertor.ts#L13">geo/geoConvertor.ts:13</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -360,7 +399,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/tiles.ts#L29">geo/tiles.ts:29</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tiles.ts#L31">geo/tiles.ts:31</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -392,7 +431,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/bboxUtils.ts#L17">geo/bboxUtils.ts:17</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/bboxUtils.ts#L17">geo/bboxUtils.ts:17</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -430,7 +469,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/geoHash.ts#L92">geo/geoHash.ts:92</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/geoHash.ts#L92">geo/geoHash.ts:92</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -464,6 +503,34 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-function">
+					<a name="tiletobbox" class="tsd-anchor"></a>
+					<h3>tile<wbr>ToBbox</h3>
+					<ul class="tsd-signatures tsd-kind-function">
+						<li class="tsd-signature tsd-kind-icon">tile<wbr>ToBbox<span class="tsd-signature-symbol">(</span>tile<span class="tsd-signature-symbol">: </span><a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BBox2d</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tiles.ts#L60">geo/tiles.ts:60</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>returns bbox of given tile</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tile: <a href="interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">BBox2d</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-function">
 					<a name="tiletodegrees" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagConst">Const</span> tile<wbr>ToDegrees</h3>
 					<ul class="tsd-signatures tsd-kind-function">
@@ -473,7 +540,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/4de80df/src/geo/geoConvertor.ts#L36">geo/geoConvertor.ts:36</a></li>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/geoConvertor.ts#L37">geo/geoConvertor.ts:37</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -519,6 +586,9 @@
 					<li class=" tsd-kind-class">
 						<a href="classes/httpclient.html" class="tsd-kind-icon">Http<wbr>Client</a>
 					</li>
+					<li class=" tsd-kind-class">
+						<a href="classes/tileranger.html" class="tsd-kind-icon">Tile<wbr>Ranger</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/ihttpretryconfig.html" class="tsd-kind-icon">IHttp<wbr>Retry<wbr>Config</a>
 					</li>
@@ -531,8 +601,14 @@
 					<li class=" tsd-kind-interface">
 						<a href="interfaces/itile.html" class="tsd-kind-icon">ITile</a>
 					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/itilerange.html" class="tsd-kind-icon">ITile<wbr>Range</a>
+					</li>
 					<li class=" tsd-kind-function">
 						<a href="modules.html#bboxfromtiles" class="tsd-kind-icon">bbox<wbr>From<wbr>Tiles</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="modules.html#bboxtotilerange" class="tsd-kind-icon">bbox<wbr>ToTile<wbr>Range</a>
 					</li>
 					<li class=" tsd-kind-function">
 						<a href="modules.html#creategeohashgenerator" class="tsd-kind-icon">create<wbr>Geo<wbr>Hash<wbr>Generator</a>
@@ -562,6 +638,9 @@
 						<a href="modules.html#tilegenerator" class="tsd-kind-icon">tile<wbr>Generator</a>
 					</li>
 					<li class=" tsd-kind-function">
+						<a href="modules.html#tiletobbox" class="tsd-kind-icon">tile<wbr>ToBbox</a>
+					</li>
+					<li class=" tsd-kind-function">
 						<a href="modules.html#tiletodegrees" class="tsd-kind-icon">tile<wbr>ToDegrees</a>
 					</li>
 				</ul>
@@ -574,14 +653,15 @@
 		<h2>Legend</h2>
 		<div class="tsd-legend-group">
 			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
 				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
-			</ul>
-			<ul class="tsd-legend">
-				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
 			</ul>
 			<ul class="tsd-legend">
 				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>

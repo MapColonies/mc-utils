@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IHttpRetryConfig | @map-colonies/mc-utils</title>
+	<title>ITileRange | @map-colonies/mc-utils</title>
 	<meta name="description" content="Documentation for @map-colonies/mc-utils">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -55,10 +55,10 @@
 					<a href="../modules.html">@map-colonies/mc-utils</a>
 				</li>
 				<li>
-					<a href="ihttpretryconfig.html">IHttpRetryConfig</a>
+					<a href="itilerange.html">ITileRange</a>
 				</li>
 			</ul>
-			<h1>Interface IHttpRetryConfig</h1>
+			<h1>Interface ITileRange</h1>
 		</div>
 	</div>
 </header>
@@ -69,7 +69,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IHttpRetryConfig</span>
+						<span class="target">ITileRange</span>
 					</li>
 				</ul>
 			</section>
@@ -80,9 +80,11 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ihttpretryconfig.html#attempts" class="tsd-kind-icon">attempts</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ihttpretryconfig.html#delay" class="tsd-kind-icon">delay</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ihttpretryconfig.html#shouldresettimeout" class="tsd-kind-icon">should<wbr>Reset<wbr>Timeout</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="itilerange.html#maxx" class="tsd-kind-icon">maxX</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="itilerange.html#maxy" class="tsd-kind-icon">maxY</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="itilerange.html#minx" class="tsd-kind-icon">minX</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="itilerange.html#miny" class="tsd-kind-icon">minY</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="itilerange.html#zoom" class="tsd-kind-icon">zoom</a></li>
 							</ul>
 						</section>
 					</div>
@@ -91,32 +93,52 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="attempts" class="tsd-anchor"></a>
-					<h3>attempts</h3>
-					<div class="tsd-signature tsd-kind-icon">attempts<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<a name="maxx" class="tsd-anchor"></a>
+					<h3>maxX</h3>
+					<div class="tsd-signature tsd-kind-icon">maxX<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/communication/http/httpClient.ts#L17">communication/http/httpClient.ts:17</a></li>
+							<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/models/interfaces/geo/iTile.ts#L13">models/interfaces/geo/iTile.ts:13</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="delay" class="tsd-anchor"></a>
-					<h3>delay</h3>
-					<div class="tsd-signature tsd-kind-icon">delay<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">&quot;exponential&quot;</span></div>
+					<a name="maxy" class="tsd-anchor"></a>
+					<h3>maxY</h3>
+					<div class="tsd-signature tsd-kind-icon">maxY<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/communication/http/httpClient.ts#L18">communication/http/httpClient.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/models/interfaces/geo/iTile.ts#L14">models/interfaces/geo/iTile.ts:14</a></li>
 						</ul>
 					</aside>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
-					<a name="shouldresettimeout" class="tsd-anchor"></a>
-					<h3>should<wbr>Reset<wbr>Timeout</h3>
-					<div class="tsd-signature tsd-kind-icon">should<wbr>Reset<wbr>Timeout<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
+					<a name="minx" class="tsd-anchor"></a>
+					<h3>minX</h3>
+					<div class="tsd-signature tsd-kind-icon">minX<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/communication/http/httpClient.ts#L19">communication/http/httpClient.ts:19</a></li>
+							<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/models/interfaces/geo/iTile.ts#L11">models/interfaces/geo/iTile.ts:11</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="miny" class="tsd-anchor"></a>
+					<h3>minY</h3>
+					<div class="tsd-signature tsd-kind-icon">minY<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/models/interfaces/geo/iTile.ts#L12">models/interfaces/geo/iTile.ts:12</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="zoom" class="tsd-anchor"></a>
+					<h3>zoom</h3>
+					<div class="tsd-signature tsd-kind-icon">zoom<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/models/interfaces/geo/iTile.ts#L15">models/interfaces/geo/iTile.ts:15</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -141,24 +163,9 @@
 					<li class=" tsd-kind-class">
 						<a href="../classes/tileranger.html" class="tsd-kind-icon">Tile<wbr>Ranger</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface">
+					<li class=" tsd-kind-interface">
 						<a href="ihttpretryconfig.html" class="tsd-kind-icon">IHttp<wbr>Retry<wbr>Config</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ihttpretryconfig.html#attempts" class="tsd-kind-icon">attempts</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ihttpretryconfig.html#delay" class="tsd-kind-icon">delay</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ihttpretryconfig.html#shouldresettimeout" class="tsd-kind-icon">should<wbr>Reset<wbr>Timeout</a>
-							</li>
-						</ul>
 					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-interface">
 						<a href="ilogger.html" class="tsd-kind-icon">ILogger</a>
 					</li>
@@ -168,9 +175,30 @@
 					<li class=" tsd-kind-interface">
 						<a href="itile.html" class="tsd-kind-icon">ITile</a>
 					</li>
-					<li class=" tsd-kind-interface">
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface">
 						<a href="itilerange.html" class="tsd-kind-icon">ITile<wbr>Range</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="itilerange.html#maxx" class="tsd-kind-icon">maxX</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="itilerange.html#maxy" class="tsd-kind-icon">maxY</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="itilerange.html#minx" class="tsd-kind-icon">minX</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="itilerange.html#miny" class="tsd-kind-icon">minY</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="itilerange.html#zoom" class="tsd-kind-icon">zoom</a>
+							</li>
+						</ul>
 					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-function">
 						<a href="../modules.html#bboxfromtiles" class="tsd-kind-icon">bbox<wbr>From<wbr>Tiles</a>
 					</li>

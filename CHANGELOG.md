@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.1.0](https://github.com/MapColonies/mc-utils/compare/v1.0.2...v1.1.0) (2021-08-12)
+
+
+### Features
+
+* Tile calculations ([#5](https://github.com/MapColonies/mc-utils/issues/5)) ([ea4c5ac](https://github.com/MapColonies/mc-utils/commit/ea4c5ac0941c7ee3d7c999e4034c0c44339db643))
+
 ### [1.0.2](https://github.com/MapColonies/mc-utils/compare/v1.0.1...v1.0.2) (2021-08-05)
 
 

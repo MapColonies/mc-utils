@@ -1,0 +1,583 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>TileRanger | @map-colonies/mc-utils</title>
+	<meta name="description" content="Documentation for @map-colonies/mc-utils">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">@map-colonies/mc-utils</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../modules.html">@map-colonies/mc-utils</a>
+				</li>
+				<li>
+					<a href="tileranger.html">TileRanger</a>
+				</li>
+			</ul>
+			<h1>Class TileRanger</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>class for generating and decoding tile hashes</p>
+					</div>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">TileRanger</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section ">
+							<h3>Constructors</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="tileranger.html#constructor" class="tsd-kind-icon">constructor</a></li>
+							</ul>
+						</section>
+						<section class="tsd-index-section ">
+							<h3>Methods</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="tileranger.html#encodefootprint" class="tsd-kind-icon">encode<wbr>Footprint</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private"><a href="tileranger.html#generateranges" class="tsd-kind-icon">generate<wbr>Ranges</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="tileranger.html#generatesubtiles" class="tsd-kind-icon">generate<wbr>Sub<wbr>Tiles</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="tileranger.html#generatetiles" class="tsd-kind-icon">generate<wbr>Tiles</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="tileranger.html#isbbox" class="tsd-kind-icon">is<wbr>Bbox</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private"><a href="tileranger.html#optimizehash" class="tsd-kind-icon">optimize<wbr>Hash</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="tileranger.html#tilefootprintintersection" class="tsd-kind-icon">tile<wbr>Footprint<wbr>Intersection</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="tileranger.html#tiletorange" class="tsd-kind-icon">tile<wbr>ToRange</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><a href="tileranger.html#tilesgenerator" class="tsd-kind-icon">tiles<wbr>Generator</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Constructors</h2>
+				<section class="tsd-panel tsd-member tsd-kind-constructor tsd-parent-kind-class">
+					<a name="constructor" class="tsd-anchor"></a>
+					<h3>constructor</h3>
+					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Tile<wbr>Ranger<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="tileranger.html" class="tsd-signature-type" data-tsd-kind="Class">TileRanger</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+							</aside>
+							<h4 class="tsd-returns-title">Returns <a href="tileranger.html" class="tsd-signature-type" data-tsd-kind="Class">TileRanger</a></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group ">
+				<h2>Methods</h2>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="encodefootprint" class="tsd-anchor"></a>
+					<h3>encode<wbr>Footprint</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">encode<wbr>Footprint<span class="tsd-signature-symbol">(</span>footprint<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Feature</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiPolygon</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Properties</span><span class="tsd-signature-symbol">&gt;</span>, zoom<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tileRanger.ts#L64">geo/tileRanger.ts:64</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>generate tile hashes</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>footprint: <span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Feature</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiPolygon</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Properties</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>footprint to cover with generated tile hashes</p>
+									</div>
+								</li>
+								<li>
+									<h5>zoom: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>max hash zoom</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+					<a name="generateranges" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> generate<wbr>Ranges</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Ranges&lt;T&gt;<span class="tsd-signature-symbol">(</span>bbox<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BBox2d</span>, zoom<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, intersectionTarget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, intersectionFunction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TileIntersectionFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tileRanger.ts#L113">geo/tileRanger.ts:113</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>bbox: <span class="tsd-signature-type">BBox2d</span></h5>
+								</li>
+								<li>
+									<h5>zoom: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>intersectionTarget: <span class="tsd-signature-type">T</span></h5>
+								</li>
+								<li>
+									<h5>intersectionFunction: <span class="tsd-signature-type">TileIntersectionFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="generatesubtiles" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> generate<wbr>Sub<wbr>Tiles</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Sub<wbr>Tiles<span class="tsd-signature-symbol">(</span>tile<span class="tsd-signature-symbol">: </span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">[]</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tileRanger.ts#L160">geo/tileRanger.ts:160</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tile: <a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">[]</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="generatetiles" class="tsd-anchor"></a>
+					<h3>generate<wbr>Tiles</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Tiles<span class="tsd-signature-symbol">(</span>bbox<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">BBox2d</span>, zoom<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+						<li class="tsd-signature tsd-kind-icon">generate<wbr>Tiles<span class="tsd-signature-symbol">(</span>footprint<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Feature</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiPolygon</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Properties</span><span class="tsd-signature-symbol">&gt;</span>, zoom<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tileRanger.ts#L82">geo/tileRanger.ts:82</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>generate tile</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>bbox: <span class="tsd-signature-type">BBox2d</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>bbox to cover with generated tiles</p>
+									</div>
+								</li>
+								<li>
+									<h5>zoom: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>target tiles zoom level</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tileRanger.ts#L88">geo/tileRanger.ts:88</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>generate tile</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>footprint: <span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Feature</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiPolygon</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Properties</span><span class="tsd-signature-symbol">&gt;</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>footprint to cover with generated tiles</p>
+									</div>
+								</li>
+								<li>
+									<h5>zoom: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>target tiles zoom level</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="isbbox" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> is<wbr>Bbox</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">is<wbr>Bbox<span class="tsd-signature-symbol">(</span>footprint<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Feature</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiPolygon</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Properties</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">boolean</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tileRanger.ts#L187">geo/tileRanger.ts:187</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>footprint: <span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">Feature</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">Polygon</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">MultiPolygon</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">Properties</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">boolean</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+					<a name="optimizehash" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> optimize<wbr>Hash</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">optimize<wbr>Hash&lt;T&gt;<span class="tsd-signature-symbol">(</span>tile<span class="tsd-signature-symbol">: </span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a>, targetZoom<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, intersectionTarget<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">T</span>, intersectionFunction<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TileIntersectionFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tileRanger.ts#L143">geo/tileRanger.ts:143</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-type-parameters-title">Type parameters</h4>
+							<ul class="tsd-type-parameters">
+								<li>
+									<h4>T</h4>
+								</li>
+							</ul>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tile: <a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h5>
+								</li>
+								<li>
+									<h5>targetZoom: <span class="tsd-signature-type">number</span></h5>
+								</li>
+								<li>
+									<h5>intersectionTarget: <span class="tsd-signature-type">T</span></h5>
+								</li>
+								<li>
+									<h5>intersectionFunction: <span class="tsd-signature-type">TileIntersectionFunction</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">T</span><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="tilefootprintintersection" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> <span class="tsd-flag ts-flagReadonly">Readonly</span> tile<wbr>Footprint<wbr>Intersection</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">tile<wbr>Footprint<wbr>Intersection<span class="tsd-signature-symbol">(</span>tile<span class="tsd-signature-symbol">: </span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a>, intersectionParams<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">IFootprintIntersectionParams</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">TileIntersectionState</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tileRanger.ts#L169">geo/tileRanger.ts:169</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tile: <a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h5>
+								</li>
+								<li>
+									<h5>intersectionParams: <span class="tsd-signature-type">IFootprintIntersectionParams</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">TileIntersectionState</span></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
+					<a name="tiletorange" class="tsd-anchor"></a>
+					<h3>tile<wbr>ToRange</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
+						<li class="tsd-signature tsd-kind-icon">tile<wbr>ToRange<span class="tsd-signature-symbol">(</span>tile<span class="tsd-signature-symbol">: </span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a>, zoom<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="../interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tileRanger.ts#L30">geo/tileRanger.ts:30</a></li>
+								</ul>
+							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>converts tile to tile range of specified zoom level</p>
+								</div>
+							</div>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>tile: <a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a></h5>
+								</li>
+								<li>
+									<h5>zoom: <span class="tsd-signature-type">number</span></h5>
+									<div class="tsd-comment tsd-typography">
+										<p>target tile range zoom</p>
+									</div>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <a href="../interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a></h4>
+						</li>
+					</ul>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-private">
+					<a name="tilesgenerator" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagPrivate">Private</span> tiles<wbr>Generator</h3>
+					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class tsd-is-private">
+						<li class="tsd-signature tsd-kind-icon">tiles<wbr>Generator<span class="tsd-signature-symbol">(</span>rangeGen<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a><span class="tsd-signature-symbol">&gt;</span>, targetZoom<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></li>
+					</ul>
+					<ul class="tsd-descriptions">
+						<li class="tsd-description">
+							<aside class="tsd-sources">
+								<ul>
+									<li>Defined in <a href="https://github.com/MapColonies/mc-utils/blob/7f16cce/src/geo/tileRanger.ts#L99">geo/tileRanger.ts:99</a></li>
+								</ul>
+							</aside>
+							<h4 class="tsd-parameters-title">Parameters</h4>
+							<ul class="tsd-parameters">
+								<li>
+									<h5>rangeGen: <span class="tsd-signature-type">Iterable</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itilerange.html" class="tsd-signature-type" data-tsd-kind="Interface">ITileRange</a><span class="tsd-signature-symbol">&gt;</span></h5>
+								</li>
+								<li>
+									<h5>targetZoom: <span class="tsd-signature-type">number</span></h5>
+								</li>
+							</ul>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Generator</span><span class="tsd-signature-symbol">&lt;</span><a href="../interfaces/itile.html" class="tsd-signature-type" data-tsd-kind="Interface">ITile</a><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">any</span><span class="tsd-signature-symbol">, </span><span class="tsd-signature-type">unknown</span><span class="tsd-signature-symbol">&gt;</span></h4>
+						</li>
+					</ul>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class=" ">
+						<a href="../modules.html">Exports</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum">
+						<a href="../enums/tileorigin.html" class="tsd-kind-icon">Tile<wbr>Origin</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="httpclient.html" class="tsd-kind-icon">Http<wbr>Client</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-class">
+						<a href="tileranger.html" class="tsd-kind-icon">Tile<wbr>Ranger</a>
+						<ul>
+							<li class=" tsd-kind-constructor tsd-parent-kind-class">
+								<a href="tileranger.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="tileranger.html#encodefootprint" class="tsd-kind-icon">encode<wbr>Footprint</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+								<a href="tileranger.html#generateranges" class="tsd-kind-icon">generate<wbr>Ranges</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="tileranger.html#generatesubtiles" class="tsd-kind-icon">generate<wbr>Sub<wbr>Tiles</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="tileranger.html#generatetiles" class="tsd-kind-icon">generate<wbr>Tiles</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="tileranger.html#isbbox" class="tsd-kind-icon">is<wbr>Bbox</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-has-type-parameter tsd-is-private">
+								<a href="tileranger.html#optimizehash" class="tsd-kind-icon">optimize<wbr>Hash</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="tileranger.html#tilefootprintintersection" class="tsd-kind-icon">tile<wbr>Footprint<wbr>Intersection</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class">
+								<a href="tileranger.html#tiletorange" class="tsd-kind-icon">tile<wbr>ToRange</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-private">
+								<a href="tileranger.html#tilesgenerator" class="tsd-kind-icon">tiles<wbr>Generator</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ihttpretryconfig.html" class="tsd-kind-icon">IHttp<wbr>Retry<wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ilogger.html" class="tsd-kind-icon">ILogger</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ipoint.html" class="tsd-kind-icon">IPoint</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/itile.html" class="tsd-kind-icon">ITile</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="../interfaces/itilerange.html" class="tsd-kind-icon">ITile<wbr>Range</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#bboxfromtiles" class="tsd-kind-icon">bbox<wbr>From<wbr>Tiles</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#bboxtotilerange" class="tsd-kind-icon">bbox<wbr>ToTile<wbr>Range</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#creategeohashgenerator" class="tsd-kind-icon">create<wbr>Geo<wbr>Hash<wbr>Generator</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#decodegeohash" class="tsd-kind-icon">decode<wbr>Geo<wbr>Hash</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#degreesperpixel" class="tsd-kind-icon">degrees<wbr>Per<wbr>Pixel</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#degreesperpixeltozoomlevel" class="tsd-kind-icon">degrees<wbr>Per<wbr>Pixel<wbr>ToZoom<wbr>Level</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#degreespertile" class="tsd-kind-icon">degrees<wbr>Per<wbr>Tile</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#degreestotile" class="tsd-kind-icon">degrees<wbr>ToTile</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#flipyaxis" class="tsd-kind-icon">flipYAxis</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#snapbboxtotilegrid" class="tsd-kind-icon">snapBBox<wbr>ToTile<wbr>Grid</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#tilegenerator" class="tsd-kind-icon">tile<wbr>Generator</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#tiletobbox" class="tsd-kind-icon">tile<wbr>ToBbox</a>
+					</li>
+					<li class=" tsd-kind-function">
+						<a href="../modules.html#tiletodegrees" class="tsd-kind-icon">tile<wbr>ToDegrees</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class tsd-is-private"><span class="tsd-kind-icon">Private method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-class tsd-is-protected"><span class="tsd-kind-icon">Protected property</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+</body>
+</html>
