@@ -18,6 +18,7 @@ export const degreesToTile = (point: IPoint, zoomLevel: number, origin: TileOrig
   }
 
   const xTile = point.longitude / resolution + (1 << zoomLevel);
+  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
   const yTile = zoomLevel != 0 ? lat / resolution + (1 << (zoomLevel - 1)) : lat / resolution + 0.5;
 
   return {
