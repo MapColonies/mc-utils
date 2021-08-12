@@ -10,7 +10,7 @@ describe('TileRanger', () => {
   });
 
   describe('tileToRange', () => {
-    it('create rage with same zoom', () => {
+    it('create range with same zoom', () => {
       const tile = {
         x: 1,
         y: 1,
@@ -29,7 +29,7 @@ describe('TileRanger', () => {
       expect(range).toEqual(expectedRange);
     });
 
-    it('create rage with higher zoom', () => {
+    it('create range with higher zoom', () => {
       const tile = {
         x: 1,
         y: 1,
@@ -48,7 +48,7 @@ describe('TileRanger', () => {
       expect(range).toEqual(expectedRange);
     });
 
-    it('create rage with lower zoom', () => {
+    it('create range with lower zoom', () => {
       const tile = {
         x: 1,
         y: 1,
