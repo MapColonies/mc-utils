@@ -1,6 +1,6 @@
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
-import { ITile } from '../models/interfaces/geo/iTile';
-import { tileToDegrees } from './geoConvertor';
+import { ITile, ITileRange } from '../models/interfaces/geo/iTile';
+import { degreesToTile, tileToDegrees } from './geoConvertor';
 import { degreesPerTile } from './tiles';
 
 const snapMinCordToTileGrid = (cord: number, tileRes: number): number => {
@@ -22,16 +22,20 @@ export const snapBBoxToTileGrid = (bbox: BBox2d, zoomLevel: number): BBox2d => {
 
   const tileRes = degreesPerTile(zoomLevel);
   bbox[0] = snapMinCordToTileGrid(minLon, tileRes);
-  bbox[1] = snapMinCordToTileGrid(minLat, tileRes);
   bbox[2] = snapMinCordToTileGrid(maxLon, tileRes);
   if (bbox[2] != maxLon) {
     bbox[2] += tileRes;
   }
-  bbox[3] = snapMinCordToTileGrid(maxLat, tileRes);
-  if (bbox[3] != maxLat) {
-    bbox[3] += tileRes;
+  if (zoomLevel === 0) {
+    bbox[1] = -90;
+    bbox[3] = 90;
+  } else {
+    bbox[1] = snapMinCordToTileGrid(minLat, tileRes);
+    bbox[3] = snapMinCordToTileGrid(maxLat, tileRes);
+    if (bbox[3] != maxLat) {
+      bbox[3] += tileRes;
+    }
   }
-
   return bbox;
 };
 
@@ -54,4 +58,35 @@ export const bboxFromTiles = (minTile: ITile, maxTile: ITile): BBox2d => {
   });
 
   return [minPoint.longitude, minPoint.latitude, maxPoint.longitude, maxPoint.latitude];
+};
+
+/**
+ * coverts bbox to covering tile range of specified zoom level
+ * @param bbox
+ * @param zoom target zoom level
+ * @returns covering tile range
+ */
+export const bboxToTileRange = (bbox: BBox2d, zoom: number): ITileRange => {
+  bbox = snapBBoxToTileGrid(bbox, zoom);
+  const minTile = degreesToTile(
+    {
+      longitude: bbox[0],
+      latitude: bbox[1],
+    },
+    zoom
+  );
+  const maxTile = degreesToTile(
+    {
+      longitude: bbox[2],
+      latitude: bbox[3],
+    },
+    zoom
+  );
+  return {
+    minX: minTile.x,
+    minY: minTile.y,
+    maxX: maxTile.x,
+    maxY: maxTile.y,
+    zoom,
+  };
 };

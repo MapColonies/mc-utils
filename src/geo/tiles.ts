@@ -1,4 +1,6 @@
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
 import { ITile } from '../models/interfaces/geo/iTile';
+import { tileToDegrees } from './geoConvertor';
 
 /**
  * calculates tile size (resolution) in degrees
@@ -48,4 +50,15 @@ export function degreesPerPixelToZoomLevel(resolution: number): number {
     throw new Error(`Invalid zoom level ${zoomLevel} for resolution ${resolution}`);
   }
   return zoomLevel;
+}
+
+/**
+ * returns bbox of given tile
+ * @param tile
+ * @returns
+ */
+export function tileToBbox(tile: ITile): BBox2d {
+  const minPoint = tileToDegrees(tile);
+  const tileSize = degreesPerTile(tile.zoom);
+  return [minPoint.longitude, minPoint.latitude, minPoint.longitude + tileSize, minPoint.latitude + tileSize];
 }

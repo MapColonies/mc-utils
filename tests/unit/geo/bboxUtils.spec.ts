@@ -1,5 +1,6 @@
+import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
 import { ITile } from '../../../src';
-import { bboxFromTiles, snapBBoxToTileGrid } from '../../../src/geo/bboxUtils';
+import { bboxFromTiles, bboxToTileRange, snapBBoxToTileGrid } from '../../../src/geo/bboxUtils';
 
 describe('bboxUtils', () => {
   describe('snapBBoxToTileGrid', () => {
@@ -29,6 +30,68 @@ describe('bboxUtils', () => {
       };
       const bbox = bboxFromTiles(tile, tile);
       expect(bbox).toEqual([-180, -90, 0, 90]);
+    });
+  });
+
+  describe('bboxToTileRange', () => {
+    it('coverts bbox to expected tile range (no rounding, single tile)', () => {
+      const bbox = [0, 0, 45, 45] as BBox2d;
+
+      const range = bboxToTileRange(bbox, 2);
+
+      const expectedRange = {
+        minX: 4,
+        minY: 2,
+        maxX: 5,
+        maxY: 3,
+        zoom: 2,
+      };
+      expect(range).toEqual(expectedRange);
+    });
+
+    it('coverts bbox to expected tile range (no rounding)', () => {
+      const bbox = [0, 0, 90, 45] as BBox2d;
+
+      const range = bboxToTileRange(bbox, 2);
+
+      const expectedRange = {
+        minX: 4,
+        minY: 2,
+        maxX: 6,
+        maxY: 3,
+        zoom: 2,
+      };
+      expect(range).toEqual(expectedRange);
+    });
+
+    it('coverts bbox to expected tile range (rounding down)', () => {
+      const bbox = [0, 0, 45, 45] as BBox2d;
+
+      const range = bboxToTileRange(bbox, 1);
+
+      const expectedRange = {
+        minX: 2,
+        minY: 1,
+        maxX: 3,
+        maxY: 2,
+        zoom: 1,
+      };
+      expect(range).toEqual(expectedRange);
+    });
+
+    it('coverts bbox to expected tile range  (rounding up)', () => {
+      const bbox = [0, 0, 45, 45.1] as BBox2d;
+
+      const range = bboxToTileRange(bbox, 3);
+
+      const expectedRange = {
+        minX: 8,
+        minY: 4,
+        maxX: 10,
+        maxY: 7,
+        zoom: 3,
+      };
+      expect(range).toEqual(expectedRange);
     });
   });
 });

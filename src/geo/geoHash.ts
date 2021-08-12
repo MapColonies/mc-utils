@@ -38,7 +38,7 @@ function* geoHash(
         continue;
       }
       const intArea = area(intersection);
-      const hashArea = area(bboxPolygon(decodeGeoHash(hash)));
+      const hashArea = area(hashPoly);
       if (intArea == hashArea || precision == maxPrecision) {
         yield hash;
       } else {
