@@ -3,6 +3,7 @@ import { area, bbox as polygonToBbox, bboxPolygon, booleanEqual, Feature, inters
 import { ITile, ITileRange } from '../models/interfaces/geo/iTile';
 import { bboxToTileRange } from './bboxUtils';
 import { tileToBbox } from './tiles';
+import { tilesGenerator } from './tilesGenerator';
 
 type TileIntersectionFunction<T> = (tile: ITile, intersectionTarget: T) => TileIntersectionState;
 
@@ -93,21 +94,7 @@ export class TileRanger {
     } else {
       gen = this.encodeFootprint(area, zoom);
     }
-    return this.tilesGenerator(gen, zoom);
-  }
-
-  private *tilesGenerator(rangeGen: Iterable<ITileRange>, targetZoom: number): Generator<ITile> {
-    for (const range of rangeGen) {
-      for (let x = range.minX; x < range.maxX; x++) {
-        for (let y = range.minY; y < range.maxY; y++) {
-          yield {
-            x,
-            y,
-            zoom: targetZoom,
-          };
-        }
-      }
-    }
+    return tilesGenerator(gen);
   }
 
   private *generateRanges<T>(
