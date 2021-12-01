@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 1.2.0 (2021-12-01)
+
+
+### Features
+
+* support basic auth and external headers ([#7](https://github.com/MapColonies/mc-utils/issues/7)) ([26b0c5d](https://github.com/MapColonies/mc-utils/commit/26b0c5d79ab38c6346de611dd415cf9e64bf1123))
+
 ### [1.1.2](https://github.com/MapColonies/mc-utils/compare/v1.1.0...v1.1.2) (2021-08-31)
 
 ### [1.1.1](https://github.com/MapColonies/mc-utils/compare/v1.1.0...v1.1.1) (2021-08-31)
