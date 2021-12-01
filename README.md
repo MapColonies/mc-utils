@@ -18,19 +18,21 @@ this is general utilities for usage in Map Colonies project.
  -```axiosOptions``` the options used by axios when sending requests
 
  the class have the protected methods for sending http requests:
- - ```protected async get<T>(url: string, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig): Promise<T>```
- - ```protected async post<T>(url: string, body?: unknown, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig): Promise<T>```
- - ```protected async put<T>(url: string, body?: unknown, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig): Promise<T>```
- - ```protected async delete<T>(url: string, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig): Promise<T>```
- - ```protected async head<T>(url: string, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig): Promise<T>```
- - ```protected async options<T>(url: string, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig): Promise<T>```
- - ```protected async patch<T>(url: string, body?: unknown, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig): Promise<T>```
+ - ```protected async get<T>(url: string, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise<T>```
+ - ```protected async post<T>(url: string, body?: unknown, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise<T>```
+ - ```protected async put<T>(url: string, body?: unknown, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise<T>```
+ - ```protected async delete<T>(url: string, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise<T>```
+ - ```protected async head<T>(url: string, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise<T>```
+ - ```protected async options<T>(url: string, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise<T>```
+ - ```protected async patch<T>(url: string, body?: unknown, queryParams?: Record<string, unknown>, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise<T>```
   
 function parameters list:
 - `url`: url path to send the request to (not including the base url).
 - `body`: optional object to be used as request body (in relevant request types).
 - `queryParams`: optional dictionary with query parameters and value.
 - `retryConfig`: optional override to the class retry configuration.
+- `auth`: optional basic authentication object (username, password).
+- `headers`: optional headers to proceed to the request.
 
 usage example:
 ```typescript
