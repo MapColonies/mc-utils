@@ -86,13 +86,13 @@
 				-<code>axiosOptions</code> the options used by axios when sending requests</p>
 				<p> the class have the protected methods for sending http requests:</p>
 				<ul>
-					<li><code>protected async get&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
-					<li><code>protected async post&lt;T&gt;(url: string, body?: unknown, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
-					<li><code>protected async put&lt;T&gt;(url: string, body?: unknown, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
-					<li><code>protected async delete&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
-					<li><code>protected async head&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
-					<li><code>protected async options&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
-					<li><code>protected async patch&lt;T&gt;(url: string, body?: unknown, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig): Promise&lt;T&gt;</code></li>
+					<li><code>protected async get&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise&lt;T&gt;</code></li>
+					<li><code>protected async post&lt;T&gt;(url: string, body?: unknown, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise&lt;T&gt;</code></li>
+					<li><code>protected async put&lt;T&gt;(url: string, body?: unknown, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise&lt;T&gt;</code></li>
+					<li><code>protected async delete&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise&lt;T&gt;</code></li>
+					<li><code>protected async head&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise&lt;T&gt;</code></li>
+					<li><code>protected async options&lt;T&gt;(url: string, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise&lt;T&gt;</code></li>
+					<li><code>protected async patch&lt;T&gt;(url: string, body?: unknown, queryParams?: Record&lt;string, unknown&gt;, retryConfig?: IAxiosRetryConfig, auth?: AxiosBasicCredentials, headers?: unknown): Promise&lt;T&gt;</code></li>
 				</ul>
 				<p>function parameters list:</p>
 				<ul>
@@ -100,6 +100,8 @@
 					<li><code>body</code>: optional object to be used as request body (in relevant request types).</li>
 					<li><code>queryParams</code>: optional dictionary with query parameters and value.</li>
 					<li><code>retryConfig</code>: optional override to the class retry configuration.</li>
+					<li><code>auth</code>: optional basic authentication object (username, password).</li>
+					<li><code>headers</code>: optional headers to proceed to the request.</li>
 				</ul>
 				<p>usage example:</p>
 				<pre><code class="language-typescript"><span style="color: #0000FF">class</span><span style="color: #000000"> </span><span style="color: #267F99">myServiceClient</span><span style="color: #000000"> </span><span style="color: #0000FF">extends</span><span style="color: #000000"> </span><span style="color: #267F99">HttpClient</span><span style="color: #000000"> {</span>
