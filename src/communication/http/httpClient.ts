@@ -210,9 +210,9 @@ export abstract class HttpClient {
       default:
         if (body !== undefined) {
           body = JSON.stringify(body);
-          this.logger.error(`error from ${this.targetService} at ${url}. body: ${body as string}. error: ${err.message}`);
+          this.logger.info(`error from ${this.targetService} at ${url}. body: ${body as string}. error: ${err.message}`);
         } else {
-          this.logger.error(`error from ${this.targetService} at ${url}. error: ${err.message}`);
+          this.logger.info(`error from ${this.targetService} at ${url}. error: ${err.message}`);
         }
         return new InternalServerError(err);
     }
