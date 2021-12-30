@@ -62,7 +62,7 @@ export abstract class HttpClient {
       const res = await this.axiosClient.get<T>(url, reqConfig);
       return res.data;
     } catch (err) {
-      const error = this.wrapError(url, err);
+      const error = this.wrapError(url, err as AxiosError);
       throw error;
     }
   }
@@ -83,7 +83,7 @@ export abstract class HttpClient {
       const res = await this.axiosClient.post<T>(url, body, reqConfig);
       return res.data;
     } catch (err) {
-      const error = this.wrapError(url, err, body);
+      const error = this.wrapError(url, err as AxiosError, body);
       throw error;
     }
   }
@@ -104,7 +104,7 @@ export abstract class HttpClient {
       const res = await this.axiosClient.put<T>(url, body, reqConfig);
       return res.data;
     } catch (err) {
-      const error = this.wrapError(url, err, body);
+      const error = this.wrapError(url, err as AxiosError, body);
       throw error;
     }
   }
@@ -124,7 +124,7 @@ export abstract class HttpClient {
       const res = await this.axiosClient.delete<T>(url, reqConfig);
       return res.data;
     } catch (err) {
-      const error = this.wrapError(url, err);
+      const error = this.wrapError(url, err as AxiosError);
       throw error;
     }
   }
@@ -144,7 +144,7 @@ export abstract class HttpClient {
       const res = await this.axiosClient.head<T>(url, reqConfig);
       return res.data;
     } catch (err) {
-      const error = this.wrapError(url, err);
+      const error = this.wrapError(url, err as AxiosError);
       throw error;
     }
   }
@@ -164,7 +164,7 @@ export abstract class HttpClient {
       const res = await this.axiosClient.options<T>(url, reqConfig);
       return res.data;
     } catch (err) {
-      const error = this.wrapError(url, err);
+      const error = this.wrapError(url, err as AxiosError);
       throw error;
     }
   }
@@ -185,7 +185,7 @@ export abstract class HttpClient {
       const res = await this.axiosClient.patch<T>(url, body, reqConfig);
       return res.data;
     } catch (err) {
-      const error = this.wrapError(url, err);
+      const error = this.wrapError(url, err as AxiosError);
       throw error;
     }
   }
