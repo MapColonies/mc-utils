@@ -23,7 +23,13 @@ export abstract class HttpClient {
   protected axiosOptions: AxiosRequestConfig = {};
   private readonly axiosClient: AxiosInstance;
 
-  public constructor(protected readonly logger: ILogger, baseUrl: string, private readonly targetService = '', retryConfig?: IHttpRetryConfig) {
+  public constructor(
+    protected readonly logger: ILogger,
+    baseUrl: string,
+    private readonly targetService = '',
+    retryConfig?: IHttpRetryConfig,
+    private readonly disableDebugLogs = false
+  ) {
     this.axiosClient = axios.create();
 
     this.axiosOptions.baseURL = baseUrl;
@@ -190,22 +196,32 @@ export abstract class HttpClient {
       case HttpStatus.BAD_REQUEST:
         if (body !== undefined) {
           body = JSON.stringify(body);
-          this.logger.debug(`invalid request sent to ${this.targetService} at ${url}. body: ${body as string}. error: ${err.message}`);
-        } else {
+          if (!this.disableDebugLogs) {
+            this.logger.debug(`invalid request sent to ${this.targetService} at ${url}. body: ${body as string}. error: ${err.message}`);
+          }
+        } else if (!this.disableDebugLogs) {
           this.logger.debug(`invalid request sent to ${this.targetService} at ${url}. error: ${err.message}`);
         }
         return new BadRequestError(err, message);
       case HttpStatus.NOT_FOUND:
-        this.logger.debug(`request url not found for service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+        if (!this.disableDebugLogs) {
+          this.logger.debug(`request url not found for service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+        }
         return new NotFoundError(err, message);
       case HttpStatus.CONFLICT:
-        this.logger.debug(`request url conflicted, for service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+        if (!this.disableDebugLogs) {
+          this.logger.debug(`request url conflicted, for service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+        }
         return new ConflictError(err, message);
       case HttpStatus.FORBIDDEN:
-        this.logger.debug(`forbidden request sent service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+        if (!this.disableDebugLogs) {
+          this.logger.debug(`forbidden request sent service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+        }
         throw new ForbiddenError(err, message);
       case HttpStatus.UNAUTHORIZED:
-        this.logger.debug(`unauthorized request sent service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+        if (!this.disableDebugLogs) {
+          this.logger.debug(`unauthorized request sent service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+        }
         throw new UnauthorizedError(err, message);
       default:
         if (body !== undefined) {
