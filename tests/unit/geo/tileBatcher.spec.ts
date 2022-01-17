@@ -82,5 +82,25 @@ describe('GeoHashBatcher', () => {
       const expectedBatches: ITileRange[][] = [];
       expect(batches).toEqual(expectedBatches);
     });
+
+    it('return proper tiles for batch size that is power of 2', function () {
+      const ranges = [{ minX: 0, minY: 16, maxX: 16, maxY: 32, zoom: 5 }];
+
+      // action
+      const generator = tileBatchGenerator(1, ranges);
+      const batches: ITileRange[][] = [];
+      for (const range of generator) {
+        batches.push(range);
+      }
+
+      // expectation
+      const expectedBatches: ITileRange[][] = [];
+      for (let y = 16; y < 32; y++) {
+        for (let x = 0; x < 16; x++) {
+          expectedBatches.push([{ minX: x, maxX: x + 1, minY: y, maxY: y + 1, zoom: 5 }]);
+        }
+      }
+      expect(batches).toEqual(expectedBatches);
+    });
   });
 });

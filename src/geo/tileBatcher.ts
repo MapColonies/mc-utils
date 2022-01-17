@@ -16,9 +16,10 @@ function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): G
     }
     let reminderX = range.maxX;
     while (range.minY < range.maxY) {
+      //remaining tiles in batch row row
       if (reminderX < range.maxX) {
         const remaining = range.maxX - reminderX;
-        if (remaining >= requiredForFullBatch) {
+        if (remaining > requiredForFullBatch) {
           targetRanges.push({
             minX: reminderX,
             maxX: reminderX + requiredForFullBatch,
@@ -45,6 +46,7 @@ function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): G
           dy--;
         }
       }
+      //add max full lines
       const requiredLines = Math.floor(requiredForFullBatch / dx);
       const yRange = Math.min(requiredLines, dy);
       if (yRange > 0) {
@@ -59,6 +61,7 @@ function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): G
         dy -= yRange;
         requiredForFullBatch -= yRange * dx;
       }
+      //add partial lines beginning
       if (requiredForFullBatch > 0 && range.minY < range.maxY) {
         const endX = Math.min(range.minX + requiredForFullBatch, range.maxX);
         targetRanges.push({
