@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.1](https://github.com/MapColonies/mc-utils/compare/v1.4.0...v1.4.1) (2022-02-17)
+
+
+### Bug Fixes
+
+* http client global config ([#10](https://github.com/MapColonies/mc-utils/issues/10)) ([55a94bc](https://github.com/MapColonies/mc-utils/commit/55a94bc38ebefaface019d8e2535728386734e88))
+
 ## [1.4.0](https://github.com/MapColonies/mc-utils/compare/v1.3.0...v1.4.0) (2022-01-17)
 
 ### [1.3.1](https://github.com/MapColonies/mc-utils/compare/v1.3.0...v1.3.1) (2022-01-17)
