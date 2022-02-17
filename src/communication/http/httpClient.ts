@@ -52,13 +52,10 @@ export abstract class HttpClient {
     queryParams?: Record<string, unknown>,
     retryConfig?: IAxiosRetryConfig,
     auth?: AxiosBasicCredentials,
-    headers?: unknown
+    headers?: Record<string, unknown>
   ): Promise<T> {
     try {
-      const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : { ...this.axiosOptions };
-      reqConfig.params = queryParams;
-      reqConfig.auth = auth;
-      reqConfig.headers = headers;
+      const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       const res = await this.axiosClient.get<T>(url, reqConfig);
       return res.data;
     } catch (err) {
@@ -73,13 +70,10 @@ export abstract class HttpClient {
     queryParams?: Record<string, unknown>,
     retryConfig?: IAxiosRetryConfig,
     auth?: AxiosBasicCredentials,
-    headers?: unknown
+    headers?: Record<string, unknown>
   ): Promise<T> {
     try {
-      const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : this.axiosOptions;
-      reqConfig.params = queryParams;
-      reqConfig.auth = auth;
-      reqConfig.headers = headers;
+      const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       const res = await this.axiosClient.post<T>(url, body, reqConfig);
       return res.data;
     } catch (err) {
@@ -94,13 +88,10 @@ export abstract class HttpClient {
     queryParams?: Record<string, unknown>,
     retryConfig?: IAxiosRetryConfig,
     auth?: AxiosBasicCredentials,
-    headers?: unknown
+    headers?: Record<string, unknown>
   ): Promise<T> {
     try {
-      const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : this.axiosOptions;
-      reqConfig.params = queryParams;
-      reqConfig.auth = auth;
-      reqConfig.headers = headers;
+      const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       const res = await this.axiosClient.put<T>(url, body, reqConfig);
       return res.data;
     } catch (err) {
@@ -114,13 +105,10 @@ export abstract class HttpClient {
     queryParams?: Record<string, unknown>,
     retryConfig?: IAxiosRetryConfig,
     auth?: AxiosBasicCredentials,
-    headers?: unknown
+    headers?: Record<string, unknown>
   ): Promise<T> {
     try {
-      const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : this.axiosOptions;
-      reqConfig.params = queryParams;
-      reqConfig.auth = auth;
-      reqConfig.headers = headers;
+      const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       const res = await this.axiosClient.delete<T>(url, reqConfig);
       return res.data;
     } catch (err) {
@@ -134,13 +122,10 @@ export abstract class HttpClient {
     queryParams?: Record<string, unknown>,
     retryConfig?: IAxiosRetryConfig,
     auth?: AxiosBasicCredentials,
-    headers?: unknown
+    headers?: Record<string, unknown>
   ): Promise<T> {
     try {
-      const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : this.axiosOptions;
-      reqConfig.params = queryParams;
-      reqConfig.auth = auth;
-      reqConfig.headers = headers;
+      const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       const res = await this.axiosClient.head<T>(url, reqConfig);
       return res.data;
     } catch (err) {
@@ -154,13 +139,10 @@ export abstract class HttpClient {
     queryParams?: Record<string, unknown>,
     retryConfig?: IAxiosRetryConfig,
     auth?: AxiosBasicCredentials,
-    headers?: unknown
+    headers?: Record<string, unknown>
   ): Promise<T> {
     try {
-      const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : this.axiosOptions;
-      reqConfig.params = queryParams;
-      reqConfig.auth = auth;
-      reqConfig.headers = headers;
+      const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       const res = await this.axiosClient.options<T>(url, reqConfig);
       return res.data;
     } catch (err) {
@@ -175,19 +157,35 @@ export abstract class HttpClient {
     queryParams?: Record<string, unknown>,
     retryConfig?: IAxiosRetryConfig,
     auth?: AxiosBasicCredentials,
-    headers?: unknown
+    headers?: Record<string, unknown>
   ): Promise<T> {
     try {
-      const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : this.axiosOptions;
-      reqConfig.params = queryParams;
-      reqConfig.auth = auth;
-      reqConfig.headers = headers;
+      const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       const res = await this.axiosClient.patch<T>(url, body, reqConfig);
       return res.data;
     } catch (err) {
       const error = this.wrapError(url, err as AxiosError);
       throw error;
     }
+  }
+
+  protected getRequestConfig(
+    retryConfig: IAxiosRetryConfig | undefined,
+    queryParams: Record<string, unknown> | undefined,
+    auth: AxiosBasicCredentials | undefined,
+    headers: Record<string, unknown> | undefined
+  ): AxiosRequestConfig {
+    const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : this.axiosOptions;
+    if (queryParams !== undefined) {
+      reqConfig.params = reqConfig.params !== undefined ? { ...(reqConfig.params as Record<string, unknown>), ...queryParams } : queryParams;
+    }
+    if (auth !== undefined) {
+      reqConfig.auth = auth;
+    }
+    if (headers !== undefined) {
+      reqConfig.headers = reqConfig.headers !== undefined ? { ...(reqConfig.headers as Record<string, unknown>), ...headers } : headers;
+    }
+    return reqConfig;
   }
 
   private wrapError(url: string, err: AxiosError, body?: unknown): HttpError {

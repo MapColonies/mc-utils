@@ -1,5 +1,5 @@
 import { BadRequestError } from '@map-colonies/error-types';
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosRequestConfig } from 'axios';
 import { exponentialDelay, IAxiosRetryConfig } from 'axios-retry';
 import { HttpClient } from '../../../../src';
 import { axiosMocks, initAxiosMock } from '../../../mocks/externalDeps/axios';
@@ -13,6 +13,10 @@ class TestClient extends HttpClient {
   public callDelete = this.delete.bind(this);
   public callHead = this.head.bind(this);
   public callOptions = this.options.bind(this);
+  public callGetRequestConfig = this.getRequestConfig.bind(this);
+  public setGlobalConfig(config: AxiosRequestConfig): void {
+    this.axiosOptions = config;
+  }
 }
 
 const testUrl = 'http://test/test';
@@ -89,6 +93,89 @@ describe('HttpClient', function () {
         parseConfig(config);
       };
       expect(action).toThrow();
+    });
+
+    it('global configurations are used when not overridden', () => {
+      const globalConfig: AxiosRequestConfig = {
+        'axios-retry': {
+          retries: 1,
+        },
+        auth: {
+          username: 'a',
+          password: 'b',
+        },
+        params: {
+          test1: 1,
+          test2: 2,
+        },
+        headers: {
+          test3: 3,
+          test4: 4,
+        },
+      };
+      client.setGlobalConfig(globalConfig);
+      const reqConf = client.callGetRequestConfig(undefined, undefined, undefined, undefined);
+      expect(reqConf).toEqual(globalConfig);
+    });
+
+    it('request configs are added to global configurations', () => {
+      const globalConfig: AxiosRequestConfig = {
+        'axios-retry': {
+          retries: 1,
+        },
+        auth: {
+          username: 'a',
+          password: 'b',
+        },
+        params: {
+          test1: 1,
+          test2: 2,
+        },
+        headers: {
+          test3: 3,
+          test4: 4,
+        },
+      };
+      const retryOverride = {
+        retries: 3,
+      };
+      const queryOverride = {
+        test1: 4,
+        test3: 3,
+      };
+      const authOverride = {
+        username: 't',
+        password: 't',
+      };
+      const headerOverride = {
+        test3: 6,
+        test5: 5,
+      };
+
+      client.setGlobalConfig(globalConfig);
+      const reqConf = client.callGetRequestConfig(retryOverride, queryOverride, authOverride, headerOverride);
+
+      const expectedConfig = {
+        'axios-retry': {
+          retries: 3,
+        },
+        auth: {
+          username: 't',
+          password: 't',
+        },
+        params: {
+          test1: 4,
+          test2: 2,
+          test3: 3,
+        },
+        headers: {
+          test3: 6,
+          test4: 4,
+          test5: 5,
+        },
+      };
+
+      expect(reqConf).toEqual(expectedConfig);
     });
   });
 
