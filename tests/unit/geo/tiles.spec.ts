@@ -39,8 +39,8 @@ describe('tiles', () => {
   });
 
   describe('degreesPerPixelToZoomLevel', () => {
-    it('Check for resolution bigger than minimum , res >  0.703125, return 0', function () {
-      const zoomLevelResult = degreesPerPixelToZoomLevel(1);
+    it('Check if calculation is able to return 0', function () {
+      const zoomLevelResult = degreesPerPixelToZoomLevel(0.7);
       expect(zoomLevelResult === 0).toEqual(true);
     });
 
@@ -49,14 +49,14 @@ describe('tiles', () => {
       expect(zoomLevelResult).toEqual(5);
     });
 
-    it('Check for resolution between resolutions returns bigger, 0.02197265625 (zoom 5) > res >  0.010986328125, (zoom 6), return 6', function () {
+    it('Check for resolution between resolutions returns the lower , 0.02197265625 (zoom 5) > res >  0.010986328125, (zoom 6), return 5', function () {
       const zoomLevelResult = degreesPerPixelToZoomLevel(0.01098632813);
-      expect(zoomLevelResult).toEqual(6);
+      expect(zoomLevelResult).toEqual(5);
     });
 
-    it('Check for resolution smaller than last existing resolution, res < 1.67638063430786e-7, (zoom 22), return 23', function () {
+    it('Check for resolution smaller than last existing resolution returns the last existing resolution, res < 1.67638063430786e-7, (zoom 22), return 22', function () {
       const zoomLevelResult = degreesPerPixelToZoomLevel(0.97638063430786e-7);
-      expect(zoomLevelResult).toEqual(23);
+      expect(zoomLevelResult).toEqual(22);
     });
   });
 });

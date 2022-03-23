@@ -38,14 +38,14 @@ export function flipYAxis(tile: ITile): ITile {
 }
 
 /**
- * converts pixel size (resolution) in degrees to matching zoom level (rounded up)
+ * converts pixel size (resolution) in degrees to matching zoom level (rounded down)
  * @param resolution pixel size (resolution) in degrees
  * @returns zoom level for given pixel size
  */
 export function degreesPerPixelToZoomLevel(resolution: number): number {
   const MIN_ZOOM_LEVEL = 0;
   // eslint-disable-next-line @typescript-eslint/no-magic-numbers
-  const zoomLevel = Math.ceil(Math.log2(180 / (resolution * 256)));
+  const zoomLevel = Math.floor(Math.log2(180 / (resolution * 256)));
   if (zoomLevel < MIN_ZOOM_LEVEL) {
     throw new Error(`Invalid zoom level ${zoomLevel} for resolution ${resolution}`);
   }
