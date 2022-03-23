@@ -39,7 +39,7 @@ describe('tiles', () => {
   });
 
   describe('degreesPerPixelToZoomLevel', () => {
-    it('Check for calculation is able to return "0" , res >  0.703125, return 0', function () {
+    it('Check if calculation is able to return 0', function () {
       const zoomLevelResult = degreesPerPixelToZoomLevel(0.7);
       expect(zoomLevelResult === 0).toEqual(true);
     });
