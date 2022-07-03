@@ -175,7 +175,7 @@ export abstract class HttpClient {
     auth: AxiosBasicCredentials | undefined,
     headers: Record<string, unknown> | undefined
   ): AxiosRequestConfig {
-    const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : this.axiosOptions;
+    const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : { ...this.axiosOptions };
     if (queryParams !== undefined) {
       reqConfig.params = reqConfig.params !== undefined ? { ...(reqConfig.params as Record<string, unknown>), ...queryParams } : queryParams;
     }
