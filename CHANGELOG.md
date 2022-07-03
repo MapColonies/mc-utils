@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.4](https://github.com/MapColonies/mc-utils/compare/v1.4.3...v1.4.4) (2022-07-03)
+
+
+### Bug Fixes
+
+* fixed axios option for requests ([#12](https://github.com/MapColonies/mc-utils/issues/12)) ([9ce0212](https://github.com/MapColonies/mc-utils/commit/9ce0212650ea62981e5c23578affef2a7fd83946))
+
 ### [1.4.3](https://github.com/MapColonies/mc-utils/compare/v1.4.1...v1.4.3) (2022-03-23)
 
 ### [1.4.2](https://github.com/MapColonies/mc-utils/compare/v1.4.1...v1.4.2) (2022-03-23)
