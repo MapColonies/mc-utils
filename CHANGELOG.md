@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.4.6](https://github.com/MapColonies/mc-utils/compare/v1.4.3...v1.4.6) (2022-07-27)
+
+
+### Bug Fixes
+
+* fixed axios option for requests ([#12](https://github.com/MapColonies/mc-utils/issues/12)) ([9ce0212](https://github.com/MapColonies/mc-utils/commit/9ce0212650ea62981e5c23578affef2a7fd83946))
+* snap bbox to tile grid ([#13](https://github.com/MapColonies/mc-utils/issues/13)) ([6ec33ae](https://github.com/MapColonies/mc-utils/commit/6ec33aeb97b3f579471c1512943a321e5afb7119))
+
 ### [1.4.5](https://github.com/MapColonies/mc-utils/compare/v1.4.3...v1.4.5) (2022-07-27)
 
 
