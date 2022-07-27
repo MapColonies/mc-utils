@@ -5,10 +5,10 @@ import { bboxFromTiles, bboxToTileRange, snapBBoxToTileGrid } from '../../../src
 describe('bboxUtils', () => {
   describe('snapBBoxToTileGrid', () => {
     it('rounds coordinates to tile grid', () => {
-      const roundedBbox = snapBBoxToTileGrid([1, 2, 3, 4], 20);
+      const roundedBbox = snapBBoxToTileGrid([-180, -179.9999, 179.9999, 180], 20);
       const gridStep = 180 / (1 << 20);
       for (const cord of roundedBbox) {
-        expect(cord % gridStep).toBe(0);
+        expect(Math.abs(cord % gridStep)).toEqual(0);
       }
     });
 

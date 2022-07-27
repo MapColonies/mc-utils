@@ -4,7 +4,7 @@ import { degreesToTile, tileToDegrees } from './geoConvertor';
 import { degreesPerTile } from './tiles';
 
 const snapMinCordToTileGrid = (cord: number, tileRes: number): number => {
-  const newCord = cord - Math.abs(cord % tileRes);
+  const newCord = Math.floor(cord / tileRes) * tileRes;
   return newCord;
 };
 
