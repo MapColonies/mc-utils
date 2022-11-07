@@ -15,28 +15,31 @@ const snapMinCordToTileGrid = (cord: number, tileRes: number): number => {
  * @returns bbox that contains the original bbox and match tile grid lines
  */
 export const snapBBoxToTileGrid = (bbox: BBox2d, zoomLevel: number): BBox2d => {
+  const initValue = -9999;
+  const snappedBbox: BBox2d = [initValue, initValue, initValue, initValue];
+
   const minLon = Math.min(bbox[0], bbox[2]);
   const minLat = Math.min(bbox[1], bbox[3]);
   const maxLon = Math.max(bbox[0], bbox[2]);
   const maxLat = Math.max(bbox[1], bbox[3]);
 
   const tileRes = degreesPerTile(zoomLevel);
-  bbox[0] = snapMinCordToTileGrid(minLon, tileRes);
-  bbox[2] = snapMinCordToTileGrid(maxLon, tileRes);
-  if (bbox[2] != maxLon) {
-    bbox[2] += tileRes;
+  snappedBbox[0] = snapMinCordToTileGrid(minLon, tileRes);
+  snappedBbox[2] = snapMinCordToTileGrid(maxLon, tileRes);
+  if (snappedBbox[2] != maxLon) {
+    snappedBbox[2] += tileRes;
   }
   if (zoomLevel === 0) {
-    bbox[1] = -90;
-    bbox[3] = 90;
+    snappedBbox[1] = -90;
+    snappedBbox[3] = 90;
   } else {
-    bbox[1] = snapMinCordToTileGrid(minLat, tileRes);
-    bbox[3] = snapMinCordToTileGrid(maxLat, tileRes);
-    if (bbox[3] != maxLat) {
-      bbox[3] += tileRes;
+    snappedBbox[1] = snapMinCordToTileGrid(minLat, tileRes);
+    snappedBbox[3] = snapMinCordToTileGrid(maxLat, tileRes);
+    if (snappedBbox[3] != maxLat) {
+      snappedBbox[3] += tileRes;
     }
   }
-  return bbox;
+  return snappedBbox;
 };
 
 /**
@@ -67,18 +70,18 @@ export const bboxFromTiles = (minTile: ITile, maxTile: ITile): BBox2d => {
  * @returns covering tile range
  */
 export const bboxToTileRange = (bbox: BBox2d, zoom: number): ITileRange => {
-  bbox = snapBBoxToTileGrid(bbox, zoom);
+  const sanitizedBbox = snapBBoxToTileGrid(bbox, zoom);
   const minTile = degreesToTile(
     {
-      longitude: bbox[0],
-      latitude: bbox[1],
+      longitude: sanitizedBbox[0],
+      latitude: sanitizedBbox[1],
     },
     zoom
   );
   const maxTile = degreesToTile(
     {
-      longitude: bbox[2],
-      latitude: bbox[3],
+      longitude: sanitizedBbox[2],
+      latitude: sanitizedBbox[3],
     },
     zoom
   );
