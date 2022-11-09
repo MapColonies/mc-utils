@@ -15,9 +15,6 @@ const snapMinCordToTileGrid = (cord: number, tileRes: number): number => {
  * @returns bbox that contains the original bbox and match tile grid lines
  */
 export const snapBBoxToTileGrid = (bbox: BBox2d, zoomLevel: number): BBox2d => {
-  // const initValue = -9999;
-  // const snappedBbox: BBox2d = [initValue, initValue, initValue, initValue];
-
   const minLon = Math.min(bbox[0], bbox[2]);
   const minLat = Math.min(bbox[1], bbox[3]);
   const maxLon = Math.max(bbox[0], bbox[2]);
