@@ -21,22 +21,27 @@ export const snapBBoxToTileGrid = (bbox: BBox2d, zoomLevel: number): BBox2d => {
   const maxLat = Math.max(bbox[1], bbox[3]);
 
   const tileRes = degreesPerTile(zoomLevel);
-  bbox[0] = snapMinCordToTileGrid(minLon, tileRes);
-  bbox[2] = snapMinCordToTileGrid(maxLon, tileRes);
-  if (bbox[2] != maxLon) {
-    bbox[2] += tileRes;
+  const snappedMinLon = snapMinCordToTileGrid(minLon, tileRes);
+  let snappedMaxLon = snapMinCordToTileGrid(maxLon, tileRes);
+  if (snappedMaxLon != maxLon) {
+    snappedMaxLon += tileRes;
   }
+  let sanppedMinLat: number;
+  let snappedMaxLat: number;
   if (zoomLevel === 0) {
-    bbox[1] = -90;
-    bbox[3] = 90;
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    sanppedMinLat = -90;
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    snappedMaxLat = 90;
   } else {
-    bbox[1] = snapMinCordToTileGrid(minLat, tileRes);
-    bbox[3] = snapMinCordToTileGrid(maxLat, tileRes);
-    if (bbox[3] != maxLat) {
-      bbox[3] += tileRes;
+    sanppedMinLat = snapMinCordToTileGrid(minLat, tileRes);
+    snappedMaxLat = snapMinCordToTileGrid(maxLat, tileRes);
+    if (snappedMaxLat != maxLat) {
+      snappedMaxLat += tileRes;
     }
   }
-  return bbox;
+  const snappedBbox: BBox2d = [snappedMinLon, sanppedMinLat, snappedMaxLon, snappedMaxLat];
+  return snappedBbox;
 };
 
 /**
@@ -67,18 +72,18 @@ export const bboxFromTiles = (minTile: ITile, maxTile: ITile): BBox2d => {
  * @returns covering tile range
  */
 export const bboxToTileRange = (bbox: BBox2d, zoom: number): ITileRange => {
-  bbox = snapBBoxToTileGrid(bbox, zoom);
+  const sanitizedBbox = snapBBoxToTileGrid(bbox, zoom);
   const minTile = degreesToTile(
     {
-      longitude: bbox[0],
-      latitude: bbox[1],
+      longitude: sanitizedBbox[0],
+      latitude: sanitizedBbox[1],
     },
     zoom
   );
   const maxTile = degreesToTile(
     {
-      longitude: bbox[2],
-      latitude: bbox[3],
+      longitude: sanitizedBbox[2],
+      latitude: sanitizedBbox[3],
     },
     zoom
   );
