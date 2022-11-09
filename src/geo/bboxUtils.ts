@@ -15,8 +15,8 @@ const snapMinCordToTileGrid = (cord: number, tileRes: number): number => {
  * @returns bbox that contains the original bbox and match tile grid lines
  */
 export const snapBBoxToTileGrid = (bbox: BBox2d, zoomLevel: number): BBox2d => {
-  const initValue = -9999;
-  const snappedBbox: BBox2d = [initValue, initValue, initValue, initValue];
+  // const initValue = -9999;
+  // const snappedBbox: BBox2d = [initValue, initValue, initValue, initValue];
 
   const minLon = Math.min(bbox[0], bbox[2]);
   const minLat = Math.min(bbox[1], bbox[3]);
@@ -24,21 +24,26 @@ export const snapBBoxToTileGrid = (bbox: BBox2d, zoomLevel: number): BBox2d => {
   const maxLat = Math.max(bbox[1], bbox[3]);
 
   const tileRes = degreesPerTile(zoomLevel);
-  snappedBbox[0] = snapMinCordToTileGrid(minLon, tileRes);
-  snappedBbox[2] = snapMinCordToTileGrid(maxLon, tileRes);
-  if (snappedBbox[2] != maxLon) {
-    snappedBbox[2] += tileRes;
+  const snappedMinLon = snapMinCordToTileGrid(minLon, tileRes);
+  let snappedMaxLon = snapMinCordToTileGrid(maxLon, tileRes);
+  if (snappedMaxLon != maxLon) {
+    snappedMaxLon += tileRes;
   }
+  let sanppedMinLat: number;
+  let snappedMaxLat: number;
   if (zoomLevel === 0) {
-    snappedBbox[1] = -90;
-    snappedBbox[3] = 90;
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    sanppedMinLat = -90;
+    // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+    snappedMaxLat = 90;
   } else {
-    snappedBbox[1] = snapMinCordToTileGrid(minLat, tileRes);
-    snappedBbox[3] = snapMinCordToTileGrid(maxLat, tileRes);
-    if (snappedBbox[3] != maxLat) {
-      snappedBbox[3] += tileRes;
+    sanppedMinLat = snapMinCordToTileGrid(minLat, tileRes);
+    snappedMaxLat = snapMinCordToTileGrid(maxLat, tileRes);
+    if (snappedMaxLat != maxLat) {
+      snappedMaxLat += tileRes;
     }
   }
+  const snappedBbox: BBox2d = [snappedMinLon, sanppedMinLat, snappedMaxLon, snappedMaxLat];
   return snappedBbox;
 };
 
