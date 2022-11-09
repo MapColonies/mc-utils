@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.5.0](https://github.com/MapColonies/mc-utils/compare/v1.1.2...v1.5.0) (2022-11-09)
+
+
+### Features
+
+* support basic auth and external headers ([#7](https://github.com/MapColonies/mc-utils/issues/7)) ([26b0c5d](https://github.com/MapColonies/mc-utils/commit/26b0c5d79ab38c6346de611dd415cf9e64bf1123))
+
+
+### Bug Fixes
+
+* fixed axios option for requests ([#12](https://github.com/MapColonies/mc-utils/issues/12)) ([9ce0212](https://github.com/MapColonies/mc-utils/commit/9ce0212650ea62981e5c23578affef2a7fd83946))
+* http client global config ([#10](https://github.com/MapColonies/mc-utils/issues/10)) ([55a94bc](https://github.com/MapColonies/mc-utils/commit/55a94bc38ebefaface019d8e2535728386734e88))
+* making by value instead by reference ([#14](https://github.com/MapColonies/mc-utils/issues/14)) ([f16ea7f](https://github.com/MapColonies/mc-utils/commit/f16ea7f375465e537084992b6d34c70bd26cb767))
+* snap bbox to tile grid ([#13](https://github.com/MapColonies/mc-utils/issues/13)) ([6ec33ae](https://github.com/MapColonies/mc-utils/commit/6ec33aeb97b3f579471c1512943a321e5afb7119))
+
 ### [1.4.6](https://github.com/MapColonies/mc-utils/compare/v1.4.3...v1.4.6) (2022-07-27)
 
 
