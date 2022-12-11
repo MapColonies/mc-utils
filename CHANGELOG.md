@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.6.0](https://github.com/MapColonies/mc-utils/compare/v1.5.0...v1.6.0) (2022-12-11)
+
+
+### Features
+
+* added utc-datetime model ([#16](https://github.com/MapColonies/mc-utils/issues/16)) ([5b9d6aa](https://github.com/MapColonies/mc-utils/commit/5b9d6aa20a355139de885e45d97acf88b27819ab))
+
 ## [1.5.0](https://github.com/MapColonies/mc-utils/compare/v1.1.2...v1.5.0) (2022-11-09)
 
 
