@@ -11,7 +11,7 @@ import {
   UnauthorizedError,
   HttpError,
 } from '@map-colonies/error-types';
-import { ILogger } from '../../models/interfaces/iLogger';
+import { Logger } from '@map-colonies/js-logger';
 
 export interface IHttpRetryConfig {
   attempts: number;
@@ -24,7 +24,7 @@ export abstract class HttpClient {
   private readonly axiosClient: AxiosInstance;
 
   public constructor(
-    protected readonly logger: ILogger,
+    protected readonly logger: Logger,
     baseUrl: string,
     private readonly targetService = '',
     retryConfig?: IHttpRetryConfig,
