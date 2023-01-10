@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.6.1](https://github.com/MapColonies/mc-utils/compare/v1.6.0...v1.6.1) (2023-01-10)
+
 ## [1.6.0](https://github.com/MapColonies/mc-utils/compare/v1.5.0...v1.6.0) (2022-12-11)
 
 
