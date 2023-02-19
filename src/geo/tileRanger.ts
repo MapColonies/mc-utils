@@ -62,7 +62,7 @@ export class TileRanger {
    * @param zoom max hash zoom
    * @returns
    */
-  public *encodeFootprint(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number, printLog: boolean = false): Generator<ITileRange> {
+  public *encodeFootprint(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number, printLog = false): Generator<ITileRange> {
     ////////////////////////////////
     /// Step 1: check if the footprint is identical to its bbox
     ////////////////////////////////
@@ -122,7 +122,7 @@ export class TileRanger {
     zoom: number,
     intersectionTarget: T,
     intersectionFunction: TileIntersectionFunction<T>,
-    printLog: boolean = false
+    printLog = false
   ): Generator<ITileRange> {
     /////////////////////////////////////////////////////////////////////////////////////////////////
     /// Step 3: Convert the bbox to tile range of the requested zoom
@@ -132,8 +132,9 @@ export class TileRanger {
     }
     const boundingRange = bboxToTileRange(bbox, zoom);
     if (printLog) {
+      const bboxString = `BBOX[0]: ${bbox[0]}, BBOX[1]: ${bbox[1]}, BBOX[2]: ${bbox[2]}, BBOX[3]: ${bbox[3]}`;
       console.log(
-        `BBOX: ${bbox}, Zoom: ${zoom}, bounding range: minX: ${boundingRange.minX}, maxX: ${boundingRange.maxX}, minY: ${boundingRange.minY}, maxY: ${boundingRange.maxY}`
+        `${bboxString}, Zoom: ${zoom}, bounding range: minX: ${boundingRange.minX}, maxX: ${boundingRange.maxX}, minY: ${boundingRange.minY}, maxY: ${boundingRange.maxY}`
       );
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -205,13 +206,13 @@ export class TileRanger {
     targetZoom: number,
     intersectionTarget: T,
     intersectionFunction: TileIntersectionFunction<T>,
-    printLog: boolean = false
+    printLog = false
   ): Generator<ITileRange> {
     /// generate from a tile the next zoom level tiles that compose the tile
     if (printLog) {
       console.log(
         `optimizeHash: Tile X: ${tile.x}, Y: ${tile.y} zoom ${tile.zoom}, intersectionTarget ${
-          (intersectionTarget as any as { maxZoom: number }).maxZoom
+          (intersectionTarget as unknown as { maxZoom: number }).maxZoom
         }, - generate from a tile the next zoom level tiles that compose the tile`
       );
     }
