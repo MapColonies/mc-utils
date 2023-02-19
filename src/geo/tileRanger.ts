@@ -62,11 +62,11 @@ export class TileRanger {
    * @param zoom max hash zoom
    * @returns
    */
-  public *encodeFootprint(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number, printLog = false): Generator<ITileRange> {
+  public *encodeFootprint(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number, verbose = false): Generator<ITileRange> {
     ////////////////////////////////
     /// Step 1: check if the footprint is identical to its bbox
     ////////////////////////////////
-    if (printLog) {
+    if (verbose) {
       console.log('encode footprint');
     }
 
@@ -77,7 +77,7 @@ export class TileRanger {
     if (this.isBbox(footprint)) {
       // if it is convert its bbox directly to tile range and return it (bbox to tiles conversion is fast and direct mathematical conversion)
       const tileRange = bboxToTileRange(bbox, zoom);
-      if (printLog) {
+      if (verbose) {
         console.log(
           `footprint is identical to its bbox - return BBOX tile range zoom: ${tileRange.zoom} : X ${tileRange.minX} - ${tileRange.maxX} : Y ${tileRange.minY} - ${tileRange.maxY}`
         );
@@ -88,10 +88,10 @@ export class TileRanger {
         footprint,
         maxZoom: zoom,
       };
-      if (printLog) {
+      if (verbose) {
         console.log('footprint is different from its bbox - generateRanges');
       }
-      yield* this.generateRanges(bbox, zoom, intersectionParams, this.tileFootprintIntersection, printLog);
+      yield* this.generateRanges(bbox, zoom, intersectionParams, this.tileFootprintIntersection, verbose);
     }
   }
 
@@ -122,16 +122,16 @@ export class TileRanger {
     zoom: number,
     intersectionTarget: T,
     intersectionFunction: TileIntersectionFunction<T>,
-    printLog = false
+    verbose = false
   ): Generator<ITileRange> {
     /////////////////////////////////////////////////////////////////////////////////////////////////
     /// Step 3: Convert the bbox to tile range of the requested zoom
     /////////////////////////////////////////////////////////////////////////////////////////////////
-    if (printLog) {
+    if (verbose) {
       console.log('Convert the bbox to tile range of the requested zoom');
     }
     const boundingRange = bboxToTileRange(bbox, zoom);
-    if (printLog) {
+    if (verbose) {
       const bboxString = `BBOX[0]: ${bbox[0]}, BBOX[1]: ${bbox[1]}, BBOX[2]: ${bbox[2]}, BBOX[3]: ${bbox[3]}`;
       console.log(
         `${bboxString}, Zoom: ${zoom}, bounding range: minX: ${boundingRange.minX}, maxX: ${boundingRange.maxX}, minY: ${boundingRange.minY}, maxY: ${boundingRange.maxY}`
@@ -142,7 +142,7 @@ export class TileRanger {
     ///         (use zoom zero in-case there is no such zoom, for example in global bbox).
     /////////////////////////////////////////////////////////////////////////////////////////////////
     // find minimal zoom where the the area can be converted by area the size of single tile to skip levels that can't have full hashes
-    if (printLog) {
+    if (verbose) {
       console.log("find minimal zoom where the the area can be converted by area the size of single tile to skip levels that can't have full hashes");
     }
     const dx = boundingRange.maxX - boundingRange.minX;
@@ -151,7 +151,7 @@ export class TileRanger {
     const minYZoom = Math.max(Math.floor(Math.log2(1 << zoom) / dy), 0);
     const minZoom = Math.min(minXZoom, minYZoom);
 
-    if (printLog) {
+    if (verbose) {
       console.log(`MinZoom: ${minZoom}`);
     }
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -167,7 +167,7 @@ export class TileRanger {
         /////////////////////////////////////////////////////////////////////////////////////////////////
         const tile = { x, y, zoom: minimalRange.zoom };
         const intersection = intersectionFunction(tile, intersectionTarget);
-        if (printLog) {
+        if (verbose) {
           console.log(`Tile X: ${tile.x}, Y: ${tile.y} zoom ${tile.zoom}, intersection: ${intersection}`);
         }
         /// if it is completely covered or the tile is in the requested zoom:
@@ -176,7 +176,7 @@ export class TileRanger {
           /// add the range to the result set (yield is used for lazy calculation to improve memory usage)
 
           const tileRange = this.tileToRange(tile, zoom);
-          if (printLog) {
+          if (verbose) {
             console.log(
               `return BBOX tile range zoom: ${tileRange.zoom} : X ${tileRange.minX} - ${tileRange.maxX} : Y ${tileRange.minY} - ${tileRange.maxY}`
             );
@@ -187,7 +187,7 @@ export class TileRanger {
           // calculate the sub tiles contained in the current tile (in the next zoom level)
           // for every sub tile recursively run step 6
           //optimize partial base hashes
-          yield* this.optimizeHash(tile, zoom, intersectionTarget, intersectionFunction, printLog);
+          yield* this.optimizeHash(tile, zoom, intersectionTarget, intersectionFunction, verbose);
         }
         /// else do nothing as this tiles aren't intersected with the original footprint
       }
@@ -206,10 +206,10 @@ export class TileRanger {
     targetZoom: number,
     intersectionTarget: T,
     intersectionFunction: TileIntersectionFunction<T>,
-    printLog = false
+    verbose = false
   ): Generator<ITileRange> {
     /// generate from a tile the next zoom level tiles that compose the tile
-    if (printLog) {
+    if (verbose) {
       console.log(
         `optimizeHash: Tile X: ${tile.x}, Y: ${tile.y} zoom ${tile.zoom}, intersectionTarget ${
           (intersectionTarget as unknown as { maxZoom: number }).maxZoom
@@ -219,7 +219,7 @@ export class TileRanger {
     const tiles = this.generateSubTiles(tile);
     for (const subTile of tiles) {
       const intersection = intersectionFunction(subTile, intersectionTarget);
-      if (printLog) {
+      if (verbose) {
         console.log(`Tile X: ${subTile.x}, Y: ${subTile.y} zoom ${subTile.zoom}, intersection: ${intersection}`);
       }
       if (intersection === TileIntersectionState.FULL) {
@@ -227,7 +227,7 @@ export class TileRanger {
         /// add the range to the result set (yield is used for lazy calculation to improve memory usage)
 
         const tileRange = this.tileToRange(subTile, targetZoom);
-        if (printLog) {
+        if (verbose) {
           console.log(
             `return BBOX tile range zoom: ${tileRange.zoom} : X ${tileRange.minX} - ${tileRange.maxX} : Y ${tileRange.minY} - ${tileRange.maxY}`
           );
@@ -236,7 +236,7 @@ export class TileRanger {
       } else if (intersection === TileIntersectionState.PARTIAL) {
         /// if it partly covered:
         // calculate the sub tiles contained in the current tile (in the next zoom level) - recursive
-        yield* this.optimizeHash(subTile, targetZoom, intersectionTarget, intersectionFunction, printLog);
+        yield* this.optimizeHash(subTile, targetZoom, intersectionTarget, intersectionFunction, verbose);
       }
     }
   }
