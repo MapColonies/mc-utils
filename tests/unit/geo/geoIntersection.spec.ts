@@ -1,5 +1,5 @@
 import { bboxPolygon, FeatureCollection } from '@turf/turf';
-import { multiIntersect, roiBooleanEqual } from '../../../src';
+import { multiIntersect, featureCollectionBooleanEqual } from '../../../src';
 import { fc1, fc2, fcNoProperties } from '../data/testData';
 
 describe('geoIntersections', () => {
@@ -25,23 +25,23 @@ describe('geoIntersections', () => {
 
   describe('roiBooleanEqual', () => {
     it('returns true to comparing two featureCollection with different feature order', () => {
-      const isEqual = roiBooleanEqual(fc1, fc2);
+      const isEqual = featureCollectionBooleanEqual(fc1, fc2);
       expect(isEqual).toBeTruthy();
     });
 
     it('returns false to comparing two featureCollection with not same features', () => {
       const fc3: FeatureCollection = { ...fc1, features: fc1.features.slice(1) };
-      const isEqual = roiBooleanEqual(fc1, fc3);
+      const isEqual = featureCollectionBooleanEqual(fc1, fc3);
       expect(isEqual).toBeFalsy();
     });
 
     it('returns false to comparing two featureCollection with not same properties', () => {
-      const isEqual = roiBooleanEqual(fc1, fcNoProperties);
+      const isEqual = featureCollectionBooleanEqual(fc1, fcNoProperties);
       expect(isEqual).toBeFalsy();
     });
 
     it('returns true to comparing two nullable', () => {
-      const isEqual = roiBooleanEqual(
+      const isEqual = featureCollectionBooleanEqual(
         {
           type: 'FeatureCollection',
           features: [],

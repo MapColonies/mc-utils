@@ -66,8 +66,8 @@ const multiIntersect = (footprints: Footprint[]): Footprint | null => {
  * @param fc2 second featureCollection to compare equal
  * @returns true if same featureCollection, false if not
  */
-const roiBooleanEqual = (fc1: FeatureCollection, fc2: FeatureCollection): boolean => {
+const featureCollectionBooleanEqual = (fc1: FeatureCollection, fc2: FeatureCollection): boolean => {
   return _.isEqualWith(fc1, fc2, featureCollectionCustomized);
 };
 
-export { multiIntersect, roiBooleanEqual, Footprint };
+export { multiIntersect, featureCollectionBooleanEqual, Footprint };
