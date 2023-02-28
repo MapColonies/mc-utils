@@ -1,5 +1,6 @@
-import { bboxPolygon } from '@turf/turf';
-import { multiIntersect } from '../../../src';
+import { bboxPolygon, FeatureCollection } from '@turf/turf';
+import { multiIntersect, roiBooleanEqual } from '../../../src';
+import { fc1, fc2, fcNoProperties } from '../data/testData';
 
 describe('geoIntersections', () => {
   describe('multiIntersect', () => {
@@ -19,6 +20,38 @@ describe('geoIntersections', () => {
       const expected = bboxPolygon([1, 1, 2, 2]);
       expected.bbox = undefined;
       expect(intersection).toEqual(expected);
+    });
+  });
+
+  describe('roiBooleanEqual', () => {
+    it('returns true to comparing two featureCollection with different feature order', () => {
+      const isEqual = roiBooleanEqual(fc1, fc2);
+      expect(isEqual).toBeTruthy();
+    });
+
+    it('returns false to comparing two featureCollection with not same features', () => {
+      const fc3: FeatureCollection = { ...fc1, features: fc1.features.slice(1) };
+      const isEqual = roiBooleanEqual(fc1, fc3);
+      expect(isEqual).toBeFalsy();
+    });
+
+    it('returns false to comparing two featureCollection with not same properties', () => {
+      const isEqual = roiBooleanEqual(fc1, fcNoProperties);
+      expect(isEqual).toBeFalsy();
+    });
+
+    it('returns true to comparing two nullable', () => {
+      const isEqual = roiBooleanEqual(
+        {
+          type: 'FeatureCollection',
+          features: [],
+        },
+        {
+          type: 'FeatureCollection',
+          features: [],
+        }
+      );
+      expect(isEqual).toBeTruthy();
     });
   });
 });
