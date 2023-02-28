@@ -23,7 +23,7 @@ describe('geoIntersections', () => {
     });
   });
 
-  describe('roiBooleanEqual', () => {
+  describe('featureCollectionBooleanEqual', () => {
     it('returns true to comparing two featureCollection with different feature order', () => {
       const isEqual = featureCollectionBooleanEqual(fc1, fc2);
       expect(isEqual).toBeTruthy();
