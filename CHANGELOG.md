@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.7.1](https://github.com/MapColonies/mc-utils/compare/v1.7.0...v1.7.1) (2023-02-28)
+
+## [1.7.0](https://github.com/MapColonies/mc-utils/compare/v1.6.1...v1.7.0) (2023-02-27)
+
+
+### Features
+
+* zoomToResDeg and zoomToResMeter ([#20](https://github.com/MapColonies/mc-utils/issues/20)) ([18faefa](https://github.com/MapColonies/mc-utils/commit/18faefadeaa59c6e81ace5c2e6589a284a67b8bd))
+
 ### [1.6.1](https://github.com/MapColonies/mc-utils/compare/v1.6.0...v1.6.1) (2023-01-10)
 
 ## [1.6.0](https://github.com/MapColonies/mc-utils/compare/v1.5.0...v1.6.0) (2022-12-11)

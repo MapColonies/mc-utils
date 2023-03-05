@@ -1,4 +1,11 @@
-import { degreesPerPixel, degreesPerPixelToZoomLevel, degreesPerTile, flipYAxis } from '../../../src/geo/tiles';
+import {
+  degreesPerPixel,
+  degreesPerPixelToZoomLevel,
+  degreesPerTile,
+  flipYAxis,
+  zoomLevelToResolutionDeg,
+  zoomLevelToResolutionMeter,
+} from '../../../src/geo/tiles';
 
 describe('tiles', () => {
   describe('degreesPerTile', () => {
@@ -57,6 +64,44 @@ describe('tiles', () => {
     it('Check for resolution smaller than last existing resolution returns the last existing resolution, res < 1.67638063430786e-7, (zoom 22), return 22', function () {
       const zoomLevelResult = degreesPerPixelToZoomLevel(0.97638063430786e-7);
       expect(zoomLevelResult).toEqual(22);
+    });
+  });
+
+  describe('zoomLevelToResolutionDeg', () => {
+    it('Check calculation for min zoom level 0', function () {
+      const resolutionDegResult = zoomLevelToResolutionDeg(0);
+      const expectedResult = 0.703125;
+      expect(resolutionDegResult).toEqual(expectedResult);
+    });
+
+    it('Check calculation for max zoom level 22', function () {
+      const resolutionDegResult = zoomLevelToResolutionDeg(22);
+      const expectedResult = 0.000000167638063430786;
+      expect(resolutionDegResult).toEqual(expectedResult);
+    });
+
+    it('Check for return undefined value for out of range value', function () {
+      const resolutionDegResult = zoomLevelToResolutionDeg(50);
+      expect(resolutionDegResult === undefined).toEqual(true);
+    });
+  });
+
+  describe('zoomLevelToResolutionMeter', () => {
+    it('Check calculation for min zoom level 0', function () {
+      const resolutionDegResult = zoomLevelToResolutionMeter(0);
+      const expectedResult = 78271.52;
+      expect(resolutionDegResult).toEqual(expectedResult);
+    });
+
+    it('Check calculation for max zoom level 22', function () {
+      const resolutionDegResult = zoomLevelToResolutionMeter(22);
+      const expectedResult = 0.0185;
+      expect(resolutionDegResult).toEqual(expectedResult);
+    });
+
+    it('Check for return undefined value for out of range value', function () {
+      const resolutionDegResult = zoomLevelToResolutionMeter(50);
+      expect(resolutionDegResult === undefined).toEqual(true);
     });
   });
 });
