@@ -64,14 +64,12 @@ export abstract class HttpClient {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       if (!this.disableDebugLogs) {
-        this.logger.debug(
-          {
-            reqConfig: JSON.stringify(reqConfig),
-            url,
-            targetService: this.targetService,
-          },
-          `Send GET message to ${this.targetService}.`
-        );
+        this.logger.debug({
+          reqConfig: JSON.stringify(reqConfig),
+          url,
+          targetService: this.targetService,
+          msg: `Send GET message to ${this.targetService}.`,
+        });
       }
       const res = await this.axiosClient.get<T>(url, reqConfig);
       return res.data;
@@ -92,15 +90,13 @@ export abstract class HttpClient {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       if (!this.disableDebugLogs) {
-        this.logger.debug(
-          {
-            reqConfig: JSON.stringify(reqConfig),
-            url,
-            body,
-            targetService: this.targetService,
-          },
-          `Send POST message to ${this.targetService}.`
-        );
+        this.logger.debug({
+          reqConfig: JSON.stringify(reqConfig),
+          url,
+          body,
+          targetService: this.targetService,
+          msg: `Send POST message to ${this.targetService}.`,
+        });
       }
       const res = await this.axiosClient.post<T>(url, body, reqConfig);
       return res.data;
@@ -121,15 +117,13 @@ export abstract class HttpClient {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       if (!this.disableDebugLogs) {
-        this.logger.debug(
-          {
-            reqConfig,
-            url,
-            body,
-            targetService: this.targetService,
-          },
-          `Send PUT message to ${this.targetService}.`
-        );
+        this.logger.debug({
+          reqConfig,
+          url,
+          body,
+          targetService: this.targetService,
+          msg: `Send PUT message to ${this.targetService}.`,
+        });
       }
       const res = await this.axiosClient.put<T>(url, body, reqConfig);
       return res.data;
@@ -149,14 +143,12 @@ export abstract class HttpClient {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       if (!this.disableDebugLogs) {
-        this.logger.debug(
-          {
-            reqConfig,
-            url,
-            targetService: this.targetService,
-          },
-          `Send DELTE message to ${this.targetService}.`
-        );
+        this.logger.debug({
+          reqConfig,
+          url,
+          targetService: this.targetService,
+          msg: `Send DELTE message to ${this.targetService}.`,
+        });
       }
       const res = await this.axiosClient.delete<T>(url, reqConfig);
       return res.data;
@@ -176,14 +168,12 @@ export abstract class HttpClient {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       if (!this.disableDebugLogs) {
-        this.logger.debug(
-          {
-            reqConfig,
-            url,
-            targetService: this.targetService,
-          },
-          `Send HEAD message to ${this.targetService}.`
-        );
+        this.logger.debug({
+          reqConfig,
+          url,
+          targetService: this.targetService,
+          msg: `Send HEAD message to ${this.targetService}.`,
+        });
       }
       const res = await this.axiosClient.head<T>(url, reqConfig);
       return res.data;
@@ -203,14 +193,12 @@ export abstract class HttpClient {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       if (!this.disableDebugLogs) {
-        this.logger.debug(
-          {
-            reqConfig,
-            url,
-            targetService: this.targetService,
-          },
-          `Send OPTIONS message to ${this.targetService}.`
-        );
+        this.logger.debug({
+          reqConfig,
+          url,
+          targetService: this.targetService,
+          msg: `Send OPTIONS message to ${this.targetService}.`,
+        });
       }
       const res = await this.axiosClient.options<T>(url, reqConfig);
       return res.data;
@@ -231,14 +219,12 @@ export abstract class HttpClient {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       if (!this.disableDebugLogs) {
-        this.logger.debug(
-          {
-            reqConfig,
-            url,
-            targetService: this.targetService,
-          },
-          `Send PATCH message to ${this.targetService}.`
-        );
+        this.logger.debug({
+          reqConfig,
+          url,
+          targetService: this.targetService,
+          msg: `Send PATCH message to ${this.targetService}.`,
+        });
       }
       const res = await this.axiosClient.patch<T>(url, body, reqConfig);
       return res.data;
@@ -282,7 +268,7 @@ export abstract class HttpClient {
               body,
               targetService: this.targetService,
             },
-            `invalid request sent to ${this.targetService}.`
+            `invalid request error recieved from service ${this.targetService}.`
           );
         }
         return new BadRequestError(err, message);
@@ -295,7 +281,7 @@ export abstract class HttpClient {
               body,
               targetService: this.targetService,
             },
-            `request url not found for service ${this.targetService}.`
+            `not found error recieved from service ${this.targetService}.`
           );
         }
         return new NotFoundError(err, message);
@@ -308,7 +294,7 @@ export abstract class HttpClient {
               body,
               targetService: this.targetService,
             },
-            `request url conflicted for service ${this.targetService}.`
+            `conflict error recieved from service ${this.targetService}.`
           );
         }
         return new ConflictError(err, message);
@@ -321,7 +307,7 @@ export abstract class HttpClient {
               body,
               targetService: this.targetService,
             },
-            `forbidden request sent service ${this.targetService}.`
+            `forbidden error recieved from service ${this.targetService}.`
           );
         }
         throw new ForbiddenError(err, message);
@@ -334,7 +320,7 @@ export abstract class HttpClient {
               body,
               targetService: this.targetService,
             },
-            `unauthorized request sent service ${this.targetService}.`
+            `unauthorized error recieved from service ${this.targetService}.`
           );
         }
         throw new UnauthorizedError(err, message);
@@ -342,12 +328,15 @@ export abstract class HttpClient {
         if (body !== undefined) {
           body = JSON.stringify(body);
         }
-        this.logger.error({
-          err,
-          url,
-          body,
-          targetService: this.targetService,
-        });
+        this.logger.error(
+          {
+            err,
+            url,
+            body,
+            targetService: this.targetService,
+          },
+          `Internal Server Error recieved from service ${this.targetService}.`
+        );
         return new InternalServerError(err);
     }
   }
