@@ -1,7 +1,7 @@
 import axios, { AxiosBasicCredentials, AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import HttpStatus from 'http-status-codes';
 import axiosRetry, { exponentialDelay, IAxiosRetryConfig } from 'axios-retry';
-import { get as readProperty } from 'lodash';
+import { get as readProperty, uniqueId } from 'lodash';
 import {
   BadRequestError,
   ConflictError,
@@ -25,10 +25,10 @@ export abstract class HttpClient {
 
   public constructor(
     protected readonly logger: Logger,
-    baseUrl: string,
-    private readonly targetService = '',
-    retryConfig?: IHttpRetryConfig,
-    private readonly disableDebugLogs = false
+    protected baseUrl: string,
+    protected readonly targetService = '',
+    protected retryConfig?: IHttpRetryConfig,
+    protected readonly disableDebugLogs = false
   ) {
     this.axiosClient = axios.create();
 
@@ -41,7 +41,14 @@ export abstract class HttpClient {
 
     const delayFunc = axiosRetryConfig.retryDelay ?? ((): number => 0);
     axiosRetryConfig.retryDelay = (retryCount: number, error: AxiosError): number => {
-      this.logger.error(`error from ${this.targetService}. retries: ${retryCount}. error: ${error.message}`);
+      this.logger.error(
+        {
+          err: error,
+          retries: retryCount,
+          targetService: this.targetService,
+        },
+        `error from ${this.targetService}.`
+      );
       return delayFunc(retryCount, error);
     };
     axiosRetry(this.axiosClient, axiosRetryConfig);
@@ -56,6 +63,16 @@ export abstract class HttpClient {
   ): Promise<T> {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
+      if (!this.disableDebugLogs) {
+        this.logger.debug(
+          {
+            reqConfig: JSON.stringify(reqConfig),
+            url,
+            targetService: this.targetService,
+          },
+          `Send GET message to ${this.targetService}.`
+        );
+      }
       const res = await this.axiosClient.get<T>(url, reqConfig);
       return res.data;
     } catch (err) {
@@ -74,6 +91,17 @@ export abstract class HttpClient {
   ): Promise<T> {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
+      if (!this.disableDebugLogs) {
+        this.logger.debug(
+          {
+            reqConfig: JSON.stringify(reqConfig),
+            url,
+            body,
+            targetService: this.targetService,
+          },
+          `Send POST message to ${this.targetService}.`
+        );
+      }
       const res = await this.axiosClient.post<T>(url, body, reqConfig);
       return res.data;
     } catch (err) {
@@ -92,6 +120,17 @@ export abstract class HttpClient {
   ): Promise<T> {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
+      if (!this.disableDebugLogs) {
+        this.logger.debug(
+          {
+            reqConfig,
+            url,
+            body,
+            targetService: this.targetService,
+          },
+          `Send PUT message to ${this.targetService}.`
+        );
+      }
       const res = await this.axiosClient.put<T>(url, body, reqConfig);
       return res.data;
     } catch (err) {
@@ -109,6 +148,16 @@ export abstract class HttpClient {
   ): Promise<T> {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
+      if (!this.disableDebugLogs) {
+        this.logger.debug(
+          {
+            reqConfig,
+            url,
+            targetService: this.targetService,
+          },
+          `Send DELTE message to ${this.targetService}.`
+        );
+      }
       const res = await this.axiosClient.delete<T>(url, reqConfig);
       return res.data;
     } catch (err) {
@@ -126,6 +175,16 @@ export abstract class HttpClient {
   ): Promise<T> {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
+      if (!this.disableDebugLogs) {
+        this.logger.debug(
+          {
+            reqConfig,
+            url,
+            targetService: this.targetService,
+          },
+          `Send HEAD message to ${this.targetService}.`
+        );
+      }
       const res = await this.axiosClient.head<T>(url, reqConfig);
       return res.data;
     } catch (err) {
@@ -143,6 +202,16 @@ export abstract class HttpClient {
   ): Promise<T> {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
+      if (!this.disableDebugLogs) {
+        this.logger.debug(
+          {
+            reqConfig,
+            url,
+            targetService: this.targetService,
+          },
+          `Send OPTIONS message to ${this.targetService}.`
+        );
+      }
       const res = await this.axiosClient.options<T>(url, reqConfig);
       return res.data;
     } catch (err) {
@@ -161,6 +230,16 @@ export abstract class HttpClient {
   ): Promise<T> {
     try {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
+      if (!this.disableDebugLogs) {
+        this.logger.debug(
+          {
+            reqConfig,
+            url,
+            targetService: this.targetService,
+          },
+          `Send PATCH message to ${this.targetService}.`
+        );
+      }
       const res = await this.axiosClient.patch<T>(url, body, reqConfig);
       return res.data;
     } catch (err) {
@@ -194,40 +273,81 @@ export abstract class HttpClient {
       case HttpStatus.BAD_REQUEST:
         if (body !== undefined) {
           body = JSON.stringify(body);
-          if (!this.disableDebugLogs) {
-            this.logger.debug(`invalid request sent to ${this.targetService} at ${url}. body: ${body as string}. error: ${err.message}`);
-          }
-        } else if (!this.disableDebugLogs) {
-          this.logger.debug(`invalid request sent to ${this.targetService} at ${url}. error: ${err.message}`);
+        }
+        if (!this.disableDebugLogs) {
+          this.logger.debug(
+            {
+              err,
+              url,
+              body,
+              targetService: this.targetService,
+            },
+            `invalid request sent to ${this.targetService}.`
+          );
         }
         return new BadRequestError(err, message);
       case HttpStatus.NOT_FOUND:
         if (!this.disableDebugLogs) {
-          this.logger.debug(`request url not found for service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+          this.logger.debug(
+            {
+              err,
+              url,
+              body,
+              targetService: this.targetService,
+            },
+            `request url not found for service ${this.targetService}.`
+          );
         }
         return new NotFoundError(err, message);
       case HttpStatus.CONFLICT:
         if (!this.disableDebugLogs) {
-          this.logger.debug(`request url conflicted, for service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+          this.logger.debug(
+            {
+              err,
+              url,
+              body,
+              targetService: this.targetService,
+            },
+            `request url conflicted for service ${this.targetService}.`
+          );
         }
         return new ConflictError(err, message);
       case HttpStatus.FORBIDDEN:
         if (!this.disableDebugLogs) {
-          this.logger.debug(`forbidden request sent service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+          this.logger.debug(
+            {
+              err,
+              url,
+              body,
+              targetService: this.targetService,
+            },
+            `forbidden request sent service ${this.targetService}.`
+          );
         }
         throw new ForbiddenError(err, message);
       case HttpStatus.UNAUTHORIZED:
         if (!this.disableDebugLogs) {
-          this.logger.debug(`unauthorized request sent service ${this.targetService}, target url: ${url}, error: ${err.message}`);
+          this.logger.debug(
+            {
+              err,
+              url,
+              body,
+              targetService: this.targetService,
+            },
+            `unauthorized request sent service ${this.targetService}.`
+          );
         }
         throw new UnauthorizedError(err, message);
       default:
         if (body !== undefined) {
           body = JSON.stringify(body);
-          this.logger.error(`error from ${this.targetService} at ${url}. body: ${body as string}. error: ${err.message}`);
-        } else {
-          this.logger.error(`error from ${this.targetService} at ${url}. error: ${err.message}`);
         }
+        this.logger.error({
+          err,
+          url,
+          body,
+          targetService: this.targetService,
+        });
         return new InternalServerError(err);
     }
   }
