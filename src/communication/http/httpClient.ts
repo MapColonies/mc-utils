@@ -65,7 +65,7 @@ export abstract class HttpClient {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       if (!this.disableDebugLogs) {
         this.logger.debug({
-          reqConfig: JSON.stringify(reqConfig),
+          reqConfig,
           url,
           targetService: this.targetService,
           msg: `Send GET message to ${this.targetService}.`,
@@ -91,7 +91,7 @@ export abstract class HttpClient {
       const reqConfig = this.getRequestConfig(retryConfig, queryParams, auth, headers);
       if (!this.disableDebugLogs) {
         this.logger.debug({
-          reqConfig: JSON.stringify(reqConfig),
+          reqConfig,
           url,
           body,
           targetService: this.targetService,
@@ -257,9 +257,6 @@ export abstract class HttpClient {
     const message = readProperty(err, 'response.data.message', undefined) as string | undefined;
     switch (err.response?.status) {
       case HttpStatus.BAD_REQUEST:
-        if (body !== undefined) {
-          body = JSON.stringify(body);
-        }
         if (!this.disableDebugLogs) {
           this.logger.debug(
             {
@@ -325,9 +322,6 @@ export abstract class HttpClient {
         }
         throw new UnauthorizedError(err, message);
       default:
-        if (body !== undefined) {
-          body = JSON.stringify(body);
-        }
         this.logger.error(
           {
             err,
