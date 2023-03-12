@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/MapColonies/mc-utils/compare/v1.7.1...v1.8.0) (2023-03-05)
+
+
+### Features
+
+* gdal types and utils ([#19](https://github.com/MapColonies/mc-utils/issues/19)) ([ede57ef](https://github.com/MapColonies/mc-utils/commit/ede57ef3d62d8511ccad59b0ebaf092a59e163eb))
+
 ### [1.7.1](https://github.com/MapColonies/mc-utils/compare/v1.7.0...v1.7.1) (2023-02-28)
 
 ## [1.7.0](https://github.com/MapColonies/mc-utils/compare/v1.6.1...v1.7.0) (2023-02-27)
