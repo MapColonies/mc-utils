@@ -1,7 +1,7 @@
 import axios, { AxiosBasicCredentials, AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
 import HttpStatus from 'http-status-codes';
 import axiosRetry, { exponentialDelay, IAxiosRetryConfig } from 'axios-retry';
-import { get as readProperty, uniqueId } from 'lodash';
+import { get as readProperty } from 'lodash';
 import {
   BadRequestError,
   ConflictError,
