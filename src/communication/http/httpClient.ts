@@ -41,14 +41,13 @@ export abstract class HttpClient {
 
     const delayFunc = axiosRetryConfig.retryDelay ?? ((): number => 0);
     axiosRetryConfig.retryDelay = (retryCount: number, error: AxiosError): number => {
-      this.logger.error(
-        {
-          err: error,
-          retries: retryCount,
-          targetService: this.targetService,
-        },
-        `error from ${this.targetService}.`
-      );
+      this.logger.error({
+        err: error,
+        retries: retryCount,
+        targetService: this.targetService,
+        msg: `error from ${this.targetService}.`,
+        msgError: error.message,
+      });
       return delayFunc(retryCount, error);
     };
     axiosRetry(this.axiosClient, axiosRetryConfig);
@@ -258,79 +257,73 @@ export abstract class HttpClient {
     switch (err.response?.status) {
       case HttpStatus.BAD_REQUEST:
         if (!this.disableDebugLogs) {
-          this.logger.debug(
-            {
-              err,
-              url,
-              body,
-              targetService: this.targetService,
-            },
-            `invalid request error recieved from service ${this.targetService}.`
-          );
-        }
-        return new BadRequestError(err, message);
-      case HttpStatus.NOT_FOUND:
-        if (!this.disableDebugLogs) {
-          this.logger.debug(
-            {
-              err,
-              url,
-              body,
-              targetService: this.targetService,
-            },
-            `not found error recieved from service ${this.targetService}.`
-          );
-        }
-        return new NotFoundError(err, message);
-      case HttpStatus.CONFLICT:
-        if (!this.disableDebugLogs) {
-          this.logger.debug(
-            {
-              err,
-              url,
-              body,
-              targetService: this.targetService,
-            },
-            `conflict error recieved from service ${this.targetService}.`
-          );
-        }
-        return new ConflictError(err, message);
-      case HttpStatus.FORBIDDEN:
-        if (!this.disableDebugLogs) {
-          this.logger.debug(
-            {
-              err,
-              url,
-              body,
-              targetService: this.targetService,
-            },
-            `forbidden error recieved from service ${this.targetService}.`
-          );
-        }
-        throw new ForbiddenError(err, message);
-      case HttpStatus.UNAUTHORIZED:
-        if (!this.disableDebugLogs) {
-          this.logger.debug(
-            {
-              err,
-              url,
-              body,
-              targetService: this.targetService,
-            },
-            `unauthorized error recieved from service ${this.targetService}.`
-          );
-        }
-        throw new UnauthorizedError(err, message);
-      default:
-        this.logger.error(
-          {
+          this.logger.debug({
             err,
             url,
             body,
             targetService: this.targetService,
-          },
-          `Internal Server Error recieved from service ${this.targetService}.`
-        );
+            msg: `invalid request error recieved from service ${this.targetService}.`,
+            msgError: err.message,
+          });
+        }
+        return new BadRequestError(err, message);
+      case HttpStatus.NOT_FOUND:
+        if (!this.disableDebugLogs) {
+          this.logger.debug({
+            err,
+            url,
+            body,
+            targetService: this.targetService,
+            msg: `not found error recieved from service ${this.targetService}.`,
+            msgError: err.message,
+          });
+        }
+        return new NotFoundError(err, message);
+      case HttpStatus.CONFLICT:
+        if (!this.disableDebugLogs) {
+          this.logger.debug({
+            err,
+            url,
+            body,
+            targetService: this.targetService,
+            msg: `conflict error recieved from service ${this.targetService}.`,
+            msgError: err.message,
+          });
+        }
+        return new ConflictError(err, message);
+      case HttpStatus.FORBIDDEN:
+        if (!this.disableDebugLogs) {
+          this.logger.debug({
+            err,
+            url,
+            body,
+            targetService: this.targetService,
+            msg: `forbidden error recieved from service ${this.targetService}.`,
+            msgError: err.message,
+          });
+        }
+        throw new ForbiddenError(err, message);
+      case HttpStatus.UNAUTHORIZED:
+        if (!this.disableDebugLogs) {
+          this.logger.debug({
+            err,
+            url,
+            body,
+            targetService: this.targetService,
+            msg: `unauthorized error recieved from service ${this.targetService}.`,
+            msgError: err.message,
+          });
+        }
+        throw new UnauthorizedError(err, message);
+      default:
+        this.logger.error({
+          err,
+          url,
+          body,
+          targetService: this.targetService,
+          msg: `Internal Server Error recieved from service ${this.targetService}.`,
+          msgError: err.message,
+        });
         return new InternalServerError(err);
     }
   }
