@@ -1,6 +1,9 @@
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
-import { ITile } from '../models/interfaces/geo/iTile';
+import { bbox, Feature, FeatureCollection, MultiPolygon, Polygon } from '@turf/turf';
+import { ITile, ITileRange } from '../models/interfaces/geo/iTile';
+import { bboxToTileRange, snapBBoxToTileGrid } from './bboxUtils';
 import { tileToDegrees } from './geoConvertor';
+import { TileRanger } from './tileRanger';
 
 const zoomToResolutionDegMapper: Record<number, number> = {
   0: 0.703125,
@@ -131,4 +134,119 @@ export function tileToBbox(tile: ITile): BBox2d {
   const minPoint = tileToDegrees(tile);
   const tileSize = degreesPerTile(tile.zoom);
   return [minPoint.longitude, minPoint.latitude, minPoint.longitude + tileSize, minPoint.latitude + tileSize];
+}
+
+/**
+ * returns the batch area
+ * @param ITileRange
+ * @returns
+ */
+export function batch2area(batch: ITileRange): number {
+  return (batch.maxX - batch.minX) * (batch.maxY - batch.minY);
+}
+
+/**
+ * returns tiles amount of given feature and zoom ranges - based on 2:1 tile scheme
+ * @param feature
+ * @param maxZoom
+ * @param minZoom optional - default as 0
+ * @returns tile count included on provided feature and zooms ranges
+ */
+export function featureToTilesCount(feature: Feature<Polygon | MultiPolygon>, maxZoom: number, minZoom = 0): number {
+  let tilesTotalAmount = 0;
+
+  try {
+    const tileRanger = new TileRanger();
+    for (let i = minZoom; i <= maxZoom; i++) {
+      const zoomTilesGroups = tileRanger.encodeFootprint(feature, i);
+      for (const group of zoomTilesGroups) {
+        tilesTotalAmount += batch2area(group);
+      }
+    }
+    return tilesTotalAmount;
+  } catch (error) {
+    const message = `Error occurred while trying to calculate tiles amount - encodeFootprint error: ${JSON.stringify(error)}`;
+    throw new Error(message);
+  }
+}
+
+/**
+ * returns tiles amount of given featureCollection [each feature may include maxResolutionDeg and minResolutionDeg
+ * if no resolutions in property will calculate all features with optional argument]
+ * based on 2:1 tile scheme
+ * @param fc
+ * @param maxZoom optional - default 21
+ * @param minZoom optional - default as 0
+ * @returns tile count included on provided feature and zooms ranges
+ */
+// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+export function featureCollectionToTilesCount(fc: FeatureCollection, maxZoom = 21, minZoom = 0): number {
+  let tilesTotalAmount = 0;
+  try {
+    for (const feature of fc.features) {
+      const targetMaxZoom =
+        feature.properties?.maxResolutionDeg !== undefined ? degreesPerPixelToZoomLevel(feature.properties.maxResolutionDeg) : maxZoom;
+      const targetMinZoom =
+        feature.properties?.minResolutionDeg !== undefined ? degreesPerPixelToZoomLevel(feature.properties.minResolutionDeg) : minZoom;
+      tilesTotalAmount += featureToTilesCount(feature as Feature<Polygon | MultiPolygon>, targetMaxZoom, targetMinZoom);
+    }
+    return tilesTotalAmount;
+  } catch (error) {
+    const message = `Error occurred while trying to calculate tiles amount - encodeFootprint error: ${JSON.stringify(error)}`;
+    throw new Error(message);
+  }
+}
+
+/**
+ * returns tiles amount of given feature and zoom ranges - based on 2:1 tile scheme
+ * use the bboxToTileRange method and provide sanitized bbox coverage of tiles
+ * @param feature
+ * @param layerFootprint - referenced layer geometry to snap on the bbox
+ * @param maxZoom
+ * @param minZoom optional - default as 0
+ * @returns tile count included on provided feature and zooms ranges
+ */
+export function featureToBboxToTilesCount(feature: Feature<Polygon | MultiPolygon>, maxZoom: number, minZoom = 0): number {
+  let tilesTotalAmount = 0;
+
+  try {
+    const sanitized = snapBBoxToTileGrid(bbox(feature.geometry) as BBox2d, maxZoom);
+    for (let i = minZoom; i <= maxZoom; i++) {
+      const zoomTilesBatch = bboxToTileRange(sanitized, i);
+      tilesTotalAmount += batch2area(zoomTilesBatch);
+    }
+
+    return tilesTotalAmount;
+  } catch (error) {
+    const message = `Error occurred while trying to calculate tiles amount - encodeFootprint error: ${JSON.stringify(error)}`;
+    throw new Error(message);
+  }
+}
+
+/**
+ * returns tiles amount of given featureCollection [each feature may include maxResolutionDeg and minResolutionDeg
+ * if no resolutions in property will calculate all features with optional argument]
+ * based on 2:1 tile scheme
+ * use the bboxToTileRange method and provide sanitized bbox coverage of tiles
+ * @param fc
+ * @param maxZoom optional - default 21
+ * @param minZoom optional - default as 0
+ * @returns tile count included on provided feature and zooms ranges
+ */
+// eslint-disable-next-line @typescript-eslint/no-magic-numbers
+export function featureCollectionToBboxToTilesCount(fc: FeatureCollection, maxZoom = 21, minZoom = 0): number {
+  let tilesTotalAmount = 0;
+  try {
+    for (const feature of fc.features) {
+      const targetMaxZoom =
+        feature.properties?.maxResolutionDeg !== undefined ? degreesPerPixelToZoomLevel(feature.properties.maxResolutionDeg) : maxZoom;
+      const targetMinZoom =
+        feature.properties?.minResolutionDeg !== undefined ? degreesPerPixelToZoomLevel(feature.properties.minResolutionDeg) : minZoom;
+      tilesTotalAmount += featureToBboxToTilesCount(feature as Feature<Polygon | MultiPolygon>, targetMaxZoom, targetMinZoom);
+    }
+    return tilesTotalAmount;
+  } catch (error) {
+    const message = `Error occurred while trying to calculate tiles amount - encodeFootprint error: ${JSON.stringify(error)}`;
+    throw new Error(message);
+  }
 }
