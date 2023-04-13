@@ -154,8 +154,8 @@ export function tileRangeToTilesCount(batch: ITileRange): number {
  * minResolutionDeg >= 0.703125
  * maxResolutionDeg <= 0.000000167638063430786
  * @param layerFootprint - referenced layer geometry to snap on the bbox
- * @param defaultMaxZoom optional - default is 22
- * @param defaultMinZoom optional - default is 0
+ * @param defaultMaxZoom optional - default is 22 - if maxResolutionDeg property was provided, the param will be ignored
+ * @param defaultMinZoom optional - default is 0 - if minResolutionDeg property was provided, the param will be ignored
  * @returns tile count included on provided feature and zooms ranges
  */
 export function featureToTilesCount(feature: Feature<Polygon | MultiPolygon>, defaultMaxZoom = 22, defaultMinZoom = 0): number {
@@ -199,8 +199,8 @@ export function featureToTilesCount(feature: Feature<Polygon | MultiPolygon>, de
  * minResolutionDeg >= 0.703125
  * maxResolutionDeg <= 0.000000167638063430786
  * for current feature in the array
- * @param defaultMaxZoom optional - default is 22
- * @param defaultMinZoom optional - default is 0
+ * @param defaultMaxZoom optional - default is 22 - if maxResolutionDeg property was provided, the param will be ignored
+ * @param defaultMinZoom optional - default is 0 - if minResolutionDeg property was provided, the param will be ignored
  * @returns tile count included on provided feature and zooms ranges
  */
 export function featureCollectionToTilesCount(fc: FeatureCollection, defaultMaxZoom = 22, defaultMinZoom = 0): number {
