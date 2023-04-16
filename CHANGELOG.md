@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.9.0](https://github.com/MapColonies/mc-utils/compare/v1.8.1...v1.9.0) (2023-04-16)
+
+
+### Features
+
+* tiles size estimation functions utilities (MAPCO-2836) ([#23](https://github.com/MapColonies/mc-utils/issues/23)) ([5f727c6](https://github.com/MapColonies/mc-utils/commit/5f727c6b5de158f089f1f61457620cba8c59af8d)), closes [#2](https://github.com/MapColonies/mc-utils/issues/2)
+
 ### [1.8.1](https://github.com/MapColonies/mc-utils/compare/v1.8.0...v1.8.1) (2023-03-13)
 
 ## [1.8.0](https://github.com/MapColonies/mc-utils/compare/v1.7.1...v1.8.0) (2023-03-05)
