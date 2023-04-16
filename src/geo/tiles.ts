@@ -1,5 +1,8 @@
+/* eslint-disable @typescript-eslint/no-magic-numbers */
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
-import { ITile } from '../models/interfaces/geo/iTile';
+import { bbox, Feature, FeatureCollection, MultiPolygon, Polygon } from '@turf/turf';
+import { ITile, ITileRange } from '../models/interfaces/geo/iTile';
+import { bboxToTileRange, snapBBoxToTileGrid } from './bboxUtils';
 import { tileToDegrees } from './geoConvertor';
 
 const zoomToResolutionDegMapper: Record<number, number> = {
@@ -131,4 +134,84 @@ export function tileToBbox(tile: ITile): BBox2d {
   const minPoint = tileToDegrees(tile);
   const tileSize = degreesPerTile(tile.zoom);
   return [minPoint.longitude, minPoint.latitude, minPoint.longitude + tileSize, minPoint.latitude + tileSize];
+}
+
+/**
+ * returns the batch area
+ * @param ITileRange
+ * @returns
+ */
+export function tileRangeToTilesCount(batch: ITileRange): number {
+  return (batch.maxX - batch.minX) * (batch.maxY - batch.minY);
+}
+
+/**
+ * returns tiles amount of given feature and zoom ranges - based on 2:1 tile scheme
+ * use the bboxToTileRange method and provide sanitized bbox coverage of tiles
+ * @param feature
+ * If feature's properties include attributes of "maxResolutionDeg" and "minResolutionDeg" or just one of them -
+ * It will be converted to maxZoom and minZoom instead of default params to calculate
+ * minResolutionDeg >= 0.703125
+ * maxResolutionDeg <= 0.000000167638063430786
+ * @param layerFootprint - referenced layer geometry to snap on the bbox
+ * @param defaultMaxZoom optional - default is 22 - if maxResolutionDeg property was provided, the param will be ignored
+ * @param defaultMinZoom optional - default is 0 - if minResolutionDeg property was provided, the param will be ignored
+ * @returns tile count included on provided feature and zooms ranges
+ */
+export function featureToTilesCount(feature: Feature<Polygon | MultiPolygon>, defaultMaxZoom = 22, defaultMinZoom = 0): number {
+  let tilesTotalAmount = 0;
+
+  if (defaultMaxZoom > 22 || defaultMinZoom < 0) {
+    throw new RangeError(`Un supported zoom levels values, min-max zoom should be [0-22] but actual [${defaultMinZoom}:${defaultMaxZoom}]`);
+  }
+
+  if (defaultMinZoom > defaultMaxZoom) {
+    throw new RangeError(`Illegal - defaultMinZoom[${defaultMinZoom}] is larger than defaultMaxZoom[${defaultMaxZoom}]`);
+  }
+  try {
+    const targetMaxZoom =
+      feature.properties?.maxResolutionDeg !== undefined ? degreesPerPixelToZoomLevel(feature.properties.maxResolutionDeg) : defaultMaxZoom;
+    const targetMinZoom =
+      feature.properties?.minResolutionDeg !== undefined ? degreesPerPixelToZoomLevel(feature.properties.minResolutionDeg) : defaultMinZoom;
+    const sanitized = snapBBoxToTileGrid(bbox(feature.geometry) as BBox2d, targetMaxZoom);
+
+    for (let i = targetMinZoom; i <= targetMaxZoom; i++) {
+      const zoomTilesBatch = bboxToTileRange(sanitized, i);
+      tilesTotalAmount += tileRangeToTilesCount(zoomTilesBatch);
+    }
+
+    return tilesTotalAmount;
+  } catch (error) {
+    const message = `Error occurred while trying to calculate tiles amount - encodeFootprint error: ${JSON.stringify(error)}`;
+    throw new Error(message);
+  }
+}
+
+/**
+ * returns tiles amount of given featureCollection [each feature may include maxResolutionDeg and minResolutionDeg
+ * if no resolutions in property will calculate all features with optional argument]
+ * based on 2:1 tile scheme
+ * use the bboxToTileRange method and provide sanitized bbox coverage of tiles
+ * @param fc - FeatureCollection
+ * foreach feature in featuresCollection features array:
+ * If feature's properties include attributes of "maxResolutionDeg" and "minResolutionDeg" or just one of them -
+ * It will be converted to maxZoom and minZoom instead of default params to calculate
+ * minResolutionDeg >= 0.703125
+ * maxResolutionDeg <= 0.000000167638063430786
+ * for current feature in the array
+ * @param defaultMaxZoom optional - default is 22 - if maxResolutionDeg property was provided, the param will be ignored
+ * @param defaultMinZoom optional - default is 0 - if minResolutionDeg property was provided, the param will be ignored
+ * @returns tile count included on provided feature and zooms ranges
+ */
+export function featureCollectionToTilesCount(fc: FeatureCollection, defaultMaxZoom = 22, defaultMinZoom = 0): number {
+  let tilesTotalAmount = 0;
+  try {
+    for (const feature of fc.features) {
+      tilesTotalAmount += featureToTilesCount(feature as Feature<Polygon | MultiPolygon>, defaultMaxZoom, defaultMinZoom);
+    }
+    return tilesTotalAmount;
+  } catch (error) {
+    const message = `Error occurred while trying to calculate tiles amount - encodeFootprint error: ${JSON.stringify(error)}`;
+    throw new Error(message);
+  }
 }
