@@ -74,6 +74,6 @@
   },
   "peerDependencies": {
     "@map-colonies/error-types": "^1.1.5",
-    "@map-colonies/js-logger": "^0.0.5"
+    "@map-colonies/js-logger": "^1.0.1"
   }
 }
