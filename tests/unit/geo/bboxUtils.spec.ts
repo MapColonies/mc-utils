@@ -8,7 +8,7 @@ describe('bboxUtils', () => {
       const roundedBbox = snapBBoxToTileGrid([-180, -179.9999, 179.9999, 180], 20);
       const gridStep = 180 / (1 << 20);
       for (const cord of roundedBbox) {
-        expect(Math.abs(cord % gridStep)).toEqual(0);
+        expect(Math.abs(cord % gridStep)).toBe(0);
       }
     });
 

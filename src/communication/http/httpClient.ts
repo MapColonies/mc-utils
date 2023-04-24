@@ -241,6 +241,7 @@ export abstract class HttpClient {
     auth: AxiosBasicCredentials | undefined,
     headers: Record<string, AxiosHeaderValue> | undefined
   ): AxiosRequestConfig {
+    // eslint-disable-next-line @typescript-eslint/naming-convention
     const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : { ...this.axiosOptions };
     if (queryParams !== undefined) {
       reqConfig.params = reqConfig.params !== undefined ? { ...(reqConfig.params as Record<string, unknown>), ...queryParams } : queryParams;

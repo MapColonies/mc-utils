@@ -67,9 +67,9 @@ describe('HttpClient', function () {
 
       const options = parseConfig(config);
 
-      expect(options.retries).toEqual(16);
-      expect(options.shouldResetTimeout).toEqual(true);
-      expect(options.retryDelay?.(0, {} as AxiosError)).toEqual(598761);
+      expect(options.retries).toBe(16);
+      expect(options.shouldResetTimeout).toBe(true);
+      expect(options.retryDelay?.(0, {} as AxiosError)).toBe(598761);
     });
 
     it('"exponential" delay is mapped properly', () => {
@@ -98,6 +98,7 @@ describe('HttpClient', function () {
 
     it('global configurations are used when not overridden', () => {
       const globalConfig: AxiosRequestConfig = {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'axios-retry': {
           retries: 1,
         },
@@ -121,6 +122,7 @@ describe('HttpClient', function () {
 
     it('request configs are added to global configurations', () => {
       const globalConfig: AxiosRequestConfig = {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'axios-retry': {
           retries: 1,
         },
@@ -157,6 +159,7 @@ describe('HttpClient', function () {
       const reqConf = client.callGetRequestConfig(retryOverride, queryOverride, authOverride, headerOverride);
 
       const expectedConfig = {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
         'axios-retry': {
           retries: 3,
         },
