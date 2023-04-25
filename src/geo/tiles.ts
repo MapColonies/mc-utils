@@ -6,6 +6,7 @@ import { bboxToTileRange, snapBBoxToTileGrid } from './bboxUtils';
 import { tileToDegrees } from './geoConvertor';
 
 const zoomToResolutionDegMapper: Record<number, number> = {
+  /* eslint-disable @typescript-eslint/naming-convention */
   0: 0.703125,
   1: 0.3515625,
   2: 0.17578125,
@@ -29,9 +30,11 @@ const zoomToResolutionDegMapper: Record<number, number> = {
   20: 0.000000670552253723145,
   21: 0.000000335276126861572,
   22: 0.000000167638063430786,
+  /* eslint-enable @typescript-eslint/naming-convention */
 };
 
 const zoomToResolutionMeterMapper: Record<number, number> = {
+  /* eslint-disable @typescript-eslint/naming-convention */
   0: 78271.52,
   1: 39135.76,
   2: 19567.88,
@@ -55,6 +58,7 @@ const zoomToResolutionMeterMapper: Record<number, number> = {
   20: 0.075,
   21: 0.037,
   22: 0.0185,
+  /* eslint-enable @typescript-eslint/naming-convention */
 };
 
 /**
@@ -170,9 +174,13 @@ export function featureToTilesCount(feature: Feature<Polygon | MultiPolygon>, de
   }
   try {
     const targetMaxZoom =
-      feature.properties?.maxResolutionDeg !== undefined ? degreesPerPixelToZoomLevel(feature.properties.maxResolutionDeg) : defaultMaxZoom;
+      feature.properties?.maxResolutionDeg !== undefined && typeof feature.properties.maxResolutionDeg === 'number'
+        ? degreesPerPixelToZoomLevel(feature.properties.maxResolutionDeg)
+        : defaultMaxZoom;
     const targetMinZoom =
-      feature.properties?.minResolutionDeg !== undefined ? degreesPerPixelToZoomLevel(feature.properties.minResolutionDeg) : defaultMinZoom;
+      feature.properties?.minResolutionDeg !== undefined && typeof feature.properties.minResolutionDeg === 'number'
+        ? degreesPerPixelToZoomLevel(feature.properties.minResolutionDeg)
+        : defaultMinZoom;
     const sanitized = snapBBoxToTileGrid(bbox(feature.geometry) as BBox2d, targetMaxZoom);
 
     for (let i = targetMinZoom; i <= targetMaxZoom; i++) {
