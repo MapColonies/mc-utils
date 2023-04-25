@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [2.0.0](https://github.com/MapColonies/mc-utils/compare/v1.6.1...v2.0.0) (2023-04-25)
+
+
+### ⚠ BREAKING CHANGES
+
+* update depencies (#24)
+
+### Features
+
+* gdal types and utils ([#19](https://github.com/MapColonies/mc-utils/issues/19)) ([ede57ef](https://github.com/MapColonies/mc-utils/commit/ede57ef3d62d8511ccad59b0ebaf092a59e163eb))
+* tiles size estimation functions utilities (MAPCO-2836) ([#23](https://github.com/MapColonies/mc-utils/issues/23)) ([5f727c6](https://github.com/MapColonies/mc-utils/commit/5f727c6b5de158f089f1f61457620cba8c59af8d)), closes [#2](https://github.com/MapColonies/mc-utils/issues/2)
+* update depencies ([#24](https://github.com/MapColonies/mc-utils/issues/24)) ([0cd2d37](https://github.com/MapColonies/mc-utils/commit/0cd2d37811db184bdcff01809ffa35e91774bddb))
+* zoomToResDeg and zoomToResMeter ([#20](https://github.com/MapColonies/mc-utils/issues/20)) ([18faefa](https://github.com/MapColonies/mc-utils/commit/18faefadeaa59c6e81ace5c2e6589a284a67b8bd))
+
 ## [1.9.0](https://github.com/MapColonies/mc-utils/compare/v1.8.1...v1.9.0) (2023-04-16)
 
 
