@@ -89,13 +89,13 @@ export const createGeoHashGenerator = (polygon: Polygon | Feature<Polygon | Mult
  * @param tileZoom target tiles zoom level
  * @param origin target tiles grid origin location (default ll)
  */
-export function* tileGenerator(
+export async function* tileGenerator(
   polygon: Polygon | Feature<Polygon | MultiPolygon>,
   tileZoom: number,
   origin: TileOrigin = TileOrigin.LOWER_LEFT
-): Generator<ITile> {
+): AsyncIterable<ITile> {
   const hashGen = createGeoHashGenerator(polygon, tileZoom);
-  for (const hash of hashGen) {
+  for await (const hash of hashGen) {
     const bbox = decodeGeoHash(hash);
     const minTile = degreesToTile(
       {
@@ -120,11 +120,11 @@ export function* tileGenerator(
     const maxY = minTile.y + maxTile.y - minY;
     for (let x = minX; x < maxX; x++) {
       for (let y = minY; y < maxY; y++) {
-        yield {
+        yield await Promise.resolve({
           x,
           y,
           zoom: tileZoom,
-        };
+        });
       }
     }
   }

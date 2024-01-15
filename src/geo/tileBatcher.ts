@@ -5,10 +5,10 @@ import { ITileRange } from '../models/interfaces/geo/iTile';
  * @param batchSize amount of tile per batch
  * @param ranges iterable collection of tile ranges
  */
-function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): Generator<ITileRange[]> {
+async function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): AsyncIterable<ITileRange[]> {
   let targetRanges: ITileRange[] = [];
   let requiredForFullBatch = batchSize;
-  for (const range of ranges) {
+  for await(const range of ranges) {
     const dx = range.maxX - range.minX;
     let dy = range.maxY - range.minY;
     if (dx === 0 || dy === 0) {
@@ -27,7 +27,7 @@ function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): G
             maxY: range.minY + 1,
             zoom: range.zoom,
           });
-          yield targetRanges;
+          yield await Promise.resolve(targetRanges);
           reminderX += requiredForFullBatch;
           targetRanges = [];
           requiredForFullBatch = batchSize;
@@ -79,14 +79,14 @@ function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): G
         }
       }
       if (requiredForFullBatch === 0) {
-        yield targetRanges;
+        yield await Promise.resolve(targetRanges);
         targetRanges = [];
         requiredForFullBatch = batchSize;
       }
     }
   }
   if (targetRanges.length > 0) {
-    yield targetRanges;
+    yield await Promise.resolve(targetRanges);
   }
 }
 
