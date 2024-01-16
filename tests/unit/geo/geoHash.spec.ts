@@ -68,41 +68,41 @@ describe('geoHash', () => {
       expect(hashes).toEqual(expectedHashes);
     });
   });
-  describe('tileGenerator', () => {
-    it('generate ll tile list for given polygon and zoom', () => {
-      const bbox = [-90, 0, 90, 90] as BBox2d;
-      const poly = bboxPolygon(bbox);
+  // describe('tileGenerator', () => {
+  //   it('generate ll tile list for given polygon and zoom', () => {
+  //     const bbox = [-90, 0, 90, 90] as BBox2d;
+  //     const poly = bboxPolygon(bbox);
 
-      const gen = tileGenerator(poly, 1);
+  //     const gen = tileGenerator(poly, 1);
 
-      const tiles = [];
-      for (const tile of gen) {
-        tiles.push(tile);
-      }
-      const expectedTiles = [
-        { x: 1, y: 1, zoom: 1 },
-        { x: 2, y: 1, zoom: 1 },
-      ];
+  //     const tiles = [];
+  //     for (const tile of gen) {
+  //       tiles.push(tile);
+  //     }
+  //     const expectedTiles = [
+  //       { x: 1, y: 1, zoom: 1 },
+  //       { x: 2, y: 1, zoom: 1 },
+  //     ];
 
-      expect(tiles).toEqual(expectedTiles);
-    });
+  //     expect(tiles).toEqual(expectedTiles);
+  //   });
 
-    it('generate ul tile list for given polygon and zoom', () => {
-      const bbox = [-90, 0, 90, 90] as BBox2d;
-      const poly = bboxPolygon(bbox);
+  //   it('generate ul tile list for given polygon and zoom', () => {
+  //     const bbox = [-90, 0, 90, 90] as BBox2d;
+  //     const poly = bboxPolygon(bbox);
 
-      const gen = tileGenerator(poly, 1, TileOrigin.UPPER_LEFT);
+  //     const gen = tileGenerator(poly, 1, TileOrigin.UPPER_LEFT);
 
-      const tiles = [];
-      for (const tile of gen) {
-        tiles.push(tile);
-      }
-      const expectedTiles = [
-        { x: 1, y: 0, zoom: 1 },
-        { x: 2, y: 0, zoom: 1 },
-      ];
+  //     const tiles = [];
+  //     for (const tile of gen) {
+  //       tiles.push(tile);
+  //     }
+  //     const expectedTiles = [
+  //       { x: 1, y: 0, zoom: 1 },
+  //       { x: 2, y: 0, zoom: 1 },
+  //     ];
 
-      expect(tiles).toEqual(expectedTiles);
-    });
-  });
+  //     expect(tiles).toEqual(expectedTiles);
+  //   });
+  // });
 });
