@@ -8,7 +8,7 @@ async function timeout(ms: number): Promise<void> {
  * @param batchSize amount of tile per batch
  * @param ranges iterable collection of tile ranges
  */
-async function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): AsyncIterable<ITileRange[]> {
+async function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): AsyncGenerator<ITileRange[]> {
   let targetRanges: ITileRange[] = [];
   let requiredForFullBatch = batchSize;
   for await(const range of ranges) {

@@ -93,7 +93,7 @@ export async function* tileGenerator(
   polygon: Polygon | Feature<Polygon | MultiPolygon>,
   tileZoom: number,
   origin: TileOrigin = TileOrigin.LOWER_LEFT
-): AsyncIterable<ITile> {
+): AsyncGenerator<ITile> {
   const hashGen = createGeoHashGenerator(polygon, tileZoom);
   for await (const hash of hashGen) {
     const bbox = decodeGeoHash(hash);
