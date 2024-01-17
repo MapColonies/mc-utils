@@ -15,7 +15,6 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncIterable<ITil
       continue;
     }
     let reminderX = range.maxX;
-    await timeout(0);
     while (range.minY < range.maxY) {
       //remaining tiles in batch row row
       if (reminderX < range.maxX) {
