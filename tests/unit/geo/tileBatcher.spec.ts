@@ -3,7 +3,7 @@ import { tileBatchGenerator } from '../../../src/geo/tileBatcher';
 
 describe('GeoHashBatcher', () => {
   describe('#getResource', () => {
-    it('return expected batches for complex data', function () {
+    it('return expected batches for complex data', async function () {
       const ranges = [
         { minX: 0, minY: 2, maxX: 5, maxY: 4, zoom: 8 },
         { minX: 0, minY: 6, maxX: 2, maxY: 8, zoom: 8 },
@@ -13,7 +13,7 @@ describe('GeoHashBatcher', () => {
       // action
       const generator = tileBatchGenerator(3, ranges);
       const batches: ITileRange[][] = [];
-      for (const range of generator) {
+      for await (const range of generator) {
         batches.push(range);
       }
 
@@ -38,13 +38,13 @@ describe('GeoHashBatcher', () => {
       expect(batches).toEqual(expectedBatches);
     });
 
-    it('return expected batch for single tile', function () {
+    it('return expected batch for single tile', async function () {
       const ranges = [{ minX: 0, minY: 2, maxX: 1, maxY: 3, zoom: 8 }];
 
       // action
       const generator = tileBatchGenerator(3, ranges);
       const batches: ITileRange[][] = [];
-      for (const range of generator) {
+      for await (const range of generator) {
         batches.push(range);
       }
 
@@ -53,13 +53,13 @@ describe('GeoHashBatcher', () => {
       expect(batches).toEqual(expectedBatches);
     });
 
-    it('return empty batch on invalid empty x', function () {
+    it('return empty batch on invalid empty x', async function () {
       const ranges = [{ minX: 0, minY: 2, maxX: 0, maxY: 3, zoom: 8 }];
 
       // action
       const generator = tileBatchGenerator(3, ranges);
       const batches: ITileRange[][] = [];
-      for (const range of generator) {
+      for await (const range of generator) {
         batches.push(range);
       }
 
@@ -68,13 +68,13 @@ describe('GeoHashBatcher', () => {
       expect(batches).toEqual(expectedBatches);
     });
 
-    it('return empty batch on invalid empty y', function () {
+    it('return empty batch on invalid empty y', async function () {
       const ranges = [{ minX: 0, minY: 2, maxX: 4, maxY: 2, zoom: 8 }];
 
       // action
       const generator = tileBatchGenerator(3, ranges);
       const batches: ITileRange[][] = [];
-      for (const range of generator) {
+      for await (const range of generator) {
         batches.push(range);
       }
 
@@ -83,13 +83,13 @@ describe('GeoHashBatcher', () => {
       expect(batches).toEqual(expectedBatches);
     });
 
-    it('return proper tiles for batch size that is power of 2', function () {
+    it('return proper tiles for batch size that is power of 2', async function () {
       const ranges = [{ minX: 0, minY: 16, maxX: 16, maxY: 32, zoom: 5 }];
 
       // action
       const generator = tileBatchGenerator(1, ranges);
       const batches: ITileRange[][] = [];
-      for (const range of generator) {
+      for await (const range of generator) {
         batches.push(range);
       }
 
