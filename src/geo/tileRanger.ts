@@ -62,7 +62,7 @@ export class TileRanger {
    * @param zoom max hash zoom
    * @returns
    */
-  public *encodeFootprint(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number, verbose = false): Generator<ITileRange> {
+  public async *encodeFootprint(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number, verbose = false): AsyncGenerator<ITileRange> {
     ////////////////////////////////
     /// Step 1: check if the footprint is identical to its bbox
     ////////////////////////////////
@@ -76,13 +76,14 @@ export class TileRanger {
     const bbox = polygonToBbox(footprint) as BBox2d;
     if (this.isBbox(footprint)) {
       // if it is convert its bbox directly to tile range and return it (bbox to tiles conversion is fast and direct mathematical conversion)
-      const tileRange = bboxToTileRange(bbox, zoom);
+      const tileRange = await bboxToTileRange(bbox, zoom);
       if (verbose) {
         console.log(
           `footprint is identical to its bbox - return BBOX tile range zoom: ${tileRange.zoom} : X ${tileRange.minX} - ${tileRange.maxX} : Y ${tileRange.minY} - ${tileRange.maxY}`
         );
       }
-      yield tileRange;
+      yield await Promise.resolve(tileRange);
+      //yield tileRange;
     } else {
       const intersectionParams: IFootprintIntersectionParams = {
         footprint,
@@ -91,7 +92,8 @@ export class TileRanger {
       if (verbose) {
         console.log('footprint is different from its bbox - generateRanges');
       }
-      yield* this.generateRanges(bbox, zoom, intersectionParams, this.tileFootprintIntersection, verbose);
+      yield* await Promise.resolve(this.generateRanges(bbox, zoom, intersectionParams, this.tileFootprintIntersection, verbose));
+      //yield* this.generateRanges(bbox, zoom, intersectionParams, this.tileFootprintIntersection, verbose);
     }
   }
 
@@ -100,37 +102,40 @@ export class TileRanger {
    * @param bbox bbox to cover with generated tiles
    * @param zoom target tiles zoom level
    */
-  public generateTiles(bbox: BBox2d, zoom: number): Generator<ITile>;
+  public generateTiles(bbox: BBox2d, zoom: number): AsyncGenerator<ITile>;
   /**
    * generate tile
    * @param footprint footprint to cover with generated tiles
    * @param zoom target tiles zoom level
    */
-  public generateTiles(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number): Generator<ITile>;
-  public generateTiles(area: BBox2d | Polygon | Feature<Polygon | MultiPolygon>, zoom: number): Generator<ITile> {
-    let gen: Iterable<ITileRange>;
+  public generateTiles(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number): AsyncGenerator<ITile>;
+  public generateTiles(area: BBox2d | Polygon | Feature<Polygon | MultiPolygon>, zoom: number): AsyncGenerator<ITile> {
+    let gen: AsyncIterable<ITileRange>;
     if (Array.isArray(area)) {
-      gen = [bboxToTileRange(area, zoom)];
+      const generator = async function* tileRangeGenerator(): AsyncGenerator<ITileRange> {
+        yield await Promise.resolve(bboxToTileRange(area, zoom));
+      }
+      gen = generator();
     } else {
       gen = this.encodeFootprint(area, zoom);
     }
     return tilesGenerator(gen);
   }
 
-  private *generateRanges<T>(
+  private async *generateRanges<T>(
     bbox: BBox2d,
     zoom: number,
     intersectionTarget: T,
     intersectionFunction: TileIntersectionFunction<T>,
     verbose = false
-  ): Generator<ITileRange> {
+  ): AsyncGenerator<ITileRange> {
     /////////////////////////////////////////////////////////////////////////////////////////////////
     /// Step 3: Convert the bbox to tile range of the requested zoom
     /////////////////////////////////////////////////////////////////////////////////////////////////
     if (verbose) {
       console.log('Convert the bbox to tile range of the requested zoom');
     }
-    const boundingRange = bboxToTileRange(bbox, zoom);
+    const boundingRange = await bboxToTileRange(bbox, zoom);
     if (verbose) {
       const bboxString = `BBOX[0]: ${bbox[0]}, BBOX[1]: ${bbox[1]}, BBOX[2]: ${bbox[2]}, BBOX[3]: ${bbox[3]}`;
       console.log(
@@ -158,7 +163,7 @@ export class TileRanger {
     /// Step 5: convert the requested bbox to to tile range of the zoom level calculated in step 3 (this reduce the iteration required for the calculation)
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //find base hashes
-    const minimalRange = bboxToTileRange(bbox, minZoom);
+    const minimalRange = await bboxToTileRange(bbox, minZoom);
     for (let x = minimalRange.minX; x < minimalRange.maxX; x++) {
       for (let y = minimalRange.minY; y < minimalRange.maxY; y++) {
         /////////////////////////////////////////////////////////////////////////////////////////////////

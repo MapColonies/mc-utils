@@ -162,7 +162,7 @@ export function tileRangeToTilesCount(batch: ITileRange): number {
  * @param defaultMinZoom optional - default is 0 - if minResolutionDeg property was provided, the param will be ignored
  * @returns tile count included on provided feature and zooms ranges
  */
-export function featureToTilesCount(feature: Feature<Polygon | MultiPolygon>, defaultMaxZoom = 22, defaultMinZoom = 0): number {
+export async function featureToTilesCount(feature: Feature<Polygon | MultiPolygon>, defaultMaxZoom = 22, defaultMinZoom = 0): Promise<number> {
   let tilesTotalAmount = 0;
 
   if (defaultMaxZoom > 22 || defaultMinZoom < 0) {
@@ -184,7 +184,7 @@ export function featureToTilesCount(feature: Feature<Polygon | MultiPolygon>, de
     const sanitized = snapBBoxToTileGrid(bbox(feature.geometry) as BBox2d, targetMaxZoom);
 
     for (let i = targetMinZoom; i <= targetMaxZoom; i++) {
-      const zoomTilesBatch = bboxToTileRange(sanitized, i);
+      const zoomTilesBatch = await bboxToTileRange(sanitized, i);
       tilesTotalAmount += tileRangeToTilesCount(zoomTilesBatch);
     }
 
@@ -211,11 +211,11 @@ export function featureToTilesCount(feature: Feature<Polygon | MultiPolygon>, de
  * @param defaultMinZoom optional - default is 0 - if minResolutionDeg property was provided, the param will be ignored
  * @returns tile count included on provided feature and zooms ranges
  */
-export function featureCollectionToTilesCount(fc: FeatureCollection, defaultMaxZoom = 22, defaultMinZoom = 0): number {
+export async function featureCollectionToTilesCount(fc: FeatureCollection, defaultMaxZoom = 22, defaultMinZoom = 0): Promise<number> {
   let tilesTotalAmount = 0;
   try {
     for (const feature of fc.features) {
-      tilesTotalAmount += featureToTilesCount(feature as Feature<Polygon | MultiPolygon>, defaultMaxZoom, defaultMinZoom);
+      tilesTotalAmount += await featureToTilesCount(feature as Feature<Polygon | MultiPolygon>, defaultMaxZoom, defaultMinZoom);
     }
     return tilesTotalAmount;
   } catch (error) {

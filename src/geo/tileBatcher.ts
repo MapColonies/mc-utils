@@ -5,7 +5,7 @@ import { ITileRange } from '../models/interfaces/geo/iTile';
  * @param batchSize amount of tile per batch
  * @param ranges iterable collection of tile ranges
  */
-async function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): AsyncGenerator<ITileRange[]> {
+async function* tileBatchGenerator(batchSize: number, ranges: AsyncIterable<ITileRange>): AsyncGenerator<ITileRange[]> {
   let targetRanges: ITileRange[] = [];
   let requiredForFullBatch = batchSize;
   for await (const range of ranges) {
