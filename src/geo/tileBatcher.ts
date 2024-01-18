@@ -5,7 +5,7 @@ import { ITileRange } from '../models/interfaces/geo/iTile';
  * @param batchSize amount of tile per batch
  * @param ranges iterable collection of tile ranges
  */
-async function* tileBatchGenerator(batchSize: number, ranges: AsyncIterable<ITileRange>): AsyncGenerator<ITileRange[]> {
+async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITileRange>): AsyncGenerator<ITileRange[]> {
   let targetRanges: ITileRange[] = [];
   let requiredForFullBatch = batchSize;
   for await (const range of ranges) {
@@ -15,7 +15,7 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncIterable<ITil
       continue;
     }
     let reminderX = range.maxX;
-    await timeout(0);
+    await timeout(0); // TODO: * This is a hot fix to keep work async and handle concurrency requests while handling the task batch merging, remove this when moving to the new utils package ! *
     while (range.minY < range.maxY) {
       //remaining tiles in batch row row
       if (reminderX < range.maxX) {

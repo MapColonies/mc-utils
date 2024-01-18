@@ -76,7 +76,7 @@ export class TileRanger {
     const bbox = polygonToBbox(footprint) as BBox2d;
     if (this.isBbox(footprint)) {
       // if it is convert its bbox directly to tile range and return it (bbox to tiles conversion is fast and direct mathematical conversion)
-      const tileRange = await bboxToTileRange(bbox, zoom);
+      const tileRange = bboxToTileRange(bbox, zoom);
       if (verbose) {
         console.log(
           `footprint is identical to its bbox - return BBOX tile range zoom: ${tileRange.zoom} : X ${tileRange.minX} - ${tileRange.maxX} : Y ${tileRange.minY} - ${tileRange.maxY}`
@@ -114,7 +114,7 @@ export class TileRanger {
     if (Array.isArray(area)) {
       const generator = async function* tileRangeGenerator(): AsyncGenerator<ITileRange> {
         yield await Promise.resolve(bboxToTileRange(area, zoom));
-      }
+      };
       gen = generator();
     } else {
       gen = this.encodeFootprint(area, zoom);
@@ -135,7 +135,7 @@ export class TileRanger {
     if (verbose) {
       console.log('Convert the bbox to tile range of the requested zoom');
     }
-    const boundingRange = await bboxToTileRange(bbox, zoom);
+    const boundingRange = bboxToTileRange(bbox, zoom);
     if (verbose) {
       const bboxString = `BBOX[0]: ${bbox[0]}, BBOX[1]: ${bbox[1]}, BBOX[2]: ${bbox[2]}, BBOX[3]: ${bbox[3]}`;
       console.log(
@@ -163,7 +163,7 @@ export class TileRanger {
     /// Step 5: convert the requested bbox to to tile range of the zoom level calculated in step 3 (this reduce the iteration required for the calculation)
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //find base hashes
-    const minimalRange = await bboxToTileRange(bbox, minZoom);
+    const minimalRange = bboxToTileRange(bbox, minZoom);
     for (let x = minimalRange.minX; x < minimalRange.maxX; x++) {
       for (let y = minimalRange.minY; y < minimalRange.maxY; y++) {
         /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -186,13 +186,13 @@ export class TileRanger {
               `return BBOX tile range zoom: ${tileRange.zoom} : X ${tileRange.minX} - ${tileRange.maxX} : Y ${tileRange.minY} - ${tileRange.maxY}`
             );
           }
-          yield tileRange;
+          yield await Promise.resolve(tileRange);
         } else if (intersection === TileIntersectionState.PARTIAL) {
           /// if it partly covered:
           // calculate the sub tiles contained in the current tile (in the next zoom level)
           // for every sub tile recursively run step 6
           //optimize partial base hashes
-          yield* this.optimizeHash(tile, zoom, intersectionTarget, intersectionFunction, verbose);
+          yield* await Promise.resolve(this.optimizeHash(tile, zoom, intersectionTarget, intersectionFunction, verbose));
         }
         /// else do nothing as this tiles aren't intersected with the original footprint
       }

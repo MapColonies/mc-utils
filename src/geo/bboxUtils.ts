@@ -71,7 +71,7 @@ export const bboxFromTiles = (minTile: ITile, maxTile: ITile): BBox2d => {
  * @param zoom target zoom level
  * @returns covering tile range
  */
-export const bboxToTileRange = async(bbox: BBox2d, zoom: number): Promise<ITileRange> => {
+export const bboxToTileRange = (bbox: BBox2d, zoom: number): ITileRange => {
   const sanitizedBbox = snapBBoxToTileGrid(bbox, zoom);
   const minTile = degreesToTile(
     {
@@ -87,11 +87,11 @@ export const bboxToTileRange = async(bbox: BBox2d, zoom: number): Promise<ITileR
     },
     zoom
   );
-  return Promise.resolve({
+  return {
     minX: minTile.x,
     minY: minTile.y,
     maxX: maxTile.x,
     maxY: maxTile.y,
     zoom,
-  });
+  };
 };

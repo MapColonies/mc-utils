@@ -10,8 +10,14 @@ describe('GeoHashBatcher', () => {
         { minX: 0, minY: 8, maxX: 1, maxY: 11, zoom: 8 },
       ];
 
+      const rangeAsyncGen = (async function* () {
+        yield await Promise.resolve(ranges[0]);
+        yield await Promise.resolve(ranges[1]);
+        yield await Promise.resolve(ranges[2]);
+      })();
+
       // action
-      const generator = tileBatchGenerator(3, ranges);
+      const generator = tileBatchGenerator(3, rangeAsyncGen);
       const batches: ITileRange[][] = [];
       for await (const range of generator) {
         batches.push(range);
@@ -40,9 +46,12 @@ describe('GeoHashBatcher', () => {
 
     it('return expected batch for single tile', async function () {
       const ranges = [{ minX: 0, minY: 2, maxX: 1, maxY: 3, zoom: 8 }];
+      const rangeAsyncGen = (async function* () {
+        yield await Promise.resolve(ranges[0]);
+      })();
 
       // action
-      const generator = tileBatchGenerator(3, ranges);
+      const generator = tileBatchGenerator(3, rangeAsyncGen);
       const batches: ITileRange[][] = [];
       for await (const range of generator) {
         batches.push(range);
@@ -55,9 +64,13 @@ describe('GeoHashBatcher', () => {
 
     it('return empty batch on invalid empty x', async function () {
       const ranges = [{ minX: 0, minY: 2, maxX: 0, maxY: 3, zoom: 8 }];
+      const rangeAsyncGen = (async function* () {
+        yield await Promise.resolve(ranges[0]);
+      })();
+
 
       // action
-      const generator = tileBatchGenerator(3, ranges);
+      const generator = tileBatchGenerator(3, rangeAsyncGen);
       const batches: ITileRange[][] = [];
       for await (const range of generator) {
         batches.push(range);
@@ -70,9 +83,12 @@ describe('GeoHashBatcher', () => {
 
     it('return empty batch on invalid empty y', async function () {
       const ranges = [{ minX: 0, minY: 2, maxX: 4, maxY: 2, zoom: 8 }];
+      const rangeAsyncGen = (async function* () {
+        yield await Promise.resolve(ranges[0]);
+      })();
 
       // action
-      const generator = tileBatchGenerator(3, ranges);
+      const generator = tileBatchGenerator(3, rangeAsyncGen);
       const batches: ITileRange[][] = [];
       for await (const range of generator) {
         batches.push(range);
@@ -85,9 +101,14 @@ describe('GeoHashBatcher', () => {
 
     it('return proper tiles for batch size that is power of 2', async function () {
       const ranges = [{ minX: 0, minY: 16, maxX: 16, maxY: 32, zoom: 5 }];
+      const rangeAsyncGen = (async function* () {
+        yield await Promise.resolve(ranges[0]);
+      })();
+
+      
 
       // action
-      const generator = tileBatchGenerator(1, ranges);
+      const generator = tileBatchGenerator(1, rangeAsyncGen);
       const batches: ITileRange[][] = [];
       for await (const range of generator) {
         batches.push(range);
