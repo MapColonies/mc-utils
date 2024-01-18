@@ -1,4 +1,5 @@
 import { ITileRange } from '../models/interfaces/geo/iTile';
+import { timeout } from '../utils/timeout';
 
 /**
  * split collection of tile ranges to batches based on tile count
@@ -89,10 +90,6 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
   if (targetRanges.length > 0) {
     yield await Promise.resolve(targetRanges);
   }
-}
-
-async function timeout(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 export { tileBatchGenerator };

@@ -83,7 +83,6 @@ export class TileRanger {
         );
       }
       yield await Promise.resolve(tileRange);
-      //yield tileRange;
     } else {
       const intersectionParams: IFootprintIntersectionParams = {
         footprint,
@@ -93,7 +92,6 @@ export class TileRanger {
         console.log('footprint is different from its bbox - generateRanges');
       }
       yield* await Promise.resolve(this.generateRanges(bbox, zoom, intersectionParams, this.tileFootprintIntersection, verbose));
-      //yield* this.generateRanges(bbox, zoom, intersectionParams, this.tileFootprintIntersection, verbose);
     }
   }
 
@@ -112,10 +110,10 @@ export class TileRanger {
   public generateTiles(area: BBox2d | Polygon | Feature<Polygon | MultiPolygon>, zoom: number): AsyncGenerator<ITile> {
     let gen: AsyncIterable<ITileRange>;
     if (Array.isArray(area)) {
-      const generator = async function* tileRangeGenerator(): AsyncGenerator<ITileRange> {
+      const tileRangeGen = async function* tileRangeGenerator(): AsyncGenerator<ITileRange> {
         yield await Promise.resolve(bboxToTileRange(area, zoom));
       };
-      gen = generator();
+      gen = tileRangeGen();
     } else {
       gen = this.encodeFootprint(area, zoom);
     }
