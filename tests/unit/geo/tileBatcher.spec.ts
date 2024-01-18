@@ -68,7 +68,6 @@ describe('GeoHashBatcher', () => {
         yield await Promise.resolve(ranges[0]);
       })();
 
-
       // action
       const generator = tileBatchGenerator(3, rangeAsyncGen);
       const batches: ITileRange[][] = [];
@@ -104,8 +103,6 @@ describe('GeoHashBatcher', () => {
       const rangeAsyncGen = (async function* () {
         yield await Promise.resolve(ranges[0]);
       })();
-
-      
 
       // action
       const generator = tileBatchGenerator(1, rangeAsyncGen);
