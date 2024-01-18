@@ -15,7 +15,6 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
       continue;
     }
     let reminderX = range.maxX;
-    await timeout(0); // TODO: * This is a hot fix to keep work async and handle concurrency requests while handling the task batch merging, remove this when moving to the new utils package ! *
     while (range.minY < range.maxY) {
       //remaining tiles in batch row row
       if (reminderX < range.maxX) {
@@ -85,6 +84,7 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
         requiredForFullBatch = batchSize;
       }
     }
+    await timeout(0); // TODO: * This is a hot fix to keep work async and handle concurrency requests while handling the task batch merging, remove this when moving to the new utils package ! *
   }
   if (targetRanges.length > 0) {
     yield await Promise.resolve(targetRanges);
