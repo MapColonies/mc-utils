@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.0.0](https://github.com/MapColonies/mc-utils/compare/v2.0.2...v3.0.0) (2024-02-01)
+
+
+### ⚠ BREAKING CHANGES
+
+* adapt generator to work async  (#26)
+
+### Features
+
+* adapt generator to work async  ([#26](https://github.com/MapColonies/mc-utils/issues/26)) ([604182e](https://github.com/MapColonies/mc-utils/commit/604182e5d06cd64ec1d981635bc3e1371888f88a))
+
 ### [2.0.2](https://github.com/MapColonies/mc-utils/compare/v2.0.0...v2.0.2) (2024-01-16)
 
 ### [2.0.1](https://github.com/MapColonies/mc-utils/compare/v2.0.0...v2.0.1) (2024-01-16)
