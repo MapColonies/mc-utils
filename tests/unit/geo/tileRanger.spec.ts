@@ -69,13 +69,13 @@ describe('TileRanger', () => {
   });
 
   describe('encodeFootprint', () => {
-    it('encode rectangle polygon calls encode bbox', () => {
+    it('encode rectangle polygon calls encode bbox', async () => {
       const bbox = [-45, 0, 45, 45] as BBox2d;
       const bboxPoly = bboxPolygon(bbox);
 
       const ranges = [];
       const gen = ranger.encodeFootprint(bboxPoly, 2);
-      for (const range of gen) {
+      for await (const range of gen) {
         ranges.push(range);
       }
 
@@ -91,7 +91,7 @@ describe('TileRanger', () => {
       expect(ranges).toEqual(expectedRanges);
     });
 
-    it('encodes none bbox polygon properly', () => {
+    it('encodes none bbox polygon properly', async () => {
       const poly = polygon([
         [
           [-45, 0],
@@ -103,7 +103,7 @@ describe('TileRanger', () => {
 
       const tileRanges = [];
       const gen = ranger.encodeFootprint(poly, 5);
-      for (const range of gen) {
+      for await (const range of gen) {
         tileRanges.push(range);
       }
 
@@ -144,12 +144,12 @@ describe('TileRanger', () => {
   });
 
   describe('generateTiles', () => {
-    it('generates expected tiles from bbox', () => {
+    it('generates expected tiles from bbox', async () => {
       const bbox = [-45, -45, 0, 0] as BBox2d;
 
       const tiles = [];
       const gen = ranger.generateTiles(bbox, 2);
-      for (const tile of gen) {
+      for await (const tile of gen) {
         tiles.push(tile);
       }
 
@@ -163,13 +163,13 @@ describe('TileRanger', () => {
       expect(tiles).toEqual(expectedTiles);
     });
 
-    it('generates expected tiles from bbox polygon', () => {
+    it('generates expected tiles from bbox polygon', async () => {
       const bbox = [-45, -45, 0, 0] as BBox2d;
       const poly = bboxPolygon(bbox);
 
       const tiles = [];
       const gen = ranger.generateTiles(poly, 2);
-      for (const tile of gen) {
+      for await (const tile of gen) {
         tiles.push(tile);
       }
 
@@ -183,7 +183,7 @@ describe('TileRanger', () => {
       expect(tiles).toEqual(expectedTiles);
     });
 
-    it('generates expected tiles from none bbox polygon', () => {
+    it('generates expected tiles from none bbox polygon', async () => {
       const poly = polygon([
         [
           [-45, 0],
@@ -195,7 +195,7 @@ describe('TileRanger', () => {
 
       const tiles = [];
       const gen = ranger.generateTiles(poly, 2);
-      for (const tile of gen) {
+      for await (const tile of gen) {
         tiles.push(tile);
       }
 
