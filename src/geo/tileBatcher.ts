@@ -1,14 +1,15 @@
 import { ITileRange } from '../models/interfaces/geo/iTile';
+import { timeout } from '../utils/timeout';
 
 /**
  * split collection of tile ranges to batches based on tile count
  * @param batchSize amount of tile per batch
  * @param ranges iterable collection of tile ranges
  */
-function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): Generator<ITileRange[]> {
+async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITileRange>): AsyncGenerator<ITileRange[]> {
   let targetRanges: ITileRange[] = [];
   let requiredForFullBatch = batchSize;
-  for (const range of ranges) {
+  for await (const range of ranges) {
     const dx = range.maxX - range.minX;
     let dy = range.maxY - range.minY;
     if (dx === 0 || dy === 0) {
@@ -27,7 +28,7 @@ function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): G
             maxY: range.minY + 1,
             zoom: range.zoom,
           });
-          yield targetRanges;
+          yield await Promise.resolve(targetRanges);
           reminderX += requiredForFullBatch;
           targetRanges = [];
           requiredForFullBatch = batchSize;
@@ -79,14 +80,15 @@ function* tileBatchGenerator(batchSize: number, ranges: Iterable<ITileRange>): G
         }
       }
       if (requiredForFullBatch === 0) {
-        yield targetRanges;
+        yield await Promise.resolve(targetRanges);
         targetRanges = [];
         requiredForFullBatch = batchSize;
       }
     }
+    await timeout(0); // TODO: * This is a hot fix to keep work async and handle concurrency requests while handling the task batch merging, remove this when moving to the new utils package ! *
   }
   if (targetRanges.length > 0) {
-    yield targetRanges;
+    yield await Promise.resolve(targetRanges);
   }
 }
 

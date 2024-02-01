@@ -62,7 +62,7 @@ export class TileRanger {
    * @param zoom max hash zoom
    * @returns
    */
-  public *encodeFootprint(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number, verbose = false): Generator<ITileRange> {
+  public async *encodeFootprint(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number, verbose = false): AsyncGenerator<ITileRange> {
     ////////////////////////////////
     /// Step 1: check if the footprint is identical to its bbox
     ////////////////////////////////
@@ -82,7 +82,7 @@ export class TileRanger {
           `footprint is identical to its bbox - return BBOX tile range zoom: ${tileRange.zoom} : X ${tileRange.minX} - ${tileRange.maxX} : Y ${tileRange.minY} - ${tileRange.maxY}`
         );
       }
-      yield tileRange;
+      yield await Promise.resolve(tileRange);
     } else {
       const intersectionParams: IFootprintIntersectionParams = {
         footprint,
@@ -91,7 +91,7 @@ export class TileRanger {
       if (verbose) {
         console.log('footprint is different from its bbox - generateRanges');
       }
-      yield* this.generateRanges(bbox, zoom, intersectionParams, this.tileFootprintIntersection, verbose);
+      yield* await Promise.resolve(this.generateRanges(bbox, zoom, intersectionParams, this.tileFootprintIntersection, verbose));
     }
   }
 
@@ -100,30 +100,33 @@ export class TileRanger {
    * @param bbox bbox to cover with generated tiles
    * @param zoom target tiles zoom level
    */
-  public generateTiles(bbox: BBox2d, zoom: number): Generator<ITile>;
+  public generateTiles(bbox: BBox2d, zoom: number): AsyncGenerator<ITile>;
   /**
    * generate tile
    * @param footprint footprint to cover with generated tiles
    * @param zoom target tiles zoom level
    */
-  public generateTiles(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number): Generator<ITile>;
-  public generateTiles(area: BBox2d | Polygon | Feature<Polygon | MultiPolygon>, zoom: number): Generator<ITile> {
-    let gen: Iterable<ITileRange>;
+  public generateTiles(footprint: Polygon | Feature<Polygon | MultiPolygon>, zoom: number): AsyncGenerator<ITile>;
+  public generateTiles(area: BBox2d | Polygon | Feature<Polygon | MultiPolygon>, zoom: number): AsyncGenerator<ITile> {
+    let gen: AsyncIterable<ITileRange>;
     if (Array.isArray(area)) {
-      gen = [bboxToTileRange(area, zoom)];
+      const tileRangeGen = async function* tileRangeGenerator(): AsyncGenerator<ITileRange> {
+        yield await Promise.resolve(bboxToTileRange(area, zoom));
+      };
+      gen = tileRangeGen();
     } else {
       gen = this.encodeFootprint(area, zoom);
     }
     return tilesGenerator(gen);
   }
 
-  private *generateRanges<T>(
+  private async *generateRanges<T>(
     bbox: BBox2d,
     zoom: number,
     intersectionTarget: T,
     intersectionFunction: TileIntersectionFunction<T>,
     verbose = false
-  ): Generator<ITileRange> {
+  ): AsyncGenerator<ITileRange> {
     /////////////////////////////////////////////////////////////////////////////////////////////////
     /// Step 3: Convert the bbox to tile range of the requested zoom
     /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -181,13 +184,13 @@ export class TileRanger {
               `return BBOX tile range zoom: ${tileRange.zoom} : X ${tileRange.minX} - ${tileRange.maxX} : Y ${tileRange.minY} - ${tileRange.maxY}`
             );
           }
-          yield tileRange;
+          yield await Promise.resolve(tileRange);
         } else if (intersection === TileIntersectionState.PARTIAL) {
           /// if it partly covered:
           // calculate the sub tiles contained in the current tile (in the next zoom level)
           // for every sub tile recursively run step 6
           //optimize partial base hashes
-          yield* this.optimizeHash(tile, zoom, intersectionTarget, intersectionFunction, verbose);
+          yield* await Promise.resolve(this.optimizeHash(tile, zoom, intersectionTarget, intersectionFunction, verbose));
         }
         /// else do nothing as this tiles aren't intersected with the original footprint
       }

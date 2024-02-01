@@ -69,14 +69,14 @@ describe('geoHash', () => {
     });
   });
   describe('tileGenerator', () => {
-    it('generate ll tile list for given polygon and zoom', () => {
+    it('generate ll tile list for given polygon and zoom', async () => {
       const bbox = [-90, 0, 90, 90] as BBox2d;
       const poly = bboxPolygon(bbox);
 
       const gen = tileGenerator(poly, 1);
 
       const tiles = [];
-      for (const tile of gen) {
+      for await (const tile of gen) {
         tiles.push(tile);
       }
       const expectedTiles = [
@@ -87,14 +87,14 @@ describe('geoHash', () => {
       expect(tiles).toEqual(expectedTiles);
     });
 
-    it('generate ul tile list for given polygon and zoom', () => {
+    it('generate ul tile list for given polygon and zoom', async () => {
       const bbox = [-90, 0, 90, 90] as BBox2d;
       const poly = bboxPolygon(bbox);
 
       const gen = tileGenerator(poly, 1, TileOrigin.UPPER_LEFT);
 
       const tiles = [];
-      for (const tile of gen) {
+      for await (const tile of gen) {
         tiles.push(tile);
       }
       const expectedTiles = [
