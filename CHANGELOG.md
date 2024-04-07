@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.1.0](https://github.com/MapColonies/mc-utils/compare/v3.0.0...v3.1.0) (2024-04-07)
+
+
+### Features
+
+* add promiseTimeout function ([#27](https://github.com/MapColonies/mc-utils/issues/27)) ([55059b0](https://github.com/MapColonies/mc-utils/commit/55059b0ce13836590d0292a7bdbb1ecf3d675e42))
+
 ## [3.0.0](https://github.com/MapColonies/mc-utils/compare/v2.0.2...v3.0.0) (2024-02-01)
 
 
