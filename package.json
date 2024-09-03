@@ -73,7 +73,7 @@
     "ngeohash": "^0.6.3"
   },
   "peerDependencies": {
-    "@map-colonies/error-types": "^1.1.5",
+    "@map-colonies/error-types": "^1.2.0",
     "@map-colonies/js-logger": "^1.0.1"
   }
 }
