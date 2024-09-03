@@ -10,6 +10,7 @@ import {
   NotFoundError,
   UnauthorizedError,
   HttpError,
+  MethodNotAllowedError  
 } from '@map-colonies/error-types';
 import { Logger } from '@map-colonies/js-logger';
 
@@ -318,6 +319,18 @@ export abstract class HttpClient {
           });
         }
         throw new UnauthorizedError(err, message);
+      case HttpStatus.METHOD_NOT_ALLOWED:
+          if (!this.disableDebugLogs) {
+            this.logger.debug({
+              err,
+              url,
+              body,
+              targetService: this.targetService,
+              msg: `method not allowed error recieved from service ${this.targetService}.`,
+              msgError: err.message,
+            });
+          }
+          throw new MethodNotAllowedError(err, message);  
       default:
         this.logger.error({
           err,
