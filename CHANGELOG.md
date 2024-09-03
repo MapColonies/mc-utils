@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.2.0](https://github.com/MapColonies/mc-utils/compare/v3.1.0...v3.2.0) (2024-09-03)
+
+
+### Features
+
+* Handle 405 error ([#28](https://github.com/MapColonies/mc-utils/issues/28)) ([9af84ae](https://github.com/MapColonies/mc-utils/commit/9af84aed974654059d83d795abfb40a6a4a36983))
+
 ## [3.1.0](https://github.com/MapColonies/mc-utils/compare/v3.0.0...v3.1.0) (2024-04-07)
 
 
