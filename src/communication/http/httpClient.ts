@@ -352,7 +352,7 @@ export abstract class HttpClient {
             url,
             body,
             targetService: this.targetService,
-            msg: `Too many requests error received from service ${this.targetService}.`,
+            msg: `too many requests error received from service ${this.targetService}.`,
             msgError: err.message,
           });
         }
