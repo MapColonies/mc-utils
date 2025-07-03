@@ -308,7 +308,7 @@ export abstract class HttpClient {
             msgError: err.message,
           });
         }
-        throw new ForbiddenError(err, message);
+        return new ForbiddenError(err, message);
       case HttpStatus.UNAUTHORIZED:
         if (!this.disableDebugLogs) {
           this.logger.debug({
@@ -320,7 +320,7 @@ export abstract class HttpClient {
             msgError: err.message,
           });
         }
-        throw new UnauthorizedError(err, message);
+        return new UnauthorizedError(err, message);
       case HttpStatus.METHOD_NOT_ALLOWED:
         if (!this.disableDebugLogs) {
           this.logger.debug({
@@ -332,7 +332,7 @@ export abstract class HttpClient {
             msgError: err.message,
           });
         }
-        throw new MethodNotAllowedError(err, message);
+        return new MethodNotAllowedError(err, message);
       case HttpStatus.REQUEST_TOO_LONG:
         if (!this.disableDebugLogs) {
           this.logger.debug({
@@ -344,7 +344,7 @@ export abstract class HttpClient {
             msgError: err.message,
           });
         }
-        throw new ContentTooLarge(err, message);
+        return new ContentTooLarge(err, message);
       case HttpStatus.TOO_MANY_REQUESTS:
         if (!this.disableDebugLogs) {
           this.logger.debug({
@@ -356,7 +356,7 @@ export abstract class HttpClient {
             msgError: err.message,
           });
         }
-        throw new TooManyRequestsError(err, message);
+        return new TooManyRequestsError(err, message);
       default:
         this.logger.error({
           err,
