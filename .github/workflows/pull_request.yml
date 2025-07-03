@@ -1,7 +1,5 @@
 name: pull_request
-
 on: [pull_request]
-
 jobs:
   tests:
     name: Run Tests
@@ -9,43 +7,33 @@ jobs:
     strategy:
       matrix:
         node: [16.x, 18.x]
-
     steps:
       - name: Check out Git repository
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-
       - name: Install Node.js dependencies
         run: npm ci
-
       - name: Run tests
         run: npm run test
-
       - uses: actions/upload-artifact@v4
         with:
           name: Test Reporters
           path: reports/**
-
   eslint:
     name: Run TS Project eslint
     runs-on: ubuntu-latest
-
     steps:
       - name: Check out TS Project Git repository
-        uses: actions/checkout@v2
-
+        uses: actions/checkout@v4
       - name: Set up Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
         with:
           node-version: 16
-
       - name: Install TS Project dependencies
         run: npm install
-
       - name: Run TS Project linters
         uses: wearerequired/lint-action@v2
         with:
