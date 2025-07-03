@@ -11,6 +11,8 @@ import {
   UnauthorizedError,
   HttpError,
   MethodNotAllowedError,
+  ContentTooLarge,
+  TooManyRequestsError,
 } from '@map-colonies/error-types';
 import { Logger } from '@map-colonies/js-logger';
 
@@ -266,7 +268,7 @@ export abstract class HttpClient {
             url,
             body,
             targetService: this.targetService,
-            msg: `invalid request error recieved from service ${this.targetService}.`,
+            msg: `invalid request error received from service ${this.targetService}.`,
             msgError: err.message,
           });
         }
@@ -278,7 +280,7 @@ export abstract class HttpClient {
             url,
             body,
             targetService: this.targetService,
-            msg: `not found error recieved from service ${this.targetService}.`,
+            msg: `not found error received from service ${this.targetService}.`,
             msgError: err.message,
           });
         }
@@ -290,7 +292,7 @@ export abstract class HttpClient {
             url,
             body,
             targetService: this.targetService,
-            msg: `conflict error recieved from service ${this.targetService}.`,
+            msg: `conflict error received from service ${this.targetService}.`,
             msgError: err.message,
           });
         }
@@ -302,7 +304,7 @@ export abstract class HttpClient {
             url,
             body,
             targetService: this.targetService,
-            msg: `forbidden error recieved from service ${this.targetService}.`,
+            msg: `forbidden error received from service ${this.targetService}.`,
             msgError: err.message,
           });
         }
@@ -314,7 +316,7 @@ export abstract class HttpClient {
             url,
             body,
             targetService: this.targetService,
-            msg: `unauthorized error recieved from service ${this.targetService}.`,
+            msg: `unauthorized error received from service ${this.targetService}.`,
             msgError: err.message,
           });
         }
@@ -326,18 +328,42 @@ export abstract class HttpClient {
             url,
             body,
             targetService: this.targetService,
-            msg: `method not allowed error recieved from service ${this.targetService}.`,
+            msg: `method not allowed error received from service ${this.targetService}.`,
             msgError: err.message,
           });
         }
         throw new MethodNotAllowedError(err, message);
+      case HttpStatus.REQUEST_TOO_LONG:
+        if (!this.disableDebugLogs) {
+          this.logger.debug({
+            err,
+            url,
+            body,
+            targetService: this.targetService,
+            msg: `content too large error received from service ${this.targetService}.`,
+            msgError: err.message,
+          });
+        }
+        throw new ContentTooLarge(err, message);
+      case HttpStatus.TOO_MANY_REQUESTS:
+        if (!this.disableDebugLogs) {
+          this.logger.debug({
+            err,
+            url,
+            body,
+            targetService: this.targetService,
+            msg: `Too many requests error received from service ${this.targetService}.`,
+            msgError: err.message,
+          });
+        }
+        throw new TooManyRequestsError(err, message);
       default:
         this.logger.error({
           err,
           url,
           body,
           targetService: this.targetService,
-          msg: `Internal Server Error recieved from service ${this.targetService}.`,
+          msg: `Internal Server Error received from service ${this.targetService}.`,
           msgError: err.message,
         });
         return new InternalServerError(err);
