@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.3.0](https://github.com/MapColonies/mc-utils/compare/v3.2.0...v3.3.0) (2025-07-06)
+
+
+### Features
+
+* adding http-client new errors cases ([#29](https://github.com/MapColonies/mc-utils/issues/29)) ([8ecf9bf](https://github.com/MapColonies/mc-utils/commit/8ecf9bf9d580e8097ec1069b1f6fea4d6d3f9ef3))
+
 ## [3.2.0](https://github.com/MapColonies/mc-utils/compare/v3.1.0...v3.2.0) (2024-09-03)
 
 
