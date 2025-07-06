@@ -1,4 +1,14 @@
-import { BadRequestError } from '@map-colonies/error-types';
+import {
+  BadRequestError,
+  ConflictError,
+  ForbiddenError,
+  InternalServerError,
+  NotFoundError,
+  UnauthorizedError,
+  MethodNotAllowedError,
+  ContentTooLarge,
+  TooManyRequestsError,
+} from '@map-colonies/error-types';
 import jsLogger from '@map-colonies/js-logger';
 import { AxiosError, AxiosRequestConfig } from 'axios';
 import { exponentialDelay, IAxiosRetryConfig } from 'axios-retry';
@@ -534,6 +544,295 @@ describe('HttpClient', function () {
       await expect(action).rejects.toThrow(BadRequestError);
       expect(axiosMocks.patch).toHaveBeenCalledTimes(1);
       expect(axiosMocks.patch).toHaveBeenCalledWith(testUrl, undefined, expect.anything());
+    });
+  });
+
+  describe('Error Handling - wrapError function', () => {
+    describe('BadRequestError - 400', () => {
+      it('should throw BadRequestError for GET on 400', async () => {
+        const badRequestError = {
+          message: 'bad request',
+          response: {
+            status: 400,
+          },
+        };
+        axiosMocks.get.mockRejectedValue(badRequestError);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(BadRequestError);
+      });
+
+      it('should throw BadRequestError for POST on 400', async () => {
+        const badRequestError = {
+          message: 'bad request',
+          response: {
+            status: 400,
+          },
+        };
+        axiosMocks.post.mockRejectedValue(badRequestError);
+
+        const action = async () => {
+          await client.callPost(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(BadRequestError);
+      });
+    });
+
+    describe('UnauthorizedError - 401', () => {
+      it('should throw UnauthorizedError for GET on 401', async () => {
+        const unauthorizedError = {
+          message: 'unauthorized',
+          response: {
+            status: 401,
+          },
+        };
+        axiosMocks.get.mockRejectedValue(unauthorizedError);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(UnauthorizedError);
+      });
+    });
+
+    describe('ForbiddenError - 403', () => {
+      it('should throw ForbiddenError for GET on 403', async () => {
+        const forbiddenError = {
+          message: 'forbidden',
+          response: {
+            status: 403,
+          },
+        };
+        axiosMocks.get.mockRejectedValue(forbiddenError);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(ForbiddenError);
+      });
+    });
+
+    describe('NotFoundError - 404', () => {
+      it('should throw NotFoundError for GET on 404', async () => {
+        const notFoundError = {
+          message: 'not found',
+          response: {
+            status: 404,
+          },
+        };
+        axiosMocks.get.mockRejectedValue(notFoundError);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(NotFoundError);
+      });
+    });
+
+    describe('MethodNotAllowedError - 405', () => {
+      it('should throw MethodNotAllowedError for GET on 405', async () => {
+        const methodNotAllowedError = {
+          message: 'method not allowed',
+          response: {
+            status: 405,
+          },
+        };
+        axiosMocks.get.mockRejectedValue(methodNotAllowedError);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(MethodNotAllowedError);
+      });
+    });
+
+    describe('ConflictError - 409', () => {
+      it('should throw ConflictError for GET on 409', async () => {
+        const conflictError = {
+          message: 'conflict',
+          response: {
+            status: 409,
+          },
+        };
+        axiosMocks.get.mockRejectedValue(conflictError);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(ConflictError);
+      });
+    });
+
+    describe('ContentTooLarge - 413', () => {
+      it('should throw ContentTooLarge for POST on 413', async () => {
+        const contentTooLargeError = {
+          message: 'content too large',
+          response: {
+            status: 413,
+          },
+        };
+        axiosMocks.post.mockRejectedValue(contentTooLargeError);
+
+        const action = async () => {
+          await client.callPost(testUrl, testBody);
+        };
+
+        await expect(action).rejects.toThrow(ContentTooLarge);
+      });
+    });
+
+    describe('TooManyRequestsError - 429', () => {
+      it('should throw TooManyRequestsError for GET on 429', async () => {
+        const tooManyRequestsError = {
+          message: 'too many requests',
+          response: {
+            status: 429,
+          },
+        };
+        axiosMocks.get.mockRejectedValue(tooManyRequestsError);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(TooManyRequestsError);
+      });
+    });
+
+    describe('InternalServerError - 500 and other status codes', () => {
+      it('should throw InternalServerError for GET on 500', async () => {
+        const internalServerError = {
+          message: 'internal server error',
+          response: {
+            status: 500,
+          },
+        };
+        axiosMocks.get.mockRejectedValue(internalServerError);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(InternalServerError);
+      });
+
+      it('should throw InternalServerError for unknown status codes', async () => {
+        const unknownError = {
+          message: 'unknown error',
+          response: {
+            status: 999,
+          },
+        };
+        axiosMocks.get.mockRejectedValue(unknownError);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(InternalServerError);
+      });
+    });
+
+    describe('Error message extraction', () => {
+      it('should extract message from response.data.message', async () => {
+        const errorWithMessage = {
+          message: 'axios error message',
+          response: {
+            status: 400,
+            data: {
+              message: 'custom error message',
+            },
+          },
+        };
+        axiosMocks.get.mockRejectedValue(errorWithMessage);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(BadRequestError);
+      });
+
+      it('should handle errors without custom message', async () => {
+        const errorWithoutMessage = {
+          message: 'axios error message',
+          response: {
+            status: 404,
+          },
+        };
+        axiosMocks.get.mockRejectedValue(errorWithoutMessage);
+
+        const action = async () => {
+          await client.callGet(testUrl);
+        };
+
+        await expect(action).rejects.toThrow(NotFoundError);
+      });
+    });
+
+    describe('Error handling across different HTTP methods', () => {
+      it('should throw BadRequestError for PUT on 400', async () => {
+        const error = { message: 'test error', response: { status: 400 } };
+        axiosMocks.put.mockRejectedValue(error);
+        await expect(client.callPut(testUrl)).rejects.toThrow(BadRequestError);
+      });
+
+      it('should throw UnauthorizedError for PATCH on 401', async () => {
+        const error = { message: 'test error', response: { status: 401 } };
+        axiosMocks.patch.mockRejectedValue(error);
+        await expect(client.callPatch(testUrl)).rejects.toThrow(UnauthorizedError);
+      });
+
+      it('should throw ForbiddenError for DELETE on 403', async () => {
+        const error = { message: 'test error', response: { status: 403 } };
+        axiosMocks.delete.mockRejectedValue(error);
+        await expect(client.callDelete(testUrl)).rejects.toThrow(ForbiddenError);
+      });
+
+      it('should throw NotFoundError for HEAD on 404', async () => {
+        const error = { message: 'test error', response: { status: 404 } };
+        axiosMocks.head.mockRejectedValue(error);
+        await expect(client.callHead(testUrl)).rejects.toThrow(NotFoundError);
+      });
+
+      it('should throw MethodNotAllowedError for OPTIONS on 405', async () => {
+        const error = { message: 'test error', response: { status: 405 } };
+        axiosMocks.options.mockRejectedValue(error);
+        await expect(client.callOptions(testUrl)).rejects.toThrow(MethodNotAllowedError);
+      });
+
+      it('should throw ConflictError for POST on 409', async () => {
+        const error = { message: 'test error', response: { status: 409 } };
+        axiosMocks.post.mockRejectedValue(error);
+        await expect(client.callPost(testUrl)).rejects.toThrow(ConflictError);
+      });
+
+      it('should throw ContentTooLarge for PUT on 413', async () => {
+        const error = { message: 'test error', response: { status: 413 } };
+        axiosMocks.put.mockRejectedValue(error);
+        await expect(client.callPut(testUrl)).rejects.toThrow(ContentTooLarge);
+      });
+
+      it('should throw TooManyRequestsError for POST on 429', async () => {
+        const error = { message: 'test error', response: { status: 429 } };
+        axiosMocks.post.mockRejectedValue(error);
+        await expect(client.callPost(testUrl)).rejects.toThrow(TooManyRequestsError);
+      });
+
+      it('should throw InternalServerError for GET on 500', async () => {
+        const error = { message: 'test error', response: { status: 500 } };
+        axiosMocks.get.mockRejectedValue(error);
+        await expect(client.callGet(testUrl)).rejects.toThrow(InternalServerError);
+      });
     });
   });
 });
