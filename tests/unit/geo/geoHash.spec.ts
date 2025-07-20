@@ -1,5 +1,5 @@
 import { bboxPolygon } from '@turf/turf';
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
+import { BBox2d } from '@src/models/types';
 import { createGeoHashGenerator, decodeGeoHash, tileGenerator } from '../../../src/geo/geoHash';
 import { TileOrigin } from '../../../src/models/enums/geo/tileOrigin';
 
@@ -16,7 +16,7 @@ describe('geoHash', () => {
   });
   describe('createGeoHashGenerator', () => {
     it('generate optimized geohashes base on polygon and zoom level that covers the polygon', () => {
-      const bbox = [0, 0, 45, 50.626] as BBox2d;
+      const bbox: BBox2d = [0, 0, 45, 50.626];
       const poly = bboxPolygon(bbox);
 
       const gen = createGeoHashGenerator(poly, 6);
@@ -70,7 +70,7 @@ describe('geoHash', () => {
   });
   describe('tileGenerator', () => {
     it('generate ll tile list for given polygon and zoom', async () => {
-      const bbox = [-90, 0, 90, 90] as BBox2d;
+      const bbox: BBox2d = [-90, 0, 90, 90];
       const poly = bboxPolygon(bbox);
 
       const gen = tileGenerator(poly, 1);
@@ -88,7 +88,7 @@ describe('geoHash', () => {
     });
 
     it('generate ul tile list for given polygon and zoom', async () => {
-      const bbox = [-90, 0, 90, 90] as BBox2d;
+      const bbox: BBox2d = [-90, 0, 90, 90];
       const poly = bboxPolygon(bbox);
 
       const gen = tileGenerator(poly, 1, TileOrigin.UPPER_LEFT);

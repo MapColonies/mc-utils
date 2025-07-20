@@ -1,5 +1,5 @@
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
 import { ITile } from '../../../src';
+import { BBox2d } from '../../../src/models/types';
 import { bboxFromTiles, bboxToTileRange, snapBBoxToTileGrid } from '../../../src/geo/bboxUtils';
 
 describe('bboxUtils', () => {

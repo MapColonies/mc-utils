@@ -108,7 +108,6 @@ describe('HttpClient', function () {
 
     it('global configurations are used when not overridden', () => {
       const globalConfig: AxiosRequestConfig = {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         'axios-retry': {
           retries: 1,
         },
@@ -132,7 +131,6 @@ describe('HttpClient', function () {
 
     it('request configs are added to global configurations', () => {
       const globalConfig: AxiosRequestConfig = {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         'axios-retry': {
           retries: 1,
         },
@@ -169,7 +167,6 @@ describe('HttpClient', function () {
       const reqConf = client.callGetRequestConfig(retryOverride, queryOverride, authOverride, headerOverride);
 
       const expectedConfig = {
-        // eslint-disable-next-line @typescript-eslint/naming-convention
         'axios-retry': {
           retries: 3,
         },

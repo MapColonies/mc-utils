@@ -1,5 +1,5 @@
 import axios, { AxiosBasicCredentials, AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
-import HttpStatus from 'http-status-codes';
+import { StatusCodes as statusCodes } from 'http-status-codes';
 import axiosRetry, { exponentialDelay, IAxiosRetryConfig } from 'axios-retry';
 import { get as readProperty } from 'lodash';
 import {
@@ -244,7 +244,6 @@ export abstract class HttpClient {
     auth: AxiosBasicCredentials | undefined,
     headers: Record<string, AxiosHeaderValue> | undefined
   ): AxiosRequestConfig {
-    // eslint-disable-next-line @typescript-eslint/naming-convention
     const reqConfig = retryConfig ? { ...this.axiosOptions, 'axios-retry': retryConfig } : { ...this.axiosOptions };
     if (queryParams !== undefined) {
       reqConfig.params = reqConfig.params !== undefined ? { ...(reqConfig.params as Record<string, unknown>), ...queryParams } : queryParams;
@@ -261,7 +260,7 @@ export abstract class HttpClient {
   private wrapError(url: string, err: AxiosError, body?: unknown): HttpError {
     const message = readProperty(err, 'response.data.message', undefined) as string | undefined;
     switch (err.response?.status) {
-      case HttpStatus.BAD_REQUEST:
+      case statusCodes.BAD_REQUEST: {
         if (!this.disableDebugLogs) {
           this.logger.debug({
             err,
@@ -273,7 +272,8 @@ export abstract class HttpClient {
           });
         }
         return new BadRequestError(err, message);
-      case HttpStatus.NOT_FOUND:
+      }
+      case statusCodes.NOT_FOUND: {
         if (!this.disableDebugLogs) {
           this.logger.debug({
             err,
@@ -285,7 +285,8 @@ export abstract class HttpClient {
           });
         }
         return new NotFoundError(err, message);
-      case HttpStatus.CONFLICT:
+      }
+      case statusCodes.CONFLICT: {
         if (!this.disableDebugLogs) {
           this.logger.debug({
             err,
@@ -297,7 +298,8 @@ export abstract class HttpClient {
           });
         }
         return new ConflictError(err, message);
-      case HttpStatus.FORBIDDEN:
+      }
+      case statusCodes.FORBIDDEN: {
         if (!this.disableDebugLogs) {
           this.logger.debug({
             err,
@@ -309,7 +311,8 @@ export abstract class HttpClient {
           });
         }
         return new ForbiddenError(err, message);
-      case HttpStatus.UNAUTHORIZED:
+      }
+      case statusCodes.UNAUTHORIZED: {
         if (!this.disableDebugLogs) {
           this.logger.debug({
             err,
@@ -321,7 +324,8 @@ export abstract class HttpClient {
           });
         }
         return new UnauthorizedError(err, message);
-      case HttpStatus.METHOD_NOT_ALLOWED:
+      }
+      case statusCodes.METHOD_NOT_ALLOWED: {
         if (!this.disableDebugLogs) {
           this.logger.debug({
             err,
@@ -333,7 +337,8 @@ export abstract class HttpClient {
           });
         }
         return new MethodNotAllowedError(err, message);
-      case HttpStatus.REQUEST_TOO_LONG:
+      }
+      case statusCodes.REQUEST_TOO_LONG: {
         if (!this.disableDebugLogs) {
           this.logger.debug({
             err,
@@ -345,7 +350,8 @@ export abstract class HttpClient {
           });
         }
         return new ContentTooLarge(err, message);
-      case HttpStatus.TOO_MANY_REQUESTS:
+      }
+      case statusCodes.TOO_MANY_REQUESTS: {
         if (!this.disableDebugLogs) {
           this.logger.debug({
             err,
@@ -357,7 +363,9 @@ export abstract class HttpClient {
           });
         }
         return new TooManyRequestsError(err, message);
-      default:
+      }
+      case undefined:
+      default: {
         this.logger.error({
           err,
           url,
@@ -367,6 +375,7 @@ export abstract class HttpClient {
           msgError: err.message,
         });
         return new InternalServerError(err);
+      }
     }
   }
 
