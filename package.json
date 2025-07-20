@@ -2,11 +2,10 @@
   "name": "@map-colonies/mc-utils",
   "version": "3.3.0",
   "type": "commonjs",
-  "description": "This is template for map colonies typescript packages",
+  "description": "MapColonies utility library for http, geo, arrays and interfaces",
   "main": "./dist/index.js",
   "scripts": {
     "test:unit": "jest --config=./tests/configurations/unit/jest.config.js",
-    "test:integration": "jest --config=./tests/configurations/integration/jest.config.js",
     "format": "prettier --check .",
     "format:fix": "prettier --write .",
     "prelint:fix": "npm run format:fix",
@@ -14,12 +13,15 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "release": "standard-version",
-    "test": "npm run test:unit && npm run test:integration",
+    "test": "npm run test:unit",
     "prebuild": "npm run clean",
     "build": "tsc --project tsconfig.build.json",
     "start": "npm run build && cd dist && node ./index.js",
     "clean": "rimraf dist",
     "prepack": "npm run build"
+  },
+  "engines": {
+    "node": ">=22.0.0"
   },
   "repository": {
     "type": "git",
