@@ -42,12 +42,17 @@ export class ProgressTracker implements IProgressTracker {
     private readonly totalVertices: number,
     private readonly totalFeatures: number,
     private readonly maxVerticesPerChunk: number,
-    private readonly initialProgress?: Pick<ProgressInfo, 'startTime' | 'processedVertices' | 'processedFeatures' | 'processedChunks'>
+    private readonly initialProgress: Pick<ProgressInfo, 'startTime' | 'processedVertices' | 'processedFeatures' | 'processedChunks'> = {
+      processedChunks: 0,
+      processedFeatures: 0,
+      processedVertices: 0,
+      startTime: Date.now(),
+    }
   ) {
-    this.startTime = this.initialProgress?.startTime ?? Date.now();
-    this.processedVertices = this.initialProgress?.processedVertices ?? 0;
-    this.processedFeatures = this.initialProgress?.processedFeatures ?? 0;
-    this.processedChunks = this.initialProgress?.processedChunks ?? 0;
+    this.startTime = this.initialProgress.startTime;
+    this.processedVertices = this.initialProgress.processedVertices;
+    this.processedFeatures = this.initialProgress.processedFeatures;
+    this.processedChunks = this.initialProgress.processedChunks;
   }
 
   public addProcessedFeatures(featuresCount: number, processedVertices: number): void {

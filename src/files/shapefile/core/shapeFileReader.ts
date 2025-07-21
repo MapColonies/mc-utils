@@ -8,14 +8,11 @@ import { IProgressTracker, ProgressTracker } from './progressTracker';
 import { IMetricsManager, MetricsManager } from './metricsManager';
 
 export class ShapefileChunkReader {
-  private readonly options: ReaderOptions;
   private metricsManager?: IMetricsManager;
   private progressTracker?: IProgressTracker;
   private lastState: ProcessingState | null = null;
 
-  public constructor(options: ReaderOptions) {
-    this.options = options;
-  }
+  public constructor(private readonly options: ReaderOptions) {}
 
   /**
    * Reads a shapefile and processes it in chunks.
@@ -33,7 +30,7 @@ export class ShapefileChunkReader {
 
       const chunkBuilder = new ChunkBuilder(chunkIndex);
 
-      this.options.logger?.info({ msg: 'Reading start' });
+      this.options.logger?.info({ msg: 'Reading started' });
       // eslint-disable-next-line no-constant-condition
       while (true) {
         const readStart = performance.now();
@@ -50,7 +47,7 @@ export class ShapefileChunkReader {
         }
 
         const readTime = performance.now() - readStart;
-        this.options.logger?.info({ msg: 'Reading end', readTime });
+        this.options.logger?.info({ msg: 'Reading finished', readTime });
 
         // Check if we can add this feature to the current chunk
         if (!chunkBuilder.canAddFeature(feature, this.options.maxVerticesPerChunk)) {
@@ -183,7 +180,7 @@ export class ShapefileChunkReader {
       const { totalFeatures, totalVertices } = this.lastState?.progress ?? (await this.getShapefileStats(shapefilePath));
       this.progressTracker = new ProgressTracker(totalVertices, totalFeatures, this.options.maxVerticesPerChunk, this.lastState?.progress);
     } catch (error) {
-      this.options.logger?.error({ msg: 'Failed to initialize reading:', error });
+      this.options.logger?.error({ msg: 'Failed to initialize reading', error });
       throw error;
     }
   }
