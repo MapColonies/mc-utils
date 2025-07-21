@@ -3,13 +3,16 @@ import { ShapefileChunk } from '../types/index';
 import { countVertices } from '../utils/geometry';
 
 export class ChunkBuilder {
-  private features: Feature[] = [];
-  private skippedFeatures: Feature[] = [];
-  private currentVerticesCount = 0;
-  private chunkId: number;
+  private features: Feature[];
+  private skippedFeatures: Feature[];
+  private currentVerticesCount: number;
+  private chunkIndex: number;
 
-  public constructor(chunkId: number) {
-    this.chunkId = chunkId;
+  public constructor(chunkIndex = 0) {
+    this.chunkIndex = chunkIndex;
+    this.features = [];
+    this.skippedFeatures = [];
+    this.currentVerticesCount = 0;
   }
 
   public canAddFeature(feature: Feature, maxVertices: number): boolean {
@@ -31,7 +34,7 @@ export class ChunkBuilder {
 
   public build(): ShapefileChunk {
     return {
-      id: this.chunkId,
+      id: this.chunkIndex,
       features: this.features,
       skippedFeatures: this.skippedFeatures,
       verticesCount: this.currentVerticesCount,
@@ -42,10 +45,10 @@ export class ChunkBuilder {
     return this.features.length === 0;
   }
 
-  public flush(): void {
+  public nextChunk(): void {
     this.features = [];
     this.skippedFeatures = [];
     this.currentVerticesCount = 0;
-    this.chunkId++;
+    this.chunkIndex++;
   }
 }

@@ -30,10 +30,9 @@ export interface IMetricsManager {
  */
 export class MetricsManager implements IMetricsManager {
   private fileMetrics: FileMetrics;
+  // Resource monitoring properties
   private peakCpu = 0;
   private peakMemory = 0;
-
-  // Resource monitoring properties
   private startCpuUsage!: NodeJS.CpuUsage;
   private startTime!: number;
 
@@ -59,7 +58,7 @@ export class MetricsManager implements IMetricsManager {
 
     // Create chunk metrics
     const chunkMetrics: ChunkMetrics = {
-      chunkId: chunk.id,
+      chunkIndex: chunk.id,
       featuresCount: chunk.features.length,
       verticesCount: chunk.verticesCount,
       readTimeMs: readTime,

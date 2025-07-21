@@ -26,25 +26,23 @@ export class ShapefileChunkReader {
     await this.initializeReading(shapefilePath);
 
     let featureIndex = -1;
-    const chunkId = this.lastState?.lastProcessedChunkId ?? 0;
+    const chunkIndex = this.lastState?.lastProcessedChunkIndex ?? 0;
 
     try {
-      const source = await shapefile.open(shapefilePath);
+      const reader = await shapefile.open(shapefilePath);
 
-      const chunkBuilder = new ChunkBuilder(chunkId);
+      const chunkBuilder = new ChunkBuilder(chunkIndex);
 
       this.options.logger?.info({ msg: 'Reading start' });
       // eslint-disable-next-line no-constant-condition
       while (true) {
         const readStart = performance.now();
-        const { done, value } = await source.read();
+        const { done, value: feature } = await reader.read();
 
         if (done) {
           break;
         }
 
-        //TODO: We need to decide if we want to validate the feature type here(polygon)?
-        const feature = value;
         featureIndex++;
 
         if (this.shouldSkipFeature(featureIndex)) {
@@ -60,7 +58,7 @@ export class ShapefileChunkReader {
           if (!chunkBuilder.isEmpty()) {
             const chunk = chunkBuilder.build();
             await this.processChunk(chunk, processor, readTime, shapefilePath);
-            chunkBuilder.flush();
+            chunkBuilder.nextChunk();
           }
         }
 
@@ -74,12 +72,12 @@ export class ShapefileChunkReader {
 
       this.metricsManager?.sendFileMetrics();
     } catch (error) {
-      this.options.logger?.error({ msg: 'Error processing shapefile:', error });
+      this.options.logger?.error({ msg: 'Error processing shapefile:', shapefilePath, error });
       const lastFeatureIndex = (this.progressTracker?.getProcessedFeatures() ?? 0) - 1;
 
       await this.saveProcessingState({
         filePath: shapefilePath,
-        chunkId,
+        chunkIndex,
         lastFeatureIndex,
       });
       throw error;
@@ -92,25 +90,23 @@ export class ShapefileChunkReader {
    * @returns Total number of vertices in the shapefile
    */
   public async getShapefileStats(shapefilePath: string): Promise<Pick<ProgressInfo, 'totalVertices' | 'totalFeatures'>> {
-    const source = await shapefile.open(shapefilePath);
+    const reader = await shapefile.open(shapefilePath);
     let totalVertices = 0;
     let totalFeatures = 0;
 
     try {
       // eslint-disable-next-line no-constant-condition
       while (true) {
-        const { done, value } = await source.read();
+        const { done, value: feature } = await reader.read();
 
         if (done) {
           break;
         }
 
-        //TODO: We need to decide if we want to validate the feature type here(polygon)?
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         totalFeatures++;
-        const feature = value;
 
         const vertices = countVertices(feature.geometry);
+
         if (vertices > this.options.maxVerticesPerChunk) {
           this.options.logger?.warn({
             msg: `Feature exceeds maximum vertices limit: ${vertices} > ${this.options.maxVerticesPerChunk}`,
@@ -118,6 +114,7 @@ export class ShapefileChunkReader {
           });
           continue; // Skip features that exceed the limit
         }
+
         totalVertices += vertices;
       }
     } catch (error) {
@@ -145,14 +142,14 @@ export class ShapefileChunkReader {
 
     this.metricsManager?.sendChunkMetrics(chunk, readTime, processTime);
 
-    this.progressTracker?.incrementFeatures(chunk.features.length, chunk.verticesCount);
+    this.progressTracker?.addProcessedFeatures(chunk.features.length, chunk.verticesCount);
     this.progressTracker?.incrementChunks();
     const lastFeatureIndex = (this.progressTracker?.getProcessedFeatures() ?? 0) - 1;
 
     // Save state after successful processing with progress information
     await this.saveProcessingState({
       filePath,
-      chunkId: chunk.id,
+      chunkIndex: chunk.id,
       lastFeatureIndex,
     });
   }
@@ -161,14 +158,14 @@ export class ShapefileChunkReader {
    * Save processing state if state manager is available
    * @param context Context object containing the required state information
    */
-  private async saveProcessingState(context: { filePath: string; chunkId: number; lastFeatureIndex: number }): Promise<void> {
+  private async saveProcessingState(context: { filePath: string; chunkIndex: number; lastFeatureIndex: number }): Promise<void> {
     if (!this.options.stateManager) {
       return;
     }
 
     const state: ProcessingState = {
       filePath: context.filePath,
-      lastProcessedChunkId: context.chunkId,
+      lastProcessedChunkIndex: context.chunkIndex,
       lastProcessedFeatureIndex: context.lastFeatureIndex,
       timestamp: new Date(),
       progress: this.progressTracker?.calculateProgress(),

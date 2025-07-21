@@ -96,7 +96,7 @@ describe('MetricsManager', () => {
       // Verify metrics collector was called
       expect(mockMetricsCollector.onChunkMetrics).toHaveBeenCalledWith(
         expect.objectContaining({
-          chunkId: 1,
+          chunkIndex: 1,
           featuresCount: 5,
           verticesCount: 100,
           readTimeMs: 10,

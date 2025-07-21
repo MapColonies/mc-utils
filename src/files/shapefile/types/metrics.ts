@@ -4,7 +4,7 @@ export interface ResourceMetrics {
 }
 
 export interface ChunkMetrics {
-  chunkId: number;
+  chunkIndex: number;
   featuresCount: number;
   verticesCount: number;
   readTimeMs: number;

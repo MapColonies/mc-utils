@@ -46,13 +46,13 @@ describe('ProgressTracker', () => {
     });
   });
 
-  describe('incrementFeatures', () => {
+  describe('addProcessedFeatures', () => {
     beforeEach(() => {
       progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk);
     });
 
     it('should increment features and vertices counters', () => {
-      progressTracker.incrementFeatures(5, 50);
+      progressTracker.addProcessedFeatures(5, 50);
 
       const progress = progressTracker.calculateProgress();
 
@@ -61,8 +61,8 @@ describe('ProgressTracker', () => {
     });
 
     it('should accumulate multiple increments', () => {
-      progressTracker.incrementFeatures(3, 30);
-      progressTracker.incrementFeatures(2, 20);
+      progressTracker.addProcessedFeatures(3, 30);
+      progressTracker.addProcessedFeatures(2, 20);
 
       const progress = progressTracker.calculateProgress();
 
@@ -103,7 +103,7 @@ describe('ProgressTracker', () => {
     it('should return the current number of processed features', () => {
       expect(progressTracker.getProcessedFeatures()).toBe(0);
 
-      progressTracker.incrementFeatures(10, 100);
+      progressTracker.addProcessedFeatures(10, 100);
 
       expect(progressTracker.getProcessedFeatures()).toBe(10);
     });
@@ -136,7 +136,7 @@ describe('ProgressTracker', () => {
     });
 
     it('should calculate correct percentage based on processed vertices', () => {
-      progressTracker.incrementFeatures(25, 250); // 25% of vertices processed
+      progressTracker.addProcessedFeatures(25, 250); // 25% of vertices processed
 
       const progress = progressTracker.calculateProgress();
 
@@ -144,7 +144,7 @@ describe('ProgressTracker', () => {
     });
 
     it('should cap percentage at 100 when vertices exceed total', () => {
-      progressTracker.incrementFeatures(100, 1500); // 150% of vertices processed
+      progressTracker.addProcessedFeatures(100, 1500); // 150% of vertices processed
 
       const progress = progressTracker.calculateProgress();
 
@@ -163,7 +163,7 @@ describe('ProgressTracker', () => {
       // Simulate 2 seconds elapsed
       jest.spyOn(Date, 'now').mockReturnValue(3000);
 
-      progressTracker.incrementFeatures(20, 200);
+      progressTracker.addProcessedFeatures(20, 200);
       progressTracker.incrementChunks();
       progressTracker.incrementChunks();
 
@@ -175,7 +175,7 @@ describe('ProgressTracker', () => {
     });
 
     it('should return zero speeds when no time has elapsed', () => {
-      progressTracker.incrementFeatures(10, 100);
+      progressTracker.addProcessedFeatures(10, 100);
 
       const progress = progressTracker.calculateProgress();
 
@@ -187,7 +187,7 @@ describe('ProgressTracker', () => {
     it('should estimate remaining time correctly when progress is made', () => {
       // Simulate 1 second elapsed with 25% progress
       jest.spyOn(Date, 'now').mockReturnValue(2000);
-      progressTracker.incrementFeatures(25, 250);
+      progressTracker.addProcessedFeatures(25, 250);
 
       const progress = progressTracker.calculateProgress();
 
@@ -206,7 +206,7 @@ describe('ProgressTracker', () => {
 
     it('should return zero remaining time when progress is complete', () => {
       jest.spyOn(Date, 'now').mockReturnValue(2000);
-      progressTracker.incrementFeatures(100, 1000); // 100% progress
+      progressTracker.addProcessedFeatures(100, 1000); // 100% progress
 
       const progress = progressTracker.calculateProgress();
 
@@ -230,7 +230,7 @@ describe('ProgressTracker', () => {
 
     it('should set endTime when all features are processed', () => {
       jest.spyOn(Date, 'now').mockReturnValue(5000);
-      progressTracker.incrementFeatures(mockTotalFeatures, 800); // All features processed
+      progressTracker.addProcessedFeatures(mockTotalFeatures, 800); // All features processed
 
       const progress = progressTracker.calculateProgress();
 
@@ -239,7 +239,7 @@ describe('ProgressTracker', () => {
 
     it('should not set endTime when features are not fully processed', () => {
       jest.spyOn(Date, 'now').mockReturnValue(5000);
-      progressTracker.incrementFeatures(50, 400); // 50% of features processed
+      progressTracker.addProcessedFeatures(50, 400); // 50% of features processed
 
       const progress = progressTracker.calculateProgress();
 
@@ -264,7 +264,7 @@ describe('ProgressTracker', () => {
       // Type assertion to ensure interface compliance
       const tracker: IProgressTracker = progressTracker;
 
-      expect(tracker.incrementFeatures).toBeDefined();
+      expect(tracker.addProcessedFeatures).toBeDefined();
       expect(tracker.incrementChunks).toBeDefined();
       expect(tracker.getProcessedFeatures).toBeDefined();
       expect(tracker.calculateProgress).toBeDefined();
@@ -298,7 +298,7 @@ describe('ProgressTracker', () => {
 
       progressTracker = new ProgressTracker(largeNumbers.totalVertices, largeNumbers.totalFeatures, largeNumbers.maxVerticesPerChunk);
 
-      progressTracker.incrementFeatures(1000000, 10000000);
+      progressTracker.addProcessedFeatures(1000000, 10000000);
 
       const progress = progressTracker.calculateProgress();
 
@@ -309,7 +309,7 @@ describe('ProgressTracker', () => {
 
     it('should maintain precision with decimal calculations', () => {
       progressTracker = new ProgressTracker(333, 33, 111); // Numbers that create decimals
-      progressTracker.incrementFeatures(11, 111); // 33.33% progress
+      progressTracker.addProcessedFeatures(11, 111); // 33.33% progress
 
       const progress = progressTracker.calculateProgress();
 

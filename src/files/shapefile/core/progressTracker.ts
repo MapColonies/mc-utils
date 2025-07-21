@@ -9,7 +9,7 @@ export interface IProgressTracker {
    * @param processedVertices Number of vertices processed in the current operation
    * @returns Current progress information
    */
-  incrementFeatures: (featuresCount: number, processedVertices: number) => void;
+  addProcessedFeatures: (featuresCount: number, processedVertices: number) => void;
 
   /**
    * Increments the chunks counter
@@ -34,9 +34,9 @@ export interface IProgressTracker {
  */
 export class ProgressTracker implements IProgressTracker {
   private readonly startTime: number;
-  private processedVertices;
-  private processedFeatures;
-  private processedChunks;
+  private processedVertices: number;
+  private processedFeatures: number;
+  private processedChunks: number;
 
   public constructor(
     private readonly totalVertices: number,
@@ -50,7 +50,7 @@ export class ProgressTracker implements IProgressTracker {
     this.processedChunks = this.initialProgress?.processedChunks ?? 0;
   }
 
-  public incrementFeatures(featuresCount: number, processedVertices: number): void {
+  public addProcessedFeatures(featuresCount: number, processedVertices: number): void {
     this.processedVertices += processedVertices;
     this.processedFeatures += featuresCount;
   }

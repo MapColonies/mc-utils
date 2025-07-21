@@ -29,7 +29,7 @@ export interface ProgressInfo {
 
 export interface ProcessingState {
   filePath: string;
-  lastProcessedChunkId: number;
+  lastProcessedChunkIndex: number;
   lastProcessedFeatureIndex: number;
   timestamp: Date;
   progress?: ProgressInfo;

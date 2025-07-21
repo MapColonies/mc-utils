@@ -22,20 +22,8 @@ export function countVertices(geometry: Geometry): number {
         });
       });
       break;
-    case 'Point': {
-      throw new Error('Vertices Count Not Supported: "Point" case');
-    }
-    case 'MultiPoint': {
-      throw new Error('Vertices Count Not Supported: "MultiPoint" case');
-    }
-    case 'LineString': {
-      throw new Error('Vertices Count Not Supported: "LineString" case');
-    }
-    case 'MultiLineString': {
-      throw new Error('Vertices Count Not Supported: "MultiLineString" case');
-    }
-    case 'GeometryCollection': {
-      throw new Error('Vertices Count Not Supported: "GeometryCollection" case');
+    default: {
+      throw new Error(`Vertices Count Not Supported: "${geometry.type}" case`);
     }
   }
 
