@@ -1,6 +1,10 @@
+const { createDefaultPreset } = require('ts-jest');
+
+const tsJestTransformCfg = createDefaultPreset().transform;
+
 module.exports = {
   transform: {
-    '^.+\\.ts$': 'ts-jest',
+    ...tsJestTransformCfg,
   },
   testMatch: ['<rootDir>/tests/unit/**/*.spec.ts'],
   collectCoverage: true,
@@ -20,10 +24,10 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      branches: 66,
+      branches: 77,
       functions: 95,
-      lines: 89,
-      statements: 90,
+      lines: 93,
+      statements: 93,
     },
   },
 };

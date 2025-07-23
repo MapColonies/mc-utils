@@ -1,4 +1,5 @@
 import { Feature, FeatureCollection, intersect, MultiPolygon, Polygon } from '@turf/turf';
+/* eslint-disable @typescript-eslint/naming-convention */
 import _ from 'lodash';
 
 /**
