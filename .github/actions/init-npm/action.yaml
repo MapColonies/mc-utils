@@ -24,6 +24,6 @@ runs:
     run: npm ci
 
   - name: build
-    if: ${{ inputs.skip-build == 'true' }}
+    if: ${{ inputs.skip-build == 'false' }}
     shell: bash
     run: npm run build
