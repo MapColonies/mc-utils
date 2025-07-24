@@ -105,3 +105,6 @@ dist
 
 # reports of jest tests
 reports
+
+# typedoc
+docs
