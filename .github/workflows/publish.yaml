@@ -12,11 +12,11 @@ jobs:
       contents: read
       packages: write # allow GITHUB_TOKEN to publish packages
     steps:
-      - uses: actions/checkout@v4
       - name: Init nodejs
         uses: ./.github/actions/init-npm
         with:
-          node-version: 20.x
+          skip-build: false
+
       - uses: JS-DevTools/npm-publish@v3
         with:
           token: ${{ secrets.NPM_TOKEN }}
