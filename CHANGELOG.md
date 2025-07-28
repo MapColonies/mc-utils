@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/MapColonies/mc-utils/compare/v3.3.0...v4.0.0) (2025-07-28)
+
+
+### ⚠ BREAKING CHANGES
+
+* added release-please and typedoc include workflows MAPCO-8321 ([#32](https://github.com/MapColonies/mc-utils/issues/32))
+* **deps:** upgraded packages ([#30](https://github.com/MapColonies/mc-utils/issues/30))
+
+### Build System
+
+* **deps:** upgraded packages ([#30](https://github.com/MapColonies/mc-utils/issues/30)) ([1c91b3a](https://github.com/MapColonies/mc-utils/commit/1c91b3a26f5b08ae25dc4136bf3f10c87fa5e026))
+
+
+### Continuous Integration
+
+* added release-please and typedoc include workflows MAPCO-8321 ([#32](https://github.com/MapColonies/mc-utils/issues/32)) ([becce01](https://github.com/MapColonies/mc-utils/commit/becce01cf63d665950919bb84e9d2bdf82162403))
+
 ## [3.3.0](https://github.com/MapColonies/mc-utils/compare/v3.2.0...v3.3.0) (2025-07-06)
 
 
