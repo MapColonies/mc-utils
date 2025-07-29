@@ -286,7 +286,7 @@ describe('ShapefileChunkReader', () => {
 
       mockSource.read
         .mockResolvedValueOnce({ done: false, value: mockFeature })
-        .mockResolvedValueOnce({ done: false, value: mockFeature })
+        .mockResolvedValueOnce({ done: false, value: { ...mockFeature, id: 'large-feature' } })
         .mockResolvedValueOnce({ done: false, value: mockFeature })
         .mockResolvedValueOnce({ done: true, value: undefined as unknown as Feature });
 
