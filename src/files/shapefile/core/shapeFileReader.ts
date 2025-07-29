@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import * as shapefile from 'shapefile';
+import { open } from 'shapefile';
 import { ReaderOptions, ChunkProcessor, ShapefileChunk, ProcessingState, ProgressInfo } from '../types';
 import { countVertices } from '../../../geo/vertices';
 import { ChunkBuilder } from './chunkBuilder';
@@ -19,14 +19,14 @@ export class ShapefileChunkReader {
    * @param shapefilePath Path to the shapefile to read
    * @param processor Processor to handle each chunk of features
    */
-  public async read(shapefilePath: string, processor: ChunkProcessor): Promise<void> {
+  public async readAndProcess(shapefilePath: string, processor: ChunkProcessor): Promise<void> {
     await this.initializeReading(shapefilePath);
 
     let featureIndex = -1;
     const chunkIndex = this.lastState?.lastProcessedChunkIndex ?? 0;
 
     try {
-      const reader = await shapefile.open(shapefilePath);
+      const reader = await open(shapefilePath);
 
       const chunkBuilder = new ChunkBuilder(chunkIndex);
 
@@ -50,7 +50,10 @@ export class ShapefileChunkReader {
           const readTime = performance.now() - readStart;
           const chunk = chunkBuilder.build();
           this.options.logger?.info({ msg: 'Chunk reading finished', readTime, chunkIndex: chunk.id, featuresCount: chunk.features.length });
-          await this.processChunk(chunk, processor, readTime, shapefilePath);
+
+          if (this.hasContentToProcess(chunk)) {
+            await this.processChunk(chunk, processor, shapefilePath, readTime);
+          }
           chunkBuilder.nextChunk();
           readStart = performance.now();
         }
@@ -59,11 +62,22 @@ export class ShapefileChunkReader {
       }
 
       // Process any remaining features
-      await this.processChunk(chunkBuilder.build(), processor, 0, shapefilePath);
+      const readTime = performance.now() - readStart;
+      const finalChunk = chunkBuilder.build();
+
+      if (this.hasContentToProcess(finalChunk)) {
+        this.options.logger?.info({
+          msg: 'Final chunk reading finished',
+          readTime,
+          chunkIndex: finalChunk.id,
+          featuresCount: finalChunk.features.length,
+        });
+        await this.processChunk(finalChunk, processor, shapefilePath, readTime);
+      }
 
       this.metricsManager?.sendFileMetrics();
     } catch (error) {
-      this.options.logger?.error({ msg: 'Error processing shapefile:', shapefilePath, error });
+      this.options.logger?.error({ msg: 'Error processing shapefile', shapefilePath, error });
       const lastFeatureIndex = (this.progressTracker?.getProcessedFeatures() ?? 0) - 1;
 
       await this.saveProcessingState({
@@ -81,7 +95,7 @@ export class ShapefileChunkReader {
    * @returns Total number of vertices in the shapefile
    */
   public async getShapefileStats(shapefilePath: string): Promise<Pick<ProgressInfo, 'totalVertices' | 'totalFeatures'>> {
-    const reader = await shapefile.open(shapefilePath);
+    const reader = await open(shapefilePath);
     let totalVertices = 0;
     let totalFeatures = 0;
 
@@ -108,14 +122,14 @@ export class ShapefileChunkReader {
         totalVertices += vertices;
       }
     } catch (error) {
-      this.options.logger?.error({ msg: 'Error counting vertices in shapefile:', error });
+      this.options.logger?.error({ msg: 'Error counting vertices in shapefile', shapefilePath, error });
       throw error;
     }
 
     return { totalVertices, totalFeatures };
   }
 
-  private async processChunk(chunk: ShapefileChunk, processor: ChunkProcessor, readTime: number, filePath: string): Promise<void> {
+  private async processChunk(chunk: ShapefileChunk, processor: ChunkProcessor, filePath: string, readTime = 0): Promise<void> {
     // Reset resource monitoring for this chunk if enabled
     this.metricsManager?.resetResourceMonitoring();
 
@@ -124,7 +138,7 @@ export class ShapefileChunkReader {
     try {
       await processor.process(chunk);
     } catch (error) {
-      console.error(`Error processing chunk ${chunk.id}:`, error);
+      console.error(`Error processing chunk ${chunk.id}`, error);
       throw error;
     }
 
@@ -133,6 +147,7 @@ export class ShapefileChunkReader {
     this.metricsManager?.sendChunkMetrics(chunk, readTime, processTime);
 
     this.progressTracker?.addProcessedFeatures(chunk.features.length, chunk.verticesCount);
+    this.progressTracker?.addSkippedFeatures(chunk.skippedFeatures.length);
     this.progressTracker?.incrementChunks();
     const lastFeatureIndex = (this.progressTracker?.getProcessedFeatures() ?? 0) - 1;
 
@@ -179,5 +194,9 @@ export class ShapefileChunkReader {
 
   private shouldSkipFeature(featureIndex: number): boolean {
     return this.lastState !== null && featureIndex <= this.lastState.lastProcessedFeatureIndex;
+  }
+
+  private hasContentToProcess(chunk: ShapefileChunk): boolean {
+    return chunk.features.length > 0 || chunk.skippedFeatures.length > 0;
   }
 }

@@ -1,3 +1,4 @@
+import { InitialProgress } from '../../../../src';
 import { ProgressTracker, IProgressTracker } from '../../../../src/files/shapefile/core/progressTracker';
 
 describe('ProgressTracker', () => {
@@ -28,8 +29,9 @@ describe('ProgressTracker', () => {
     });
 
     it('should initialize with provided initial progress values', () => {
-      const initialProgress = {
+      const initialProgress: InitialProgress = {
         startTime: 500,
+        skippedFeatures: 0,
         processedVertices: 200,
         processedFeatures: 20,
         processedChunks: 2,
@@ -68,6 +70,30 @@ describe('ProgressTracker', () => {
 
       expect(progress.processedFeatures).toBe(5);
       expect(progress.processedVertices).toBe(50);
+    });
+  });
+
+  describe('addSkippedFeatures', () => {
+    beforeEach(() => {
+      progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk);
+    });
+
+    it('should increment skipped features counter', () => {
+      progressTracker.addSkippedFeatures(3);
+
+      const progress = progressTracker.calculateProgress();
+
+      expect(progress.skippedFeatures).toBe(3);
+    });
+
+    it('should accumulate multiple skipped features', () => {
+      progressTracker.addSkippedFeatures(2);
+      progressTracker.addSkippedFeatures(5);
+      progressTracker.addSkippedFeatures(1);
+
+      const progress = progressTracker.calculateProgress();
+
+      expect(progress.skippedFeatures).toBe(8);
     });
   });
 
@@ -131,6 +157,7 @@ describe('ProgressTracker', () => {
         verticesPerSecond: 0,
         chunksPerSecond: 0,
         startTime: 1000,
+        skippedFeatures: 0,
         endTime: undefined,
       });
     });
@@ -273,8 +300,9 @@ describe('ProgressTracker', () => {
 
   describe('edge cases and error conditions', () => {
     it('should handle negative initial progress values gracefully', () => {
-      const initialProgress = {
+      const initialProgress: InitialProgress = {
         startTime: 1000,
+        skippedFeatures: 0,
         processedVertices: -10,
         processedFeatures: -5,
         processedChunks: -1,

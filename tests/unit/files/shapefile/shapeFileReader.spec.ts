@@ -83,6 +83,7 @@ describe('ShapefileChunkReader', () => {
     // Setup mock progress tracker
     mockProgressTracker = {
       addProcessedFeatures: jest.fn(),
+      addSkippedFeatures: jest.fn(),
       incrementChunks: jest.fn(),
       calculateProgress: jest.fn(),
       getProcessedFeatures: jest.fn(),
@@ -100,7 +101,7 @@ describe('ShapefileChunkReader', () => {
     reader = new ShapefileChunkReader(mockOptions);
   });
 
-  describe('read', () => {
+  describe('readAndProcess', () => {
     beforeEach(() => {
       jest.spyOn(reader, 'getShapefileStats').mockResolvedValue({
         totalVertices: 5000,
@@ -122,7 +123,7 @@ describe('ShapefileChunkReader', () => {
         verticesCount: 100,
       });
 
-      await reader.read(shapefilePath, { process: mockProcessor });
+      await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
       expect(mockShapefile.open).toHaveBeenCalledWith(shapefilePath);
       expect(mockChunkBuilder.addFeature).toHaveBeenCalledTimes(2);
@@ -143,7 +144,7 @@ describe('ShapefileChunkReader', () => {
       const chunk2: ShapefileChunk = { id: 1, features: [mockFeature, mockFeature], skippedFeatures: [], verticesCount: 100 };
       mockChunkBuilder.build.mockReturnValueOnce(chunk1).mockReturnValueOnce(chunk2);
 
-      await reader.read(shapefilePath, { process: mockProcessor });
+      await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
       expect(mockProcessor).toHaveBeenCalledTimes(2);
       expect(mockProcessor).toHaveBeenCalledWith(chunk1);
@@ -178,7 +179,7 @@ describe('ShapefileChunkReader', () => {
         skippedFeatures: [],
       });
 
-      await reader.read(shapefilePath, { process: mockProcessor });
+      await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
       expect(mockChunkBuilder.addFeature).toHaveBeenCalledTimes(1); // Only feature at index 4
       expect(MockChunkBuilder).toHaveBeenCalledWith(2); // Resume from chunk 2
@@ -216,7 +217,7 @@ describe('ShapefileChunkReader', () => {
       mockSource.read.mockResolvedValueOnce({ done: false, value: largeFeature }).mockResolvedValueOnce({ done: true, value: largeFeature });
       mockChunkBuilder.canAddFeature.mockReturnValue(false);
       mockChunkBuilder.build.mockReturnValue(chunk);
-      await reader.read(shapefilePath, { process: mockProcessor });
+      await reader.readAndProcess(shapefilePath, { process: mockProcessor });
       expect(mockChunkBuilder.canAddFeature).toHaveBeenCalledWith(largeFeature, maxVertices);
       expect(mockChunkBuilder.build).toHaveBeenCalled();
       expect(mockProcessor).toHaveBeenCalledWith(chunk);
@@ -236,7 +237,7 @@ describe('ShapefileChunkReader', () => {
       mockProcessor.mockRejectedValue(new Error());
       mockProgressTracker.getProcessedFeatures.mockReturnValue(1);
 
-      await expect(reader.read(shapefilePath, { process: mockProcessor })).rejects.toThrow();
+      await expect(reader.readAndProcess(shapefilePath, { process: mockProcessor })).rejects.toThrow();
       expect(mockOptions.stateManager?.saveState).toHaveBeenCalledWith(
         expect.objectContaining({
           filePath: shapefilePath,
@@ -250,10 +251,10 @@ describe('ShapefileChunkReader', () => {
       mockSource.read.mockResolvedValueOnce({ done: false, value: mockFeature }).mockResolvedValueOnce({ done: true, value: mockFeature });
 
       mockChunkBuilder.canAddFeature.mockReturnValue(true);
-      const chunk = { id: 0, features: [mockFeature], verticesCount: 50 } as ShapefileChunk;
+      const chunk = { id: 0, features: [mockFeature], skippedFeatures: [], verticesCount: 50 } as ShapefileChunk;
       mockChunkBuilder.build.mockReturnValue(chunk);
 
-      await reader.read(shapefilePath, { process: mockProcessor });
+      await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
       expect(mockMetricsManager.resetResourceMonitoring).toHaveBeenCalled();
       expect(mockMetricsManager.sendChunkMetrics).toHaveBeenCalledWith(chunk, expect.any(Number), expect.any(Number));

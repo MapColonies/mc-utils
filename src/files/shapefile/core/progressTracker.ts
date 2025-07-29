@@ -1,4 +1,4 @@
-import { ProgressInfo } from '../types';
+import { InitialProgress, ProgressInfo } from '../types';
 
 /**
  * Interface for progress tracking functionality
@@ -6,10 +6,17 @@ import { ProgressInfo } from '../types';
 export interface IProgressTracker {
   /**
    * Increments the features counter vertices processed
+   * @param featuresCount Number of features processed in the current operation
    * @param processedVertices Number of vertices processed in the current operation
    * @returns Current progress information
    */
   addProcessedFeatures: (featuresCount: number, processedVertices: number) => void;
+
+  /**
+   * Increments the skipped features counter
+   * @param count Number of skipped features
+   */
+  addSkippedFeatures: (count: number) => void;
 
   /**
    * Increments the chunks counter
@@ -36,16 +43,18 @@ export class ProgressTracker implements IProgressTracker {
   private readonly startTime: number;
   private processedVertices: number;
   private processedFeatures: number;
+  private skippedFeatures: number;
   private processedChunks: number;
 
   public constructor(
     private readonly totalVertices: number,
     private readonly totalFeatures: number,
     private readonly maxVerticesPerChunk: number,
-    private readonly initialProgress: Pick<ProgressInfo, 'startTime' | 'processedVertices' | 'processedFeatures' | 'processedChunks'> = {
+    private readonly initialProgress: InitialProgress = {
       processedChunks: 0,
       processedFeatures: 0,
       processedVertices: 0,
+      skippedFeatures: 0,
       startTime: Date.now(),
     }
   ) {
@@ -53,11 +62,16 @@ export class ProgressTracker implements IProgressTracker {
     this.processedVertices = this.initialProgress.processedVertices;
     this.processedFeatures = this.initialProgress.processedFeatures;
     this.processedChunks = this.initialProgress.processedChunks;
+    this.skippedFeatures = this.initialProgress.skippedFeatures;
   }
 
   public addProcessedFeatures(featuresCount: number, processedVertices: number): void {
     this.processedVertices += processedVertices;
     this.processedFeatures += featuresCount;
+  }
+
+  public addSkippedFeatures(count: number): void {
+    this.skippedFeatures += count;
   }
 
   public getProcessedFeatures(): number {
@@ -104,6 +118,7 @@ export class ProgressTracker implements IProgressTracker {
       totalChunks: estimatedTotalChunks,
       processedVertices: this.processedVertices,
       totalVertices: this.totalVertices,
+      skippedFeatures: this.skippedFeatures,
       percentage,
       elapsedTimeMs,
       estimatedRemainingTimeMs,

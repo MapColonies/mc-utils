@@ -3,13 +3,6 @@ export interface StateManager {
   loadState: () => (ProcessingState | null) | Promise<ProcessingState | null>;
 }
 
-// interface AsyncStateManager {
-//   saveState: (state: ProcessingState) => Promise<void>;
-//   loadState: () => Promise<ProcessingState | null>;
-// }
-
-// export type StateManager = SyncStateManager | AsyncStateManager;
-
 export interface ProgressInfo {
   startTime: number;
   endTime?: number;
@@ -19,6 +12,7 @@ export interface ProgressInfo {
   totalChunks: number;
   processedVertices: number;
   totalVertices: number;
+  skippedFeatures: number;
   percentage: number;
   elapsedTimeMs: number;
   estimatedRemainingTimeMs: number;
@@ -26,6 +20,8 @@ export interface ProgressInfo {
   verticesPerSecond: number;
   chunksPerSecond: number;
 }
+
+export type InitialProgress = Pick<ProgressInfo, 'startTime' | 'processedVertices' | 'processedFeatures' | 'processedChunks' | 'skippedFeatures'>;
 
 export interface ProcessingState {
   filePath: string;

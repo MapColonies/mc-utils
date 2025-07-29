@@ -105,6 +105,37 @@ describe('ChunkBuilder', () => {
       expect(canAdd).toBe(false);
       expect(chunkBuilder.build().skippedFeatures).toHaveLength(1);
     });
+
+    it('should not add feature that is already in skipped array', () => {
+      const largeFeature = createPolygonFeature([
+        [0, 0],
+        [1, 0],
+        [2, 0],
+        [3, 0],
+        [3, 1],
+        [3, 2],
+        [2, 2],
+        [1, 2],
+        [0, 2],
+        [0, 1],
+        [0, 0],
+      ]); // 11 vertices
+
+      const maxVertices = 10;
+
+      // First, feature gets added to skipped array via canAddFeature
+      const canAdd = chunkBuilder.canAddFeature(largeFeature, maxVertices);
+      expect(canAdd).toBe(false);
+      expect(chunkBuilder.build().skippedFeatures).toHaveLength(1);
+
+      // Now try to add the same feature - it should be ignored
+      chunkBuilder.addFeature(largeFeature);
+
+      const chunk = chunkBuilder.build();
+      expect(chunk.features).toHaveLength(0); // Feature not added to main features array
+      expect(chunk.skippedFeatures).toHaveLength(1); // Still only one skipped feature
+      expect(chunk.verticesCount).toBe(0); // Vertex count unchanged
+    });
   });
 
   describe('addFeature', () => {
