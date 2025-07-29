@@ -1,9 +1,6 @@
 import { ChunkMetrics, FileMetrics, MetricsCollector, ResourceMetrics } from '../types';
 import { ShapefileChunk } from '../types';
 
-/**
- * Interface for metrics management functionality
- */
 export interface IMetricsManager {
   /**
    * Updates metrics with chunk processing information
@@ -25,9 +22,6 @@ export interface IMetricsManager {
   resetResourceMonitoring: () => void;
 }
 
-/**
- * Implementation of metrics management for shapefile processing with integrated resource monitoring
- */
 export class MetricsManager implements IMetricsManager {
   private fileMetrics: FileMetrics;
   // Resource monitoring properties
@@ -36,12 +30,8 @@ export class MetricsManager implements IMetricsManager {
   private startCpuUsage!: NodeJS.CpuUsage;
   private startTime!: number;
 
-  public constructor(
-    filePath: string,
-    private readonly metricsCollector?: MetricsCollector,
-    private readonly includeResourceMetrics: boolean = false
-  ) {
-    this.fileMetrics = this.initializeFileMetrics(filePath);
+  public constructor(private readonly metricsCollector?: MetricsCollector, private readonly includeResourceMetrics: boolean = false) {
+    this.fileMetrics = this.initializeFileMetrics();
     this.initializeResourceMonitoring();
   }
 
@@ -98,9 +88,8 @@ export class MetricsManager implements IMetricsManager {
     }
   }
 
-  private initializeFileMetrics(filePath: string): FileMetrics {
+  private initializeFileMetrics(): FileMetrics {
     return {
-      filePath,
       totalFeatures: 0,
       totalVertices: 0,
       totalChunks: 0,

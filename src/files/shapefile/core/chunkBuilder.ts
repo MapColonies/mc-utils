@@ -1,6 +1,6 @@
 import { Feature } from 'geojson';
 import { ShapefileChunk } from '../types/index';
-import { countVertices } from '../utils/geometry';
+import { countVertices } from '../../../geo/vertices';
 
 export class ChunkBuilder {
   private features: Feature[];
@@ -18,7 +18,6 @@ export class ChunkBuilder {
   public canAddFeature(feature: Feature, maxVertices: number): boolean {
     const featureVertices = countVertices(feature.geometry);
 
-    // Check if the feature exceeds the maximum vertices limit
     if (featureVertices > maxVertices) {
       this.skippedFeatures.push(feature);
       return false;
@@ -28,6 +27,9 @@ export class ChunkBuilder {
   }
 
   public addFeature(feature: Feature): void {
+    if (this.withinSkipped(feature)) {
+      return;
+    }
     this.features.push(feature);
     this.currentVerticesCount += countVertices(feature.geometry);
   }
@@ -41,14 +43,14 @@ export class ChunkBuilder {
     };
   }
 
-  public isEmpty(): boolean {
-    return this.features.length === 0;
-  }
-
   public nextChunk(): void {
     this.features = [];
     this.skippedFeatures = [];
     this.currentVerticesCount = 0;
     this.chunkIndex++;
+  }
+
+  private withinSkipped(feature: Feature): boolean {
+    return this.skippedFeatures.some((skipped) => skipped.id === feature.id);
   }
 }

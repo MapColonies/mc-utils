@@ -214,42 +214,6 @@ describe('ChunkBuilder', () => {
     });
   });
 
-  describe('isEmpty', () => {
-    it('should return true when no features have been added', () => {
-      expect(chunkBuilder.isEmpty()).toBe(true);
-    });
-
-    it('should return false when features have been added', () => {
-      const feature = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ]);
-
-      chunkBuilder.addFeature(feature);
-
-      expect(chunkBuilder.isEmpty()).toBe(false);
-    });
-
-    it('should return true after nextChunking', () => {
-      const feature = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ]);
-
-      chunkBuilder.addFeature(feature);
-      expect(chunkBuilder.isEmpty()).toBe(false);
-
-      chunkBuilder.nextChunk();
-      expect(chunkBuilder.isEmpty()).toBe(true);
-    });
-  });
-
   describe('nextChunk', () => {
     it('should clear features and reset vertex count', () => {
       const feature = createPolygonFeature([
@@ -261,14 +225,12 @@ describe('ChunkBuilder', () => {
       ]);
 
       chunkBuilder.addFeature(feature);
-      expect(chunkBuilder.isEmpty()).toBe(false);
 
       chunkBuilder.nextChunk();
 
       const chunk = chunkBuilder.build();
       expect(chunk.features).toEqual([]);
       expect(chunk.verticesCount).toBe(0);
-      expect(chunkBuilder.isEmpty()).toBe(true);
     });
 
     it('should increment chunk ID', () => {
@@ -380,16 +342,11 @@ describe('ChunkBuilder', () => {
         [0, 0],
       ]);
 
-      // Initial state
-      expect(chunkBuilder.isEmpty()).toBe(true);
-
       // Add feature
       chunkBuilder.addFeature(feature);
-      expect(chunkBuilder.isEmpty()).toBe(false);
 
       // Build should not change state
       const chunk1 = chunkBuilder.build();
-      expect(chunkBuilder.isEmpty()).toBe(false);
       expect(chunk1.verticesCount).toBe(5);
 
       // Second build should be identical
@@ -398,7 +355,6 @@ describe('ChunkBuilder', () => {
 
       // nextChunk should reset state
       chunkBuilder.nextChunk();
-      expect(chunkBuilder.isEmpty()).toBe(true);
 
       const chunk3 = chunkBuilder.build();
       expect(chunk3.features).toEqual([]);

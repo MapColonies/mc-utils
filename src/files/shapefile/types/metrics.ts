@@ -15,7 +15,6 @@ export interface ChunkMetrics {
 }
 
 export interface FileMetrics {
-  filePath: string;
   totalFeatures: number;
   totalVertices: number;
   totalChunks: number;

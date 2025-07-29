@@ -1,14 +1,14 @@
-interface SyncStateManager {
-  saveState: (state: ProcessingState) => Promise<void>;
-  loadState: () => ProcessingState | null;
+export interface StateManager {
+  saveState: (state: ProcessingState) => Promise<void> | void;
+  loadState: () => (ProcessingState | null) | Promise<ProcessingState | null>;
 }
 
-interface AsyncStateManager {
-  saveState: (state: ProcessingState) => Promise<void>;
-  loadState: () => Promise<ProcessingState | null>;
-}
+// interface AsyncStateManager {
+//   saveState: (state: ProcessingState) => Promise<void>;
+//   loadState: () => Promise<ProcessingState | null>;
+// }
 
-export type StateManager = SyncStateManager | AsyncStateManager;
+// export type StateManager = SyncStateManager | AsyncStateManager;
 
 export interface ProgressInfo {
   startTime: number;

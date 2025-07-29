@@ -1,6 +1,5 @@
-import { Feature, Polygon } from '@turf/turf';
 import { MetricsManager } from '../../../../src/files/shapefile/core/metricsManager';
-import { MetricsCollector, ShapefileChunk } from '../../../../src/files/shapefile/types';
+import { MetricsCollector } from '../../../../src/files/shapefile/types';
 import { createTestChunk } from './utils';
 
 // Mock Node.js process methods
@@ -16,7 +15,6 @@ const originalPerformanceNow = performance.now.bind(performance);
 describe('MetricsManager', () => {
   let metricsManager: MetricsManager;
   let mockMetricsCollector: jest.Mocked<MetricsCollector>;
-  const testFilePath = '/test/path/file.shp';
 
   beforeEach(() => {
     // Reset mocks
@@ -54,19 +52,19 @@ describe('MetricsManager', () => {
 
   describe('constructor', () => {
     it('should initialize with basic configuration', () => {
-      metricsManager = new MetricsManager(testFilePath);
+      metricsManager = new MetricsManager();
 
       expect(metricsManager).toBeDefined();
     });
 
     it('should initialize with metrics collector', () => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector);
+      metricsManager = new MetricsManager(mockMetricsCollector);
 
       expect(metricsManager).toBeDefined();
     });
 
     it('should initialize with resource metrics enabled', () => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, true);
+      metricsManager = new MetricsManager(mockMetricsCollector, true);
 
       expect(metricsManager).toBeDefined();
       expect(mockCpuUsage).toHaveBeenCalled();
@@ -74,7 +72,7 @@ describe('MetricsManager', () => {
     });
 
     it('should not initialize resource monitoring when disabled', () => {
-      const metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, false);
+      const metricsManager = new MetricsManager(mockMetricsCollector, false);
 
       expect(metricsManager).toBeDefined();
       // CPU usage might be called once during initialization, but not for monitoring
@@ -83,7 +81,7 @@ describe('MetricsManager', () => {
 
   describe('sendChunkMetrics', () => {
     beforeEach(() => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, false);
+      metricsManager = new MetricsManager(mockMetricsCollector, false);
     });
 
     it('should update file metrics with chunk data', () => {
@@ -125,7 +123,7 @@ describe('MetricsManager', () => {
     });
 
     it('should include resource metrics when enabled', () => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, true);
+      metricsManager = new MetricsManager(mockMetricsCollector, true);
 
       // Setup CPU usage delta for calculation
       mockCpuUsage.mockReturnValueOnce({ user: 0, system: 0 }); // Initial baseline
@@ -152,7 +150,7 @@ describe('MetricsManager', () => {
     });
 
     it('should not include resource metrics when disabled', () => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, false);
+      metricsManager = new MetricsManager(mockMetricsCollector, false);
       const chunk = createTestChunk(1, 5, 100);
       metricsManager.sendChunkMetrics(chunk, 10, 20);
 
@@ -163,7 +161,7 @@ describe('MetricsManager', () => {
 
   describe('sendFileMetrics', () => {
     beforeEach(() => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, false);
+      metricsManager = new MetricsManager(mockMetricsCollector, false);
     });
 
     it('should return finalized file metrics', () => {
@@ -174,7 +172,6 @@ describe('MetricsManager', () => {
 
       expect(fileMetrics).toEqual(
         expect.objectContaining({
-          filePath: testFilePath,
           totalFeatures: 5,
           totalVertices: 100,
           totalChunks: 1,
@@ -195,7 +192,6 @@ describe('MetricsManager', () => {
 
       expect(mockMetricsCollector.onFileMetrics).toHaveBeenCalledWith(
         expect.objectContaining({
-          filePath: testFilePath,
           totalFeatures: 5,
           totalVertices: 100,
         })
@@ -203,7 +199,7 @@ describe('MetricsManager', () => {
     });
 
     it('should include peak resource metrics when enabled', () => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, true);
+      metricsManager = new MetricsManager(mockMetricsCollector, true);
 
       // Setup for resource metrics calculation
       mockCpuUsage.mockReturnValue({ user: 0, system: 0 });
@@ -238,7 +234,7 @@ describe('MetricsManager', () => {
 
   describe('resetResourceMonitoring', () => {
     it('should reset resource monitoring when enabled', () => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, true);
+      metricsManager = new MetricsManager(mockMetricsCollector, true);
 
       // Clear previous calls
       mockCpuUsage.mockClear();
@@ -251,7 +247,7 @@ describe('MetricsManager', () => {
     });
 
     it('should not affect anything when resource monitoring is disabled', () => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, false);
+      metricsManager = new MetricsManager(mockMetricsCollector, false);
 
       // Clear previous calls
       mockCpuUsage.mockClear();
@@ -266,7 +262,7 @@ describe('MetricsManager', () => {
 
   describe('resource metrics calculations', () => {
     beforeEach(() => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, true);
+      metricsManager = new MetricsManager(mockMetricsCollector, true);
     });
 
     it('should calculate CPU cores usage correctly', () => {
@@ -275,7 +271,7 @@ describe('MetricsManager', () => {
       mockPerformanceNow.mockReturnValueOnce(1000); // Initial performance.now() for startTime
 
       // Create metrics manager (this will call the first mocks)
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, true);
+      metricsManager = new MetricsManager(mockMetricsCollector, true);
 
       // Now setup the mocks for when sendChunkMetrics calls getResourceMetrics
       mockCpuUsage.mockReturnValueOnce({ user: 500000, system: 300000 }); // 800ms total CPU time
@@ -350,7 +346,7 @@ describe('MetricsManager', () => {
 
   describe('without metrics collector', () => {
     beforeEach(() => {
-      metricsManager = new MetricsManager(testFilePath);
+      metricsManager = new MetricsManager();
     });
 
     it('should handle chunk metrics without collector', () => {
@@ -373,7 +369,7 @@ describe('MetricsManager', () => {
 
   describe('edge cases', () => {
     beforeEach(() => {
-      metricsManager = new MetricsManager(testFilePath, mockMetricsCollector, false);
+      metricsManager = new MetricsManager(mockMetricsCollector, false);
     });
 
     it('should handle empty chunks', () => {

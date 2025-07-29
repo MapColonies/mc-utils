@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import * as shapefile from 'shapefile';
 import { ReaderOptions, ChunkProcessor, ShapefileChunk, ProcessingState, ProgressInfo } from '../types';
-import { countVertices } from '../utils/geometry';
+import { countVertices } from '../../../geo/vertices';
 import { ChunkBuilder } from './chunkBuilder';
 import { IProgressTracker, ProgressTracker } from './progressTracker';
 import { IMetricsManager, MetricsManager } from './metricsManager';
@@ -31,9 +31,9 @@ export class ShapefileChunkReader {
       const chunkBuilder = new ChunkBuilder(chunkIndex);
 
       this.options.logger?.info({ msg: 'Reading started' });
+      let readStart = performance.now();
       // eslint-disable-next-line no-constant-condition
       while (true) {
-        const readStart = performance.now();
         const { done, value: feature } = await reader.read();
 
         if (done) {
@@ -46,26 +46,20 @@ export class ShapefileChunkReader {
           continue;
         }
 
-        const readTime = performance.now() - readStart;
-        this.options.logger?.info({ msg: 'Reading finished', readTime });
-
-        // Check if we can add this feature to the current chunk
         if (!chunkBuilder.canAddFeature(feature, this.options.maxVerticesPerChunk)) {
-          // Process current chunk before starting a new one
-          if (!chunkBuilder.isEmpty()) {
-            const chunk = chunkBuilder.build();
-            await this.processChunk(chunk, processor, readTime, shapefilePath);
-            chunkBuilder.nextChunk();
-          }
+          const readTime = performance.now() - readStart;
+          const chunk = chunkBuilder.build();
+          this.options.logger?.info({ msg: 'Chunk reading finished', readTime, chunkIndex: chunk.id, featuresCount: chunk.features.length });
+          await this.processChunk(chunk, processor, readTime, shapefilePath);
+          chunkBuilder.nextChunk();
+          readStart = performance.now();
         }
 
         chunkBuilder.addFeature(feature);
       }
 
       // Process any remaining features
-      if (!chunkBuilder.isEmpty()) {
-        await this.processChunk(chunkBuilder.build(), processor, 0, shapefilePath);
-      }
+      await this.processChunk(chunkBuilder.build(), processor, 0, shapefilePath);
 
       this.metricsManager?.sendFileMetrics();
     } catch (error) {
@@ -100,8 +94,6 @@ export class ShapefileChunkReader {
           break;
         }
 
-        totalFeatures++;
-
         const vertices = countVertices(feature.geometry);
 
         if (vertices > this.options.maxVerticesPerChunk) {
@@ -111,6 +103,7 @@ export class ShapefileChunkReader {
           });
           continue; // Skip features that exceed the limit
         }
+        totalFeatures++;
 
         totalVertices += vertices;
       }
@@ -173,9 +166,8 @@ export class ShapefileChunkReader {
   private async initializeReading(shapefilePath: string): Promise<void> {
     try {
       if (this.options.metricsCollector) {
-        this.metricsManager = new MetricsManager(shapefilePath, this.options.metricsCollector, this.options.includeResourceMetrics);
+        this.metricsManager = new MetricsManager(this.options.metricsCollector, this.options.includeResourceMetrics);
       }
-
       this.lastState = (await this.options.stateManager?.loadState()) ?? null;
       const { totalFeatures, totalVertices } = this.lastState?.progress ?? (await this.getShapefileStats(shapefilePath));
       this.progressTracker = new ProgressTracker(totalVertices, totalFeatures, this.options.maxVerticesPerChunk, this.lastState?.progress);
