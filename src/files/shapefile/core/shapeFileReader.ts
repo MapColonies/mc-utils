@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { open } from 'shapefile';
-import { ReaderOptions, ChunkProcessor, ShapefileChunk, ProcessingState, ProgressInfo } from '../types';
+import { ReaderOptions, ChunkProcessor, ShapefileChunk, ProcessingState, ProgressInfo, ReaderInit } from '../types';
 import { countVertices } from '../../../geo/vertices';
 import { ChunkBuilder } from './chunkBuilder';
 import { IProgressTracker, ProgressTracker } from './progressTracker';
@@ -20,10 +20,8 @@ export class ShapefileChunkReader {
    * @param processor Processor to handle each chunk of features
    */
   public async readAndProcess(shapefilePath: string, processor: ChunkProcessor): Promise<void> {
-    await this.initializeReading(shapefilePath);
-
-    let featureIndex = -1;
-    const chunkIndex = this.lastState?.lastProcessedChunkIndex ?? 0;
+    const { featureIndex: initialFeatureIndex, chunkIndex } = await this.initializeReading(shapefilePath);
+    let featureIndex = initialFeatureIndex;
 
     try {
       const reader = await open(shapefilePath);
@@ -175,7 +173,7 @@ export class ShapefileChunkReader {
     await this.options.stateManager.saveState(state);
   }
 
-  private async initializeReading(shapefilePath: string): Promise<void> {
+  private async initializeReading(shapefilePath: string): Promise<ReaderInit> {
     try {
       if (this.options.metricsCollector) {
         this.metricsManager = new MetricsManager(this.options.metricsCollector);
@@ -183,6 +181,11 @@ export class ShapefileChunkReader {
       this.lastState = (await this.options.stateManager?.loadState()) ?? null;
       const { totalFeatures, totalVertices } = this.lastState?.progress ?? (await this.getShapefileStats(shapefilePath));
       this.progressTracker = new ProgressTracker(totalVertices, totalFeatures, this.options.maxVerticesPerChunk, this.lastState?.progress);
+
+      const featureIndex = -1;
+      const chunkIndex = this.lastState?.lastProcessedChunkIndex ?? 0;
+
+      return { featureIndex, chunkIndex };
     } catch (error) {
       this.options.logger?.error({ msg: 'Failed to initialize reading', error });
       throw error;
