@@ -1,5 +1,5 @@
 import { InitialProgress } from '../../../../src';
-import { ProgressTracker, IProgressTracker } from '../../../../src/files/shapefile/core/progressTracker';
+import { ProgressTracker, IProgressTracker, ProgressTrackerOptions } from '../../../../src/files/shapefile/core/progressTracker';
 
 describe('ProgressTracker', () => {
   let progressTracker: ProgressTracker;
@@ -18,7 +18,11 @@ describe('ProgressTracker', () => {
 
   describe('constructor', () => {
     it('should initialize with default values when no initial progress provided', () => {
-      progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk);
+      progressTracker = new ProgressTracker({
+        totalVertices: mockTotalVertices,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+      });
 
       const progress = progressTracker.calculateProgress();
 
@@ -37,7 +41,12 @@ describe('ProgressTracker', () => {
         processedChunks: 2,
       };
 
-      progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk, initialProgress);
+      progressTracker = new ProgressTracker({
+        totalVertices: mockTotalVertices,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+        initialProgress,
+      });
 
       const progress = progressTracker.calculateProgress();
 
@@ -50,7 +59,11 @@ describe('ProgressTracker', () => {
 
   describe('addProcessedFeatures', () => {
     beforeEach(() => {
-      progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk);
+      progressTracker = new ProgressTracker({
+        totalVertices: mockTotalVertices,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+      });
     });
 
     it('should increment features and vertices counters', () => {
@@ -75,7 +88,11 @@ describe('ProgressTracker', () => {
 
   describe('addSkippedFeatures', () => {
     beforeEach(() => {
-      progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk);
+      progressTracker = new ProgressTracker({
+        totalVertices: mockTotalVertices,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+      });
     });
 
     it('should increment skipped features counter', () => {
@@ -99,7 +116,11 @@ describe('ProgressTracker', () => {
 
   describe('incrementChunks', () => {
     beforeEach(() => {
-      progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk);
+      progressTracker = new ProgressTracker({
+        totalVertices: mockTotalVertices,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+      });
     });
 
     it('should increment chunks counter', () => {
@@ -123,7 +144,11 @@ describe('ProgressTracker', () => {
 
   describe('getProcessedFeatures', () => {
     beforeEach(() => {
-      progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk);
+      progressTracker = new ProgressTracker({
+        totalVertices: mockTotalVertices,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+      });
     });
 
     it('should return the current number of processed features', () => {
@@ -137,7 +162,11 @@ describe('ProgressTracker', () => {
 
   describe('calculateProgress', () => {
     beforeEach(() => {
-      progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk);
+      progressTracker = new ProgressTracker({
+        totalVertices: mockTotalVertices,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+      });
     });
 
     it('should calculate progress with zero values initially', () => {
@@ -247,7 +276,11 @@ describe('ProgressTracker', () => {
     });
 
     it('should handle edge case when total vertices is zero', () => {
-      progressTracker = new ProgressTracker(0, mockTotalFeatures, mockMaxVerticesPerChunk);
+      progressTracker = new ProgressTracker({
+        totalVertices: 0,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+      });
 
       const progress = progressTracker.calculateProgress();
 
@@ -274,7 +307,11 @@ describe('ProgressTracker', () => {
     });
 
     it('should use processed chunks as total when total vertices is zero', () => {
-      progressTracker = new ProgressTracker(0, mockTotalFeatures, mockMaxVerticesPerChunk);
+      progressTracker = new ProgressTracker({
+        totalVertices: 0,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+      });
       progressTracker.incrementChunks();
       progressTracker.incrementChunks();
 
@@ -286,7 +323,11 @@ describe('ProgressTracker', () => {
 
   describe('interface compliance', () => {
     it('should implement IProgressTracker interface', () => {
-      progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk);
+      progressTracker = new ProgressTracker({
+        totalVertices: mockTotalVertices,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+      });
 
       // Type assertion to ensure interface compliance
       const tracker: IProgressTracker = progressTracker;
@@ -308,7 +349,12 @@ describe('ProgressTracker', () => {
         processedChunks: -1,
       };
 
-      progressTracker = new ProgressTracker(mockTotalVertices, mockTotalFeatures, mockMaxVerticesPerChunk, initialProgress);
+      progressTracker = new ProgressTracker({
+        totalVertices: mockTotalVertices,
+        totalFeatures: mockTotalFeatures,
+        maxVerticesPerChunk: mockMaxVerticesPerChunk,
+        initialProgress,
+      });
 
       const progress = progressTracker.calculateProgress();
 
@@ -324,7 +370,11 @@ describe('ProgressTracker', () => {
         maxVerticesPerChunk: 1000000,
       };
 
-      progressTracker = new ProgressTracker(largeNumbers.totalVertices, largeNumbers.totalFeatures, largeNumbers.maxVerticesPerChunk);
+      progressTracker = new ProgressTracker({
+        totalVertices: largeNumbers.totalVertices,
+        totalFeatures: largeNumbers.totalFeatures,
+        maxVerticesPerChunk: largeNumbers.maxVerticesPerChunk,
+      });
 
       progressTracker.addProcessedFeatures(1000000, 10000000);
 
@@ -336,7 +386,11 @@ describe('ProgressTracker', () => {
     });
 
     it('should maintain precision with decimal calculations', () => {
-      progressTracker = new ProgressTracker(333, 33, 111); // Numbers that create decimals
+      progressTracker = new ProgressTracker({
+        totalVertices: 333,
+        totalFeatures: 33,
+        maxVerticesPerChunk: 111,
+      }); // Numbers that create decimals
       progressTracker.addProcessedFeatures(11, 111); // 33.33% progress
 
       const progress = progressTracker.calculateProgress();

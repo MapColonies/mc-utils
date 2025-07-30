@@ -180,7 +180,12 @@ export class ShapefileChunkReader {
       }
       this.lastState = (await this.options.stateManager?.loadState()) ?? null;
       const { totalFeatures, totalVertices } = this.lastState?.progress ?? (await this.getShapefileStats(shapefilePath));
-      this.progressTracker = new ProgressTracker(totalVertices, totalFeatures, this.options.maxVerticesPerChunk, this.lastState?.progress);
+      this.progressTracker = new ProgressTracker({
+        totalVertices,
+        totalFeatures,
+        maxVerticesPerChunk: this.options.maxVerticesPerChunk,
+        initialProgress: this.lastState?.progress,
+      });
 
       const featureIndex = -1;
       const chunkIndex = this.lastState?.lastProcessedChunkIndex ?? 0;

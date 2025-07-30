@@ -37,32 +37,46 @@ export interface IProgressTracker {
 }
 
 /**
+ * Configuration options for ProgressTracker constructor
+ */
+export interface ProgressTrackerOptions {
+  totalVertices: number;
+  totalFeatures: number;
+  maxVerticesPerChunk: number;
+  initialProgress?: InitialProgress;
+}
+
+/**
  * Implementation of progress tracking for shapefile processing
  */
 export class ProgressTracker implements IProgressTracker {
   private readonly startTime: number;
+  private readonly totalVertices: number;
+  private readonly totalFeatures: number;
+  private readonly maxVerticesPerChunk: number;
   private processedVertices: number;
   private processedFeatures: number;
   private skippedFeatures: number;
   private processedChunks: number;
 
-  public constructor(
-    private readonly totalVertices: number,
-    private readonly totalFeatures: number,
-    private readonly maxVerticesPerChunk: number,
-    private readonly initialProgress: InitialProgress = {
+  public constructor(options: ProgressTrackerOptions) {
+    this.totalVertices = options.totalVertices;
+    this.totalFeatures = options.totalFeatures;
+    this.maxVerticesPerChunk = options.maxVerticesPerChunk;
+
+    const initialProgress = options.initialProgress ?? {
       processedChunks: 0,
       processedFeatures: 0,
       processedVertices: 0,
       skippedFeatures: 0,
       startTime: Date.now(),
-    }
-  ) {
-    this.startTime = this.initialProgress.startTime;
-    this.processedVertices = this.initialProgress.processedVertices;
-    this.processedFeatures = this.initialProgress.processedFeatures;
-    this.processedChunks = this.initialProgress.processedChunks;
-    this.skippedFeatures = this.initialProgress.skippedFeatures;
+    };
+
+    this.startTime = initialProgress.startTime;
+    this.processedVertices = initialProgress.processedVertices;
+    this.processedFeatures = initialProgress.processedFeatures;
+    this.processedChunks = initialProgress.processedChunks;
+    this.skippedFeatures = initialProgress.skippedFeatures;
   }
 
   public addProcessedFeatures(featuresCount: number, processedVertices: number): void {
