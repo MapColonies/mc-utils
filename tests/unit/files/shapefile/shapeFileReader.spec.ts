@@ -184,7 +184,6 @@ describe('ShapefileChunkReader', () => {
     });
 
     it('should handle feature with exceeding vertex count', async () => {
-      const maxVertices = 5;
       const largeFeature: Feature = {
         type: 'Feature',
         geometry: {

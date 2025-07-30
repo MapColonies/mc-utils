@@ -1,5 +1,5 @@
 import { InitialProgress } from '../../../../src';
-import { ProgressTracker, IProgressTracker, ProgressTrackerOptions } from '../../../../src/files/shapefile/core/progressTracker';
+import { ProgressTracker, IProgressTracker } from '../../../../src/files/shapefile/core/progressTracker';
 
 describe('ProgressTracker', () => {
   let progressTracker: ProgressTracker;
