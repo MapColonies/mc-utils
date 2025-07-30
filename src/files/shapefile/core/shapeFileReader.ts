@@ -26,7 +26,7 @@ export class ShapefileChunkReader {
     try {
       const reader = await open(shapefilePath);
 
-      const chunkBuilder = new ChunkBuilder(chunkIndex);
+      const chunkBuilder = new ChunkBuilder(this.options.maxVerticesPerChunk, chunkIndex);
 
       this.options.logger?.info({ msg: 'Reading started' });
       let readStart = performance.now();
@@ -44,7 +44,7 @@ export class ShapefileChunkReader {
           continue;
         }
 
-        if (!chunkBuilder.canAddFeature(feature, this.options.maxVerticesPerChunk)) {
+        if (!chunkBuilder.canAddFeature(feature)) {
           const readTime = performance.now() - readStart;
           const chunk = chunkBuilder.build();
           this.options.logger?.info({ msg: 'Chunk reading finished', readTime, chunkIndex: chunk.id, featuresCount: chunk.features.length });

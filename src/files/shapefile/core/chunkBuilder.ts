@@ -6,24 +6,22 @@ export class ChunkBuilder {
   private features: Feature[];
   private skippedFeatures: Feature[];
   private currentVerticesCount: number;
-  private chunkIndex: number;
 
-  public constructor(chunkIndex = 0) {
-    this.chunkIndex = chunkIndex;
+  public constructor(private readonly maxVertices: number, private chunkIndex: number = 0) {
     this.features = [];
     this.skippedFeatures = [];
     this.currentVerticesCount = 0;
   }
 
-  public canAddFeature(feature: Feature, maxVertices: number): boolean {
+  public canAddFeature(feature: Feature): boolean {
     const featureVertices = countVertices(feature.geometry);
 
-    if (featureVertices > maxVertices) {
+    if (featureVertices > this.maxVertices) {
       this.skippedFeatures.push(feature);
       return false;
     }
 
-    return this.currentVerticesCount + featureVertices <= maxVertices;
+    return this.currentVerticesCount + featureVertices <= this.maxVertices;
   }
 
   public addFeature(feature: Feature): void {

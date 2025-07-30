@@ -4,16 +4,18 @@ import { createPolygonFeature } from './utils';
 
 describe('ChunkBuilder', () => {
   let chunkBuilder: ChunkBuilder;
+  const maxVertices = 10;
   const initialChunkIndex = 1;
 
   beforeEach(() => {
-    chunkBuilder = new ChunkBuilder(initialChunkIndex);
+    chunkBuilder = new ChunkBuilder(maxVertices, initialChunkIndex);
   });
 
   describe('constructor', () => {
     it('should initialize with provided chunk ID', () => {
       const testChunkIndex = 5;
-      const builder = new ChunkBuilder(testChunkIndex);
+      const testMaxVertices = 15;
+      const builder = new ChunkBuilder(testMaxVertices, testChunkIndex);
       const chunk = builder.build();
 
       expect(chunk.id).toBe(testChunkIndex);
@@ -31,14 +33,14 @@ describe('ChunkBuilder', () => {
         [0, 1],
         [0, 0],
       ]); // 5 vertices
-      const maxVertices = 10;
 
-      const canAdd = chunkBuilder.canAddFeature(feature, maxVertices);
+      const canAdd = chunkBuilder.canAddFeature(feature);
 
       expect(canAdd).toBe(true);
     });
 
     it('should return false when adding feature would exceed vertex limit', () => {
+      const limitedChunkBuilder = new ChunkBuilder(8, initialChunkIndex); // maxVertices = 8
       const feature1 = createPolygonFeature([
         [0, 0],
         [1, 0],
@@ -53,10 +55,9 @@ describe('ChunkBuilder', () => {
         [2, 3],
         [2, 2],
       ]); // 5 vertices
-      const maxVertices = 8;
 
-      chunkBuilder.addFeature(feature1); // Current count: 5
-      const canAdd = chunkBuilder.canAddFeature(feature2, maxVertices); // Would be 10 > 8
+      limitedChunkBuilder.addFeature(feature1); // Current count: 5
+      const canAdd = limitedChunkBuilder.canAddFeature(feature2); // Would be 10 > 8
 
       expect(canAdd).toBe(false);
     });
@@ -76,10 +77,9 @@ describe('ChunkBuilder', () => {
         [2, 3],
         [2, 2],
       ]); // 5 vertices
-      const maxVertices = 10;
 
       chunkBuilder.addFeature(feature1); // Current count: 5
-      const canAdd = chunkBuilder.canAddFeature(feature2, maxVertices); // Would be exactly 10
+      const canAdd = chunkBuilder.canAddFeature(feature2); // Would be exactly 10
 
       expect(canAdd).toBe(true);
     });
@@ -98,9 +98,8 @@ describe('ChunkBuilder', () => {
         [0, 1],
         [0, 0],
       ]); // 11 vertices
-      const maxVertices = 10;
 
-      const canAdd = chunkBuilder.canAddFeature(largeFeature, maxVertices);
+      const canAdd = chunkBuilder.canAddFeature(largeFeature);
 
       expect(canAdd).toBe(false);
       expect(chunkBuilder.build().skippedFeatures).toHaveLength(1);
@@ -121,10 +120,8 @@ describe('ChunkBuilder', () => {
         [0, 0],
       ]); // 11 vertices
 
-      const maxVertices = 10;
-
       // First, feature gets added to skipped array via canAddFeature
-      const canAdd = chunkBuilder.canAddFeature(largeFeature, maxVertices);
+      const canAdd = chunkBuilder.canAddFeature(largeFeature);
       expect(canAdd).toBe(false);
       expect(chunkBuilder.build().skippedFeatures).toHaveLength(1);
 
@@ -311,7 +308,6 @@ describe('ChunkBuilder', () => {
 
   describe('integration scenarios', () => {
     it('should handle typical chunking workflow', () => {
-      const maxVertices = 10;
       const features = [
         createPolygonFeature([
           [0, 0],
@@ -337,14 +333,14 @@ describe('ChunkBuilder', () => {
       ];
 
       // Add first two features (exactly at limit)
-      expect(chunkBuilder.canAddFeature(features[0], maxVertices)).toBe(true);
+      expect(chunkBuilder.canAddFeature(features[0])).toBe(true);
       chunkBuilder.addFeature(features[0]);
 
-      expect(chunkBuilder.canAddFeature(features[1], maxVertices)).toBe(true);
+      expect(chunkBuilder.canAddFeature(features[1])).toBe(true);
       chunkBuilder.addFeature(features[1]);
 
       // Third feature would exceed limit
-      expect(chunkBuilder.canAddFeature(features[2], maxVertices)).toBe(false);
+      expect(chunkBuilder.canAddFeature(features[2])).toBe(false);
 
       // Build first chunk
       const chunk1 = chunkBuilder.build();
@@ -354,7 +350,7 @@ describe('ChunkBuilder', () => {
 
       // nextChunk and add third feature
       chunkBuilder.nextChunk();
-      expect(chunkBuilder.canAddFeature(features[2], maxVertices)).toBe(true);
+      expect(chunkBuilder.canAddFeature(features[2])).toBe(true);
       chunkBuilder.addFeature(features[2]);
 
       // Build second chunk

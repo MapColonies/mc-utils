@@ -180,7 +180,7 @@ describe('ShapefileChunkReader', () => {
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
       expect(mockChunkBuilder.addFeature).toHaveBeenCalledTimes(1); // Only feature at index 4
-      expect(MockChunkBuilder).toHaveBeenCalledWith(2); // Resume from chunk 2
+      expect(MockChunkBuilder).toHaveBeenCalledWith(mockOptions.maxVerticesPerChunk, 2); // Resume from chunk 2
     });
 
     it('should handle feature with exceeding vertex count', async () => {
@@ -211,12 +211,11 @@ describe('ShapefileChunkReader', () => {
         verticesCount: 0,
       };
 
-      mockOptions.maxVerticesPerChunk = maxVertices;
       mockSource.read.mockResolvedValueOnce({ done: false, value: largeFeature }).mockResolvedValueOnce({ done: true, value: largeFeature });
       mockChunkBuilder.canAddFeature.mockReturnValue(false);
       mockChunkBuilder.build.mockReturnValue(chunk);
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
-      expect(mockChunkBuilder.canAddFeature).toHaveBeenCalledWith(largeFeature, maxVertices);
+      expect(mockChunkBuilder.canAddFeature).toHaveBeenCalledWith(largeFeature);
       expect(mockChunkBuilder.build).toHaveBeenCalled();
       expect(mockProcessor).toHaveBeenCalledWith(chunk);
     });
