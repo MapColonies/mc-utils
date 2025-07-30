@@ -1,8 +1,3 @@
-export interface ResourceMetrics {
-  cpu: number; // Absolute CPU cores used (e.g., 0.5 = 500m, 1.2 = 1200m)
-  memory: number; // Absolute memory in MB (e.g., 512 MB)
-}
-
 export interface ChunkMetrics {
   chunkIndex: number;
   featuresCount: number;
@@ -11,7 +6,6 @@ export interface ChunkMetrics {
   processTimeMs: number;
   totalTimeMs: number;
   timestamp: Date;
-  resources?: ResourceMetrics;
 }
 
 export interface FileMetrics {
@@ -23,7 +17,6 @@ export interface FileMetrics {
   totalTimeMs: number;
   startTime: Date;
   endTime?: Date;
-  peakResources?: ResourceMetrics;
 }
 
 export interface MetricsCollector {

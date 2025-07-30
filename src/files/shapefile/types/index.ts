@@ -22,5 +22,4 @@ export interface ReaderOptions {
   maxVerticesPerChunk: number;
   stateManager?: StateManager;
   metricsCollector?: MetricsCollector;
-  includeResourceMetrics?: boolean;
 }

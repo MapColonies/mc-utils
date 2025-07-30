@@ -56,7 +56,6 @@ describe('ShapefileChunkReader', () => {
         onChunkMetrics: jest.fn(),
         onFileMetrics: jest.fn(),
       },
-      includeResourceMetrics: true,
     };
 
     // Setup mock processor
@@ -94,7 +93,6 @@ describe('ShapefileChunkReader', () => {
     mockMetricsManager = {
       sendChunkMetrics: jest.fn(),
       sendFileMetrics: jest.fn(),
-      resetResourceMonitoring: jest.fn(),
     } as unknown as jest.Mocked<MetricsManager>;
     MockMetricsManager.mockImplementation(() => mockMetricsManager);
 
@@ -256,7 +254,6 @@ describe('ShapefileChunkReader', () => {
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
-      expect(mockMetricsManager.resetResourceMonitoring).toHaveBeenCalled();
       expect(mockMetricsManager.sendChunkMetrics).toHaveBeenCalledWith(chunk, expect.any(Number), expect.any(Number));
       expect(mockMetricsManager.sendFileMetrics).toHaveBeenCalled();
     });

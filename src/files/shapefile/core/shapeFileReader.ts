@@ -130,9 +130,6 @@ export class ShapefileChunkReader {
   }
 
   private async processChunk(chunk: ShapefileChunk, processor: ChunkProcessor, filePath: string, readTime = 0): Promise<void> {
-    // Reset resource monitoring for this chunk if enabled
-    this.metricsManager?.resetResourceMonitoring();
-
     const processStart = performance.now();
 
     try {
@@ -181,7 +178,7 @@ export class ShapefileChunkReader {
   private async initializeReading(shapefilePath: string): Promise<void> {
     try {
       if (this.options.metricsCollector) {
-        this.metricsManager = new MetricsManager(this.options.metricsCollector, this.options.includeResourceMetrics);
+        this.metricsManager = new MetricsManager(this.options.metricsCollector);
       }
       this.lastState = (await this.options.stateManager?.loadState()) ?? null;
       const { totalFeatures, totalVertices } = this.lastState?.progress ?? (await this.getShapefileStats(shapefilePath));

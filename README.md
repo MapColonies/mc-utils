@@ -96,7 +96,6 @@ const options: ReaderOptions = {
   logger: myLogger,
   stateManager: myStateManager, // Optional: for resumable processing
   metricsCollector: myMetricsCollector, // Optional: for performance monitoring
-  includeResourceMetrics: true // Optional: include CPU and memory metrics
 };
 
 // Create and use the reader
@@ -167,4 +166,3 @@ const metricsCollector: MetricsCollector = {
 | `logger` | Logger | undefined | Optional logger for debugging and monitoring |
 | `stateManager` | StateManager | undefined | Optional state manager for resumable processing |
 | `metricsCollector` | MetricsCollector | undefined | Optional metrics collector for performance monitoring |
-| `includeResourceMetrics` | boolean | false | Include CPU and memory usage in metrics |
