@@ -1,6 +1,6 @@
 {
   "name": "@map-colonies/mc-utils",
-  "version": "4.0.1",
+  "version": "4.0.2",
   "type": "commonjs",
   "description": "MapColonies utility library for http, geo, arrays and interfaces",
   "main": "./dist/index.js",
