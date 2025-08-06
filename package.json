@@ -14,7 +14,7 @@
     "lint:fix": "eslint --fix .",
     "test": "npm run test:unit",
     "prebuild": "npm run clean",
-    "build": "tsc --project tsconfig.build.json",
+    "build": "tsc --project tsconfig.build.json && tsc-alias",
     "start": "npm run build && cd dist && node ./index.js",
     "clean": "rimraf dist",
     "prepack": "npm run build",
@@ -58,6 +58,7 @@
     "rimraf": "^6.0.1",
     "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
+    "tsc-alias": "^1.8.16",
     "typedoc": "^0.28.7",
     "typescript": "^5.8.3"
   },
