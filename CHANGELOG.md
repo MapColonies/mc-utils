@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.1](https://github.com/MapColonies/mc-utils/compare/v4.0.0...v4.0.1) (2025-08-06)
+
+
+### Bug Fixes
+
+* **deps:** upgrade js-logger for engine ([#34](https://github.com/MapColonies/mc-utils/issues/34)) ([98184fb](https://github.com/MapColonies/mc-utils/commit/98184fb95cf7f64348e61fa2f0e7b495ae28b8a3))
+
 ## [4.0.0](https://github.com/MapColonies/mc-utils/compare/v3.3.0...v4.0.0) (2025-07-28)
 
 
