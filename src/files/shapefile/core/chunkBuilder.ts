@@ -14,6 +14,8 @@ export class ChunkBuilder {
   }
 
   public canAddFeature(feature: Feature): boolean {
+    this.validateFeatureId(feature);
+
     const featureVertices = countVertices(feature.geometry);
 
     if (featureVertices > this.maxVertices) {
@@ -25,6 +27,8 @@ export class ChunkBuilder {
   }
 
   public addFeature(feature: Feature): void {
+    this.validateFeatureId(feature);
+
     if (this.withinSkipped(feature)) {
       return;
     }
@@ -50,5 +54,11 @@ export class ChunkBuilder {
 
   private withinSkipped(feature: Feature): boolean {
     return this.skippedFeatures.some((skipped) => skipped.id === feature.id);
+  }
+
+  private validateFeatureId(feature: Feature): void {
+    if (feature.id === undefined) {
+      throw new Error('Feature must have an id');
+    }
   }
 }

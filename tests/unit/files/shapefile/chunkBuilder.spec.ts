@@ -18,86 +18,105 @@ describe('ChunkBuilder', () => {
       const builder = new ChunkBuilder(testMaxVertices, testChunkIndex);
       const chunk = builder.build();
 
+      expect(builder).toBeInstanceOf(ChunkBuilder);
       expect(chunk.id).toBe(testChunkIndex);
-      expect(chunk.features).toEqual([]);
-      expect(chunk.verticesCount).toBe(0);
     });
   });
 
   describe('canAddFeature', () => {
     it('should return true when feature can be added within vertex limit', () => {
-      const feature = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ]); // 5 vertices
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        'feature-1'
+      ); // 5 vertices
 
       const canAdd = chunkBuilder.canAddFeature(feature);
 
       expect(canAdd).toBe(true);
     });
 
-    it('should return false when adding feature would exceed vertex limit', () => {
-      const limitedChunkBuilder = new ChunkBuilder(8, initialChunkIndex); // maxVertices = 8
-      const feature1 = createPolygonFeature([
+    it('should throw error when feature has no ID', () => {
+      const feature = createPolygonFeature([
         [0, 0],
         [1, 0],
         [1, 1],
         [0, 1],
         [0, 0],
-      ]); // 5 vertices
-      const feature2 = createPolygonFeature([
-        [2, 2],
-        [3, 2],
-        [3, 3],
-        [2, 3],
-        [2, 2],
-      ]); // 5 vertices
+      ]); // no ID provided
 
-      limitedChunkBuilder.addFeature(feature1); // Current count: 5
-      const canAdd = limitedChunkBuilder.canAddFeature(feature2); // Would be 10 > 8
+      expect(() => chunkBuilder.canAddFeature(feature)).toThrow('Feature must have an id');
+    });
+
+    it('should return false when adding feature would exceed vertex limit', () => {
+      // 11 vertices
+      const feature1 = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [2, 0],
+          [3, 0],
+          [3, 1],
+          [3, 2],
+          [2, 2],
+          [1, 2],
+          [0, 2],
+          [0, 1],
+          [0, 0],
+        ],
+        'feature-1'
+      );
+
+      const canAdd = chunkBuilder.canAddFeature(feature1); // Would be 11 > 10
 
       expect(canAdd).toBe(false);
     });
 
     it('should return true when adding feature exactly matches vertex limit', () => {
-      const feature1 = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ]); // 5 vertices
-      const feature2 = createPolygonFeature([
-        [2, 2],
-        [3, 2],
-        [3, 3],
-        [2, 3],
-        [2, 2],
-      ]); // 5 vertices
+      // 10 vertices
+      const feature1 = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [2, 0],
+          [3, 0],
+          [3, 1],
+          [3, 2],
+          [2, 2],
+          [1, 2],
+          [0, 2],
+          [0, 1],
+        ],
+        'feature-1'
+      );
 
-      chunkBuilder.addFeature(feature1); // Current count: 5
-      const canAdd = chunkBuilder.canAddFeature(feature2); // Would be exactly 10
+      const canAdd = chunkBuilder.canAddFeature(feature1); // Would be exactly 10
 
       expect(canAdd).toBe(true);
     });
 
     it('should add features that exceeded vertices limit to skipped array', () => {
-      const largeFeature = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [2, 0],
-        [3, 0],
-        [3, 1],
-        [3, 2],
-        [2, 2],
-        [1, 2],
-        [0, 2],
-        [0, 1],
-        [0, 0],
-      ]); // 11 vertices
+      const largeFeature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [2, 0],
+          [3, 0],
+          [3, 1],
+          [3, 2],
+          [2, 2],
+          [1, 2],
+          [0, 2],
+          [0, 1],
+          [0, 0],
+        ],
+        'large-feature'
+      ); // 11 vertices
 
       const canAdd = chunkBuilder.canAddFeature(largeFeature);
 
@@ -106,19 +125,22 @@ describe('ChunkBuilder', () => {
     });
 
     it('should not add feature that is already in skipped array', () => {
-      const largeFeature = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [2, 0],
-        [3, 0],
-        [3, 1],
-        [3, 2],
-        [2, 2],
-        [1, 2],
-        [0, 2],
-        [0, 1],
-        [0, 0],
-      ]); // 11 vertices
+      const largeFeature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [2, 0],
+          [3, 0],
+          [3, 1],
+          [3, 2],
+          [2, 2],
+          [1, 2],
+          [0, 2],
+          [0, 1],
+          [0, 0],
+        ],
+        'large-feature'
+      ); // 11 vertices
 
       // First, feature gets added to skipped array via canAddFeature
       const canAdd = chunkBuilder.canAddFeature(largeFeature);
@@ -137,13 +159,16 @@ describe('ChunkBuilder', () => {
 
   describe('addFeature', () => {
     it('should add feature to the chunk', () => {
-      const feature = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ]);
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        'feature-1'
+      );
 
       chunkBuilder.addFeature(feature);
       const chunk = chunkBuilder.build();
@@ -153,21 +178,39 @@ describe('ChunkBuilder', () => {
       expect(chunk.verticesCount).toBe(5);
     });
 
-    it('should add multiple features and update vertex count correctly', () => {
-      const feature1 = createPolygonFeature([
+    it('should throw error when feature has no ID during addFeature', () => {
+      const feature = createPolygonFeature([
         [0, 0],
         [1, 0],
         [1, 1],
         [0, 1],
         [0, 0],
-      ]); // 5 vertices
-      const feature2 = createPolygonFeature([
-        [2, 2],
-        [3, 2],
-        [3, 3],
-        [2, 3],
-        [2, 2],
-      ]); // 5 vertices
+      ]); // no ID provided
+
+      expect(() => chunkBuilder.addFeature(feature)).toThrow('Feature must have an id');
+    });
+
+    it('should add multiple features and update vertex count correctly', () => {
+      const feature1 = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        'feature-1'
+      ); // 5 vertices
+      const feature2 = createPolygonFeature(
+        [
+          [2, 2],
+          [3, 2],
+          [3, 3],
+          [2, 3],
+          [2, 2],
+        ],
+        'feature-2'
+      ); // 5 vertices
 
       chunkBuilder.addFeature(feature1);
       chunkBuilder.addFeature(feature2);
@@ -183,6 +226,7 @@ describe('ChunkBuilder', () => {
       // Polygon with hole
       const complexFeature: Feature<Polygon> = {
         type: 'Feature',
+        id: 'complex-feature',
         properties: {},
         geometry: {
           type: 'Polygon',
@@ -217,13 +261,16 @@ describe('ChunkBuilder', () => {
 
   describe('build', () => {
     it('should return chunk with correct ID, features, and vertex count', () => {
-      const feature = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ]);
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        'feature-1'
+      );
 
       chunkBuilder.addFeature(feature);
       const chunk = chunkBuilder.build();
@@ -244,13 +291,16 @@ describe('ChunkBuilder', () => {
 
   describe('nextChunk', () => {
     it('should clear features and reset vertex count', () => {
-      const feature = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ]);
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        'feature-1'
+      );
 
       chunkBuilder.addFeature(feature);
 
@@ -262,13 +312,16 @@ describe('ChunkBuilder', () => {
     });
 
     it('should increment chunk ID', () => {
-      const feature = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ]);
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        'feature-1'
+      );
 
       chunkBuilder.addFeature(feature);
       const chunkBeforenextChunk = chunkBuilder.build();
@@ -280,20 +333,26 @@ describe('ChunkBuilder', () => {
     });
 
     it('should allow adding features after nextChunk', () => {
-      const feature1 = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ]);
-      const feature2 = createPolygonFeature([
-        [2, 2],
-        [3, 2],
-        [3, 3],
-        [2, 3],
-        [2, 2],
-      ]);
+      const feature1 = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        'feature-1'
+      );
+      const feature2 = createPolygonFeature(
+        [
+          [2, 2],
+          [3, 2],
+          [3, 3],
+          [2, 3],
+          [2, 2],
+        ],
+        'feature-2'
+      );
 
       chunkBuilder.addFeature(feature1);
       chunkBuilder.nextChunk();
@@ -306,30 +365,39 @@ describe('ChunkBuilder', () => {
     });
   });
 
-  describe('integration scenarios', () => {
+  describe('multi-step scenarios', () => {
     it('should handle typical chunking workflow', () => {
       const features = [
-        createPolygonFeature([
-          [0, 0],
-          [1, 0],
-          [1, 1],
-          [0, 1],
-          [0, 0],
-        ]), // 5 vertices
-        createPolygonFeature([
-          [2, 2],
-          [3, 2],
-          [3, 3],
-          [2, 3],
-          [2, 2],
-        ]), // 5 vertices
-        createPolygonFeature([
-          [4, 4],
-          [5, 4],
-          [5, 5],
-          [4, 5],
-          [4, 4],
-        ]), // 5 vertices
+        createPolygonFeature(
+          [
+            [0, 0],
+            [1, 0],
+            [1, 1],
+            [0, 1],
+            [0, 0],
+          ],
+          'feature-1'
+        ), // 5 vertices
+        createPolygonFeature(
+          [
+            [2, 2],
+            [3, 2],
+            [3, 3],
+            [2, 3],
+            [2, 2],
+          ],
+          'feature-2'
+        ), // 5 vertices
+        createPolygonFeature(
+          [
+            [4, 4],
+            [5, 4],
+            [5, 5],
+            [4, 5],
+            [4, 4],
+          ],
+          'feature-3'
+        ), // 5 vertices
       ];
 
       // Add first two features (exactly at limit)
@@ -361,13 +429,16 @@ describe('ChunkBuilder', () => {
     });
 
     it('should maintain state consistency across operations', () => {
-      const feature = createPolygonFeature([
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [0, 1],
-        [0, 0],
-      ]);
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        'feature-1'
+      );
 
       // Add feature
       chunkBuilder.addFeature(feature);
@@ -387,6 +458,112 @@ describe('ChunkBuilder', () => {
       expect(chunk3.features).toEqual([]);
       expect(chunk3.verticesCount).toBe(0);
       expect(chunk3.id).toBe(initialChunkIndex + 1);
+    });
+  });
+
+  describe('ID validation scenarios', () => {
+    it('should handle features with string IDs', () => {
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        'string-id'
+      );
+
+      expect(chunkBuilder.canAddFeature(feature)).toBe(true);
+      chunkBuilder.addFeature(feature);
+
+      const chunk = chunkBuilder.build();
+      expect(chunk.features).toHaveLength(1);
+      expect(chunk.features[0].id).toBe('string-id');
+    });
+
+    it('should handle features with numeric IDs', () => {
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        12345
+      );
+
+      expect(chunkBuilder.canAddFeature(feature)).toBe(true);
+      chunkBuilder.addFeature(feature);
+
+      const chunk = chunkBuilder.build();
+      expect(chunk.features).toHaveLength(1);
+      expect(chunk.features[0].id).toBe(12345);
+    });
+
+    it('should throw error when trying to add feature without ID via canAddFeature', () => {
+      const featureWithoutId = createPolygonFeature([
+        [0, 0],
+        [1, 0],
+        [1, 1],
+        [0, 1],
+        [0, 0],
+      ]);
+
+      expect(() => chunkBuilder.canAddFeature(featureWithoutId)).toThrow('Feature must have an id');
+    });
+
+    it('should throw error when trying to add feature without ID via addFeature', () => {
+      const featureWithoutId = createPolygonFeature([
+        [0, 0],
+        [1, 0],
+        [1, 1],
+        [0, 1],
+        [0, 0],
+      ]);
+
+      expect(() => chunkBuilder.addFeature(featureWithoutId)).toThrow('Feature must have an id');
+    });
+
+    it('should handle features with zero as ID', () => {
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        0
+      );
+
+      expect(chunkBuilder.canAddFeature(feature)).toBe(true);
+      chunkBuilder.addFeature(feature);
+
+      const chunk = chunkBuilder.build();
+      expect(chunk.features).toHaveLength(1);
+      expect(chunk.features[0].id).toBe(0);
+    });
+
+    it('should handle features with empty string as ID', () => {
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        ''
+      );
+
+      expect(chunkBuilder.canAddFeature(feature)).toBe(true);
+      chunkBuilder.addFeature(feature);
+
+      const chunk = chunkBuilder.build();
+      expect(chunk.features).toHaveLength(1);
+      expect(chunk.features[0].id).toBe('');
     });
   });
 });

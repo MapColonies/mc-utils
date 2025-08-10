@@ -2,9 +2,10 @@ import { Feature, Polygon } from 'geojson';
 import { ShapefileChunk } from '../../../../src';
 
 // Helper function to create a simple polygon feature
-export function createPolygonFeature(coordinates: number[][]): Feature<Polygon> {
+export function createPolygonFeature(coordinates: number[][], id?: string | number): Feature<Polygon> {
   return {
     type: 'Feature',
+    id: id,
     properties: {},
     geometry: {
       type: 'Polygon',
@@ -22,7 +23,7 @@ export function createTestChunk(id: number, featuresCount: number, verticesCount
     [0, 1],
     [0, 0],
   ];
-  const features = Array.from({ length: featuresCount }, () => createPolygonFeature(defaultCoords));
+  const features = Array.from({ length: featuresCount }, (_, index) => createPolygonFeature(defaultCoords, `feature-${index}`));
 
   return {
     id,

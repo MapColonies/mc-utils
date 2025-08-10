@@ -29,6 +29,7 @@ export class MetricsManager implements IMetricsManager {
 
     // Update file metrics
     this.fileMetrics.totalFeatures += chunk.features.length;
+    this.fileMetrics.totalSkippedFeatures += chunk.skippedFeatures.length;
     this.fileMetrics.totalVertices += chunk.verticesCount;
     this.fileMetrics.totalChunks++;
     this.fileMetrics.totalReadTimeMs += readTime;
@@ -39,6 +40,7 @@ export class MetricsManager implements IMetricsManager {
     const chunkMetrics: ChunkMetrics = {
       chunkIndex: chunk.id,
       featuresCount: chunk.features.length,
+      skippedFeaturesCount: chunk.skippedFeatures.length,
       verticesCount: chunk.verticesCount,
       readTimeMs: readTime,
       processTimeMs: processTime,
@@ -60,6 +62,7 @@ export class MetricsManager implements IMetricsManager {
   private initializeFileMetrics(): FileMetrics {
     return {
       totalFeatures: 0,
+      totalSkippedFeatures: 0,
       totalVertices: 0,
       totalChunks: 0,
       totalReadTimeMs: 0,

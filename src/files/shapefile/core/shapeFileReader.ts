@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { open } from 'shapefile';
-import { ReaderOptions, ChunkProcessor, ShapefileChunk, ProcessingState, ProgressInfo, ReaderInit } from '../types';
+import { ReaderOptions, ChunkProcessor, ShapefileChunk, ProcessingState, ProgressInfo } from '../types';
 import { countVertices } from '../../../geo/vertices';
 import { ChunkBuilder } from './chunkBuilder';
 import { IProgressTracker, ProgressTracker } from './progressTracker';
@@ -20,8 +20,8 @@ export class ShapefileChunkReader {
    * @param processor Processor to handle each chunk of features
    */
   public async readAndProcess(shapefilePath: string, processor: ChunkProcessor): Promise<void> {
-    const { featureIndex: initialFeatureIndex, chunkIndex } = await this.initializeReading(shapefilePath);
-    let featureIndex = initialFeatureIndex;
+    const chunkIndex = await this.initializeReading(shapefilePath);
+    let readFeatureIndex = -1;
 
     try {
       const reader = await open(shapefilePath);
@@ -38,9 +38,9 @@ export class ShapefileChunkReader {
           break;
         }
 
-        featureIndex++;
+        readFeatureIndex++;
 
-        if (this.shouldSkipFeature(featureIndex)) {
+        if (this.shouldSkipFeature(readFeatureIndex)) {
           continue;
         }
 
@@ -66,9 +66,6 @@ export class ShapefileChunkReader {
       if (this.hasContentToProcess(finalChunk)) {
         this.options.logger?.info({
           msg: 'Final chunk reading finished',
-          readTime,
-          chunkIndex: finalChunk.id,
-          featuresCount: finalChunk.features.length,
         });
         await this.processChunk(finalChunk, processor, shapefilePath, readTime);
       }
@@ -88,9 +85,9 @@ export class ShapefileChunkReader {
   }
 
   /**
-   * Count total vertices in the shapefile for progress calculation
+   * Count total features and vertices in the shapefile for progress calculation
    * @param shapefilePath Path to the shapefile
-   * @returns Total number of vertices in the shapefile
+   * @returns Total number of features and vertices in the shapefile
    */
   public async getShapefileStats(shapefilePath: string): Promise<Pick<ProgressInfo, 'totalVertices' | 'totalFeatures'>> {
     const reader = await open(shapefilePath);
@@ -124,6 +121,12 @@ export class ShapefileChunkReader {
       throw error;
     }
 
+    if (totalFeatures === 0 || totalVertices === 0) {
+      const message = `Shapefile ${shapefilePath} has no valid features or vertices`;
+      this.options.logger?.error({ msg: message });
+      throw new Error(message);
+    }
+
     return { totalVertices, totalFeatures };
   }
 
@@ -131,9 +134,11 @@ export class ShapefileChunkReader {
     const processStart = performance.now();
 
     try {
+      this.options.logger?.info({ msg: 'Processing chunk', chunkIndex: chunk.id, featuresCount: chunk.features.length, filePath, readTime });
       await processor.process(chunk);
+      this.options.logger?.info({ msg: 'Chunk processing finished', chunkIndex: chunk.id });
     } catch (error) {
-      console.error(`Error processing chunk ${chunk.id}`, error);
+      this.options.logger?.error(`Error processing chunk ${chunk.id}`, error);
       throw error;
     }
 
@@ -156,24 +161,24 @@ export class ShapefileChunkReader {
 
   /**
    * Save processing state if state manager is available
-   * @param context Context object containing the required state information
+   * @param state State object containing the required state information
    */
-  private async saveProcessingState(context: { filePath: string; chunkIndex: number; lastFeatureIndex: number }): Promise<void> {
+  private async saveProcessingState(state: { filePath: string; chunkIndex: number; lastFeatureIndex: number }): Promise<void> {
     if (!this.options.stateManager) {
       return;
     }
 
-    const state: ProcessingState = {
-      filePath: context.filePath,
-      lastProcessedChunkIndex: context.chunkIndex,
-      lastProcessedFeatureIndex: context.lastFeatureIndex,
+    const currentState: ProcessingState = {
+      filePath: state.filePath,
+      lastProcessedChunkIndex: state.chunkIndex,
+      lastProcessedFeatureIndex: state.lastFeatureIndex,
       timestamp: new Date(),
       progress: this.progressTracker?.calculateProgress(),
     };
-    await this.options.stateManager.saveState(state);
+    await this.options.stateManager.saveState(currentState);
   }
 
-  private async initializeReading(shapefilePath: string): Promise<ReaderInit> {
+  private async initializeReading(shapefilePath: string): Promise<number> {
     try {
       if (this.options.metricsCollector) {
         this.metricsManager = new MetricsManager(this.options.metricsCollector);
@@ -187,10 +192,9 @@ export class ShapefileChunkReader {
         initialProgress: this.lastState?.progress,
       });
 
-      const featureIndex = -1;
       const chunkIndex = this.lastState?.lastProcessedChunkIndex ?? 0;
 
-      return { featureIndex, chunkIndex };
+      return chunkIndex;
     } catch (error) {
       this.options.logger?.error({ msg: 'Failed to initialize reading', error });
       throw error;

@@ -8,7 +8,6 @@ export interface IProgressTracker {
    * Increments the features counter vertices processed
    * @param featuresCount Number of features processed in the current operation
    * @param processedVertices Number of vertices processed in the current operation
-   * @returns Current progress information
    */
   addProcessedFeatures: (featuresCount: number, processedVertices: number) => void;
 

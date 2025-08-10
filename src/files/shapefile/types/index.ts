@@ -23,8 +23,3 @@ export interface ReaderOptions {
   stateManager?: StateManager;
   metricsCollector?: MetricsCollector;
 }
-
-export interface ReaderInit {
-  featureIndex: number;
-  chunkIndex: number;
-}

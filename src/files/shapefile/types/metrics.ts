@@ -1,6 +1,7 @@
 export interface ChunkMetrics {
   chunkIndex: number;
   featuresCount: number;
+  skippedFeaturesCount: number;
   verticesCount: number;
   readTimeMs: number;
   processTimeMs: number;
@@ -10,6 +11,7 @@ export interface ChunkMetrics {
 
 export interface FileMetrics {
   totalFeatures: number;
+  totalSkippedFeatures: number;
   totalVertices: number;
   totalChunks: number;
   totalReadTimeMs: number;

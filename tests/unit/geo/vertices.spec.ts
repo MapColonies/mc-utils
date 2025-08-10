@@ -214,18 +214,66 @@ describe('countVertices', () => {
     });
   });
 
-  describe('Error handling', () => {
-    it('should throw error for Point geometry', () => {
+  describe('Point geometries', () => {
+    it('should count vertices in a point', () => {
       const point: Geometry = {
         type: 'Point',
         coordinates: [0, 0],
       };
 
-      expect(() => countVertices(point)).toThrow('Vertices Count Not Supported: "Point" case');
+      const result = countVertices(point);
+
+      expect(result).toBe(1);
+    });
+  });
+
+  describe('MultiPoint geometries', () => {
+    it('should count vertices in a multipoint', () => {
+      const multiPoint: Geometry = {
+        type: 'MultiPoint',
+        coordinates: [
+          [0, 0],
+          [1, 1],
+          [2, 2],
+        ],
+      };
+
+      const result = countVertices(multiPoint);
+
+      expect(result).toBe(3);
     });
 
-    it('should throw error for LineString geometry', () => {
+    it('should handle empty multipoint', () => {
+      const emptyMultiPoint: Geometry = {
+        type: 'MultiPoint',
+        coordinates: [],
+      };
+
+      const result = countVertices(emptyMultiPoint);
+
+      expect(result).toBe(0);
+    });
+  });
+
+  describe('LineString geometries', () => {
+    it('should count vertices in a simple linestring', () => {
       const lineString: Geometry = {
+        type: 'LineString',
+        coordinates: [
+          [0, 0],
+          [1, 1],
+          [2, 2],
+          [3, 3],
+        ],
+      };
+
+      const result = countVertices(lineString);
+
+      expect(result).toBe(4);
+    });
+
+    it('should handle linestring with two points', () => {
+      const twoPointLine: Geometry = {
         type: 'LineString',
         coordinates: [
           [0, 0],
@@ -233,39 +281,76 @@ describe('countVertices', () => {
         ],
       };
 
-      expect(() => countVertices(lineString)).toThrow('Vertices Count Not Supported: "LineString" case');
+      const result = countVertices(twoPointLine);
+
+      expect(result).toBe(2);
     });
 
-    it('should throw error for MultiPoint geometry', () => {
-      const multiPoint: Geometry = {
-        type: 'MultiPoint',
-        coordinates: [
-          [0, 0],
-          [1, 1],
-        ],
+    it('should handle empty linestring', () => {
+      const emptyLineString: Geometry = {
+        type: 'LineString',
+        coordinates: [],
       };
 
-      expect(() => countVertices(multiPoint)).toThrow('Vertices Count Not Supported: "MultiPoint" case');
-    });
+      const result = countVertices(emptyLineString);
 
-    it('should throw error for MultiLineString geometry', () => {
+      expect(result).toBe(0);
+    });
+  });
+
+  describe('MultiLineString geometries', () => {
+    it('should count vertices in a multilinestring', () => {
       const multiLineString: Geometry = {
         type: 'MultiLineString',
         coordinates: [
           [
             [0, 0],
             [1, 1],
+            [2, 2],
           ],
           [
-            [2, 2],
             [3, 3],
+            [4, 4],
           ],
         ],
       };
 
-      expect(() => countVertices(multiLineString)).toThrow('Vertices Count Not Supported: "MultiLineString" case');
+      const result = countVertices(multiLineString);
+
+      expect(result).toBe(5); // 3 + 2 vertices
     });
 
+    it('should handle empty multilinestring', () => {
+      const emptyMultiLineString: Geometry = {
+        type: 'MultiLineString',
+        coordinates: [],
+      };
+
+      const result = countVertices(emptyMultiLineString);
+
+      expect(result).toBe(0);
+    });
+
+    it('should handle multilinestring with empty lines', () => {
+      const multiLineStringWithEmptyLines: Geometry = {
+        type: 'MultiLineString',
+        coordinates: [
+          [],
+          [
+            [0, 0],
+            [1, 1],
+          ],
+          [],
+        ],
+      };
+
+      const result = countVertices(multiLineStringWithEmptyLines);
+
+      expect(result).toBe(2);
+    });
+  });
+
+  describe('Error handling', () => {
     it('should throw error for GeometryCollection', () => {
       const geometryCollection: Geometry = {
         type: 'GeometryCollection',
@@ -277,7 +362,7 @@ describe('countVertices', () => {
         ],
       };
 
-      expect(() => countVertices(geometryCollection)).toThrow('Vertices Count Not Supported: "GeometryCollection" case');
+      expect(() => countVertices(geometryCollection)).toThrow('Unsupported geometry type: GeometryCollection');
     });
   });
 

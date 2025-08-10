@@ -80,7 +80,7 @@ The `ShapefileChunkReader` provides robust shapefile processing with built-in st
 ### Basic Usage
 
 ```typescript
-import { ShapefileChunkReader, ReaderOptions, ChunkProcessor } from '@your-package/mc-utils';
+import { ShapefileChunkReader, ReaderOptions, ChunkProcessor } from '@map-colonies/mc-utils';
 
 // Define your chunk processor
 const processor: ChunkProcessor = {
@@ -108,7 +108,7 @@ await reader.readAndProcess('/path/to/shapefile.shp', processor);
 Implement the `StateManager` interface to enable resumable processing:
 
 ```typescript
-import { StateManager, ProcessingState } from '@your-package/mc-utils';
+import { StateManager, ProcessingState } from '@map-colonies/mc-utils';
 
 class FileStateManager implements StateManager {
   async saveState(state: ProcessingState): Promise<void> {
@@ -146,7 +146,7 @@ const progressInfo = state.progress; // Contains:
 Implement the `MetricsCollector` interface to monitor performance:
 
 ```typescript
-import { MetricsCollector, ChunkMetrics, FileMetrics } from '@your-package/mc-utils';
+import { MetricsCollector, ChunkMetrics, FileMetrics } from '@map-colonies/mc-utils';
 
 const metricsCollector: MetricsCollector = {
   onChunkMetrics: (metrics: ChunkMetrics) => {
