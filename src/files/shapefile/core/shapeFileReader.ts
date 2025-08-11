@@ -23,10 +23,9 @@ export class ShapefileChunkReader {
     const chunkIndex = await this.initializeReading(shapefilePath);
     let readFeatureIndex = -1;
 
+    const chunkBuilder = new ChunkBuilder(this.options.maxVerticesPerChunk, chunkIndex);
     try {
       const reader = await open(shapefilePath);
-
-      const chunkBuilder = new ChunkBuilder(this.options.maxVerticesPerChunk, chunkIndex);
 
       this.options.logger?.info({ msg: 'Reading started' });
       let readStart = performance.now();
@@ -72,12 +71,12 @@ export class ShapefileChunkReader {
 
       this.metricsManager?.sendFileMetrics();
     } catch (error) {
-      this.options.logger?.error({ msg: 'Error processing shapefile', shapefilePath, error });
       const lastFeatureIndex = (this.progressTracker?.getProcessedFeatures() ?? 0) - 1;
+      this.options.logger?.error({ msg: 'Error processing shapefile', shapefilePath, lastFeatureIndex, error });
 
       await this.saveProcessingState({
         filePath: shapefilePath,
-        chunkIndex,
+        chunkIndex: chunkBuilder.chunkId,
         lastFeatureIndex,
       });
       throw error;

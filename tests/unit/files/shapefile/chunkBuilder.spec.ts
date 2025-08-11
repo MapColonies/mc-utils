@@ -39,6 +39,7 @@ describe('ChunkBuilder', () => {
       const canAdd = chunkBuilder.canAddFeature(feature);
 
       expect(canAdd).toBe(true);
+      expect(chunkBuilder.build().skippedFeatures).toHaveLength(0);
     });
 
     it('should throw error when feature has no ID', () => {
@@ -98,6 +99,7 @@ describe('ChunkBuilder', () => {
       const canAdd = chunkBuilder.canAddFeature(feature1); // Would be exactly 10
 
       expect(canAdd).toBe(true);
+      expect(chunkBuilder.build().skippedFeatures).toHaveLength(0);
     });
 
     it('should add features that exceeded vertices limit to skipped array', () => {
@@ -121,7 +123,7 @@ describe('ChunkBuilder', () => {
       const canAdd = chunkBuilder.canAddFeature(largeFeature);
 
       expect(canAdd).toBe(false);
-      expect(chunkBuilder.build().skippedFeatures).toHaveLength(1);
+      expect(chunkBuilder.build().skippedFeatures).toStrictEqual([largeFeature]);
     });
 
     it('should not add feature that is already in skipped array', () => {
@@ -255,6 +257,7 @@ describe('ChunkBuilder', () => {
       const chunk = chunkBuilder.build();
 
       expect(chunk.features).toHaveLength(1);
+      expect(chunk.features[0]).toBe(complexFeature);
       expect(chunk.verticesCount).toBe(10); // 5 + 5 vertices
     });
   });

@@ -230,6 +230,7 @@ describe('ShapefileChunkReader', () => {
         skippedFeatures: [],
       });
 
+      Object.defineProperty(mockChunkBuilder, 'chunkId', { value: 0, writable: true });
       mockProcessor.mockRejectedValue(new Error());
       mockProgressTracker.getProcessedFeatures.mockReturnValue(1);
 

@@ -13,6 +13,10 @@ export class ChunkBuilder {
     this.currentVerticesCount = 0;
   }
 
+  public get chunkId(): number {
+    return this.chunkIndex;
+  }
+
   public canAddFeature(feature: Feature): boolean {
     this.validateFeatureId(feature);
 
