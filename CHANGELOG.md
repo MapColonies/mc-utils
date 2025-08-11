@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.3](https://github.com/MapColonies/mc-utils/compare/v4.0.2...v4.0.3) (2025-08-11)
+
+
+### Dependency Updates
+
+* prepare husky install script ([#38](https://github.com/MapColonies/mc-utils/issues/38)) ([3a8ac8b](https://github.com/MapColonies/mc-utils/commit/3a8ac8b409b91f44d15584556227a06fbdb5859c))
+
 ## [4.0.2](https://github.com/MapColonies/mc-utils/compare/v4.0.1...v4.0.2) (2025-08-06)
 
 
