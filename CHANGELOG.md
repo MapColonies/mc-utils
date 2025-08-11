@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.4.0](https://github.com/MapColonies/mc-utils/compare/v3.3.0...v3.4.0) (2025-08-11)
+
+
+### Features
+
+* Add Shapefile Chunked Reader with Progress Tracking and Metrics ([#31](https://github.com/MapColonies/mc-utils/issues/31)) ([5b55679](https://github.com/MapColonies/mc-utils/commit/5b556792d17bcebdef0ff4c5a5f72837c3790989))
+* refactor publish workflow to use workflow_dispatch and simplify steps ([625b9b0](https://github.com/MapColonies/mc-utils/commit/625b9b0296523412daa5a318be3e719c6ff631bf))
+
 ## [3.3.0](https://github.com/MapColonies/mc-utils/compare/v3.2.0...v3.3.0) (2025-07-06)
 
 
