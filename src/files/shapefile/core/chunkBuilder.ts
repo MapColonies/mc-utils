@@ -1,7 +1,6 @@
 import { Feature } from 'geojson';
 import { ShapefileChunk } from '../types/index';
 import { countVertices } from '../../../geo/vertices';
-import { featurePropertiesSchema } from '../../../utils/validation';
 
 export class ChunkBuilder {
   private features: Feature[];
@@ -33,6 +32,7 @@ export class ChunkBuilder {
 
   public addFeature(feature: Feature): void {
     this.validateFeatureId(feature);
+
     if (this.withinSkipped(feature)) {
       return;
     }
@@ -57,16 +57,11 @@ export class ChunkBuilder {
   }
 
   private withinSkipped(feature: Feature): boolean {
-    const featureId = featurePropertiesSchema.safeParse(feature.properties).data?.id;
-    return this.skippedFeatures.some((skipped) => {
-      const skippedId = featurePropertiesSchema.safeParse(skipped.properties).data?.id;
-      return skippedId === featureId;
-    });
+    return this.skippedFeatures.some((skipped) => skipped.id === feature.id);
   }
 
   private validateFeatureId(feature: Feature): void {
-    const parsed = featurePropertiesSchema.safeParse(feature.properties);
-    if (!parsed.success) {
+    if (feature.id === undefined) {
       throw new Error('Feature must have an id');
     }
   }

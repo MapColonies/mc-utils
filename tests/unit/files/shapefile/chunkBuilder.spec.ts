@@ -33,7 +33,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-1'
       ); // 5 vertices
 
       const canAdd = chunkBuilder.canAddFeature(feature);
@@ -70,7 +70,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-1'
       );
 
       const canAdd = chunkBuilder.canAddFeature(feature1); // Would be 11 > 10
@@ -93,7 +93,7 @@ describe('ChunkBuilder', () => {
           [0, 2],
           [0, 1],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-1'
       );
 
       const canAdd = chunkBuilder.canAddFeature(feature1); // Would be exactly 10
@@ -117,7 +117,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'large-feature'
       ); // 11 vertices
 
       const canAdd = chunkBuilder.canAddFeature(largeFeature);
@@ -141,7 +141,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'large-feature'
       ); // 11 vertices
 
       // First, feature gets added to skipped array via canAddFeature
@@ -169,7 +169,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-1'
       );
 
       chunkBuilder.addFeature(feature);
@@ -201,7 +201,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-1'
       ); // 5 vertices
       const feature2 = createPolygonFeature(
         [
@@ -211,7 +211,7 @@ describe('ChunkBuilder', () => {
           [2, 3],
           [2, 2],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-2'
       ); // 5 vertices
 
       chunkBuilder.addFeature(feature1);
@@ -229,7 +229,7 @@ describe('ChunkBuilder', () => {
       const complexFeature: Feature<Polygon> = {
         type: 'Feature',
         id: 'complex-feature',
-        properties: { id: '12a779a2-7f3b-4323-832f-acab5a3b27d4' },
+        properties: {},
         geometry: {
           type: 'Polygon',
           coordinates: [
@@ -272,7 +272,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-1'
       );
 
       chunkBuilder.addFeature(feature);
@@ -302,7 +302,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-1'
       );
 
       chunkBuilder.addFeature(feature);
@@ -323,7 +323,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-1'
       );
 
       chunkBuilder.addFeature(feature);
@@ -344,7 +344,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-1'
       );
       const feature2 = createPolygonFeature(
         [
@@ -354,7 +354,7 @@ describe('ChunkBuilder', () => {
           [2, 3],
           [2, 2],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-2'
       );
 
       chunkBuilder.addFeature(feature1);
@@ -379,7 +379,7 @@ describe('ChunkBuilder', () => {
             [0, 1],
             [0, 0],
           ],
-          '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+          'feature-1'
         ), // 5 vertices
         createPolygonFeature(
           [
@@ -389,7 +389,7 @@ describe('ChunkBuilder', () => {
             [2, 3],
             [2, 2],
           ],
-          '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+          'feature-2'
         ), // 5 vertices
         createPolygonFeature(
           [
@@ -399,7 +399,7 @@ describe('ChunkBuilder', () => {
             [4, 5],
             [4, 4],
           ],
-          '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+          'feature-3'
         ), // 5 vertices
       ];
 
@@ -440,7 +440,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'feature-1'
       );
 
       // Add feature
@@ -474,7 +474,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        'string-id'
       );
 
       expect(chunkBuilder.canAddFeature(feature)).toBe(true);
@@ -482,7 +482,7 @@ describe('ChunkBuilder', () => {
 
       const chunk = chunkBuilder.build();
       expect(chunk.features).toHaveLength(1);
-      expect(chunk.features[0].id).toBe('05fcd4e9-adf5-4258-b582-42ff983b67ce');
+      expect(chunk.features[0].id).toBe('string-id');
     });
 
     it('should handle features with numeric IDs', () => {
@@ -494,7 +494,7 @@ describe('ChunkBuilder', () => {
           [0, 1],
           [0, 0],
         ],
-        '05fcd4e9-adf5-4258-b582-42ff983b67ce'
+        12345
       );
 
       expect(chunkBuilder.canAddFeature(feature)).toBe(true);
@@ -502,7 +502,7 @@ describe('ChunkBuilder', () => {
 
       const chunk = chunkBuilder.build();
       expect(chunk.features).toHaveLength(1);
-      expect(chunk.features[0].id).toBe('05fcd4e9-adf5-4258-b582-42ff983b67ce');
+      expect(chunk.features[0].id).toBe(12345);
     });
 
     it('should throw error when trying to add feature without ID via canAddFeature', () => {
@@ -527,6 +527,46 @@ describe('ChunkBuilder', () => {
       ]);
 
       expect(() => chunkBuilder.addFeature(featureWithoutId)).toThrow('Feature must have an id');
+    });
+
+    it('should handle features with zero as ID', () => {
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        0
+      );
+
+      expect(chunkBuilder.canAddFeature(feature)).toBe(true);
+      chunkBuilder.addFeature(feature);
+
+      const chunk = chunkBuilder.build();
+      expect(chunk.features).toHaveLength(1);
+      expect(chunk.features[0].id).toBe(0);
+    });
+
+    it('should handle features with empty string as ID', () => {
+      const feature = createPolygonFeature(
+        [
+          [0, 0],
+          [1, 0],
+          [1, 1],
+          [0, 1],
+          [0, 0],
+        ],
+        ''
+      );
+
+      expect(chunkBuilder.canAddFeature(feature)).toBe(true);
+      chunkBuilder.addFeature(feature);
+
+      const chunk = chunkBuilder.build();
+      expect(chunk.features).toHaveLength(1);
+      expect(chunk.features[0].id).toBe('');
     });
   });
 });
