@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.4.1](https://github.com/MapColonies/mc-utils/compare/v3.4.0...v3.4.1) (2025-08-13)
+
+
+### Bug Fixes
+
+* trusting feature propetirs id instead of first levle feature id ([#41](https://github.com/MapColonies/mc-utils/issues/41)) ([5d6054b](https://github.com/MapColonies/mc-utils/commit/5d6054bbb517174ba08fa982d04fc0511cf9c107))
+
 ## [3.4.0](https://github.com/MapColonies/mc-utils/compare/v3.3.0...v3.4.0) (2025-08-11)
 
 
