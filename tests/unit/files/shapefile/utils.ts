@@ -2,11 +2,11 @@ import { Feature, Polygon } from 'geojson';
 import { ShapefileChunk } from '../../../../src';
 
 // Helper function to create a simple polygon feature
-export function createPolygonFeature(coordinates: number[][], id?: string | number): Feature<Polygon> {
+export function createPolygonFeature(coordinates: number[][], id?: string): Feature<Polygon> {
   return {
     type: 'Feature',
     id: id,
-    properties: {},
+    properties: { id: id },
     geometry: {
       type: 'Polygon',
       coordinates: [coordinates],
