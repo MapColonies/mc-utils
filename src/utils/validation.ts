@@ -3,8 +3,8 @@ import z from 'zod';
 export const featurePropertiesSchema = z
   .object(
     {
-      id: z.uuid(),
+      id: z.string().uuid(),
     },
-    { error: 'error(mc-utils): Feature must have an id' }
+    { message: 'error(mc-utils): Feature must have an id' }
   )
-  .loose();
+  .passthrough();
