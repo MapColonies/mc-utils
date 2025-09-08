@@ -256,6 +256,54 @@ describe('ShapefileChunkReader', () => {
       expect(mockMetricsManager.sendChunkMetrics).toHaveBeenCalledWith(chunk, expect.any(Number), expect.any(Number));
       expect(mockMetricsManager.sendFileMetrics).toHaveBeenCalled();
     });
+
+    it('should handle feature with exceeding vertex count, when feature ids are generated', async () => {
+      const largeFeature: Feature = {
+        type: 'Feature',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        id: expect.stringMatching(/^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i),
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [-1, -1],
+              [-1, 1],
+              [1, 1],
+              [1, -1],
+              [-1, -1],
+              [-1, -1],
+              [-1, -1],
+              [-1, -1],
+            ],
+          ],
+        },
+        properties: {},
+      };
+      const chunk: ShapefileChunk = {
+        id: 0,
+        features: [],
+        skippedFeatures: [largeFeature],
+        verticesCount: 0,
+      };
+      const finalChunk: ShapefileChunk = {
+        id: 1,
+        features: [],
+        skippedFeatures: [],
+        verticesCount: 0,
+      };
+      mockSource.read.mockResolvedValueOnce({ done: false, value: largeFeature }).mockResolvedValueOnce({ done: true, value: largeFeature });
+      mockChunkBuilder.canAddFeature.mockReturnValue(false);
+      mockChunkBuilder.build.mockReturnValueOnce(chunk).mockReturnValueOnce(finalChunk);
+      mockOptions.generateFeatureId = true;
+
+      await reader.readAndProcess(shapefilePath, { process: mockProcessor });
+
+      expect(mockChunkBuilder.canAddFeature).toHaveBeenCalledWith(largeFeature);
+      expect(mockChunkBuilder.build).toHaveBeenCalled();
+      expect(mockChunkBuilder.addFeature).toHaveBeenCalled();
+      expect(mockProcessor).toHaveBeenCalledWith(chunk);
+      expect(mockProcessor).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('getShapefileStats', () => {
