@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
-import { randomUUID } from 'crypto';
+import { randomUUID } from 'node:crypto';
 import { open } from 'shapefile';
 import { countVertices } from '../../../geo/vertices';
 import { ChunkProcessor, ProcessingState, ProgressInfo, ReaderOptions, ShapefileChunk } from '../types';
