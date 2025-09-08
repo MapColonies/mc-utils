@@ -1,19 +1,31 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/naming-convention */
-import * as shapefile from 'shapefile';
 import jsLogger from '@map-colonies/js-logger';
 import { Feature } from 'geojson';
-import { ReaderOptions, ChunkProcessor, ProcessingState, ShapefileChunk } from '../../../../src/files/shapefile/types';
+import * as shapefile from 'shapefile';
 import { ShapefileChunkReader } from '../../../../src';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
-import { ProgressTracker } from '../../../../src/files/shapefile/core/progressTracker';
 import { MetricsManager } from '../../../../src/files/shapefile/core/metricsManager';
+import { ProgressTracker } from '../../../../src/files/shapefile/core/progressTracker';
+import { ChunkProcessor, ProcessingState, ReaderOptions, ShapefileChunk } from '../../../../src/files/shapefile/types';
 import * as vertices from '../../../../src/geo/vertices';
 
 const shapefilePath = '/path/to/shapefile.shp';
 
+const mockRandomUUID = jest.fn<string, never>();
+
 // Mock all dependencies
+jest.mock('node:crypto', () => {
+  const originalModule = jest.requireActual<typeof import('node:crypto')>('node:crypto');
+
+  return {
+    ...originalModule,
+    randomUUID: jest.fn(() => {
+      return mockRandomUUID();
+    }),
+  };
+});
 jest.mock('shapefile');
 jest.mock('../../../../src/files/shapefile/core/chunkBuilder');
 jest.mock('../../../../src/files/shapefile/core/progressTracker');
@@ -298,6 +310,7 @@ describe('ShapefileChunkReader', () => {
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
+      expect(mockRandomUUID).toHaveBeenCalledTimes(1);
       expect(mockChunkBuilder.canAddFeature).toHaveBeenCalledWith(largeFeature);
       expect(mockChunkBuilder.build).toHaveBeenCalled();
       expect(mockChunkBuilder.addFeature).toHaveBeenCalled();
