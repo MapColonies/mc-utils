@@ -93,6 +93,7 @@ const processor: ChunkProcessor = {
 // Configure the reader
 const options: ReaderOptions = {
   maxVerticesPerChunk: 10000,
+  generateFeatureId: // Optional: for generating an UUID v4 for missing IDs
   logger: myLogger,
   stateManager: myStateManager, // Optional: for resumable processing
   metricsCollector: myMetricsCollector, // Optional: for performance monitoring
@@ -163,6 +164,7 @@ const metricsCollector: MetricsCollector = {
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `maxVerticesPerChunk` | number | Required | Maximum vertices per chunk to control memory usage |
+| `generateFeatureId` | boolean | false | Optional determines whether a unique feature identifier should be automatically generated for each feature missing an indentifier |
 | `logger` | Logger | undefined | Optional logger for debugging and monitoring |
 | `stateManager` | StateManager | undefined | Optional state manager for resumable processing |
 | `metricsCollector` | MetricsCollector | undefined | Optional metrics collector for performance monitoring |

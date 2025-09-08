@@ -18,8 +18,14 @@ export interface ChunkProcessor {
 }
 
 export interface ReaderOptions {
-  logger?: Logger;
+  /** Maximum vertices per chunk to control memory usage */
   maxVerticesPerChunk: number;
+  /** Determines whether a unique feature identifier should be automatically generated for each feature missing an indentifier */
+  generateFeatureId?: boolean;
+  /** Logger for debugging and monitoring */
+  logger?: Logger;
+  /** State manager for resumable processing */
   stateManager?: StateManager;
+  /** Metrics collector for performance monitoring */
   metricsCollector?: MetricsCollector;
 }
