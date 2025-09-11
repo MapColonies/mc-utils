@@ -25,7 +25,9 @@ export class ShapefileChunkReader {
 
     const chunkBuilder = new ChunkBuilder(this.options.maxVerticesPerChunk, chunkIndex);
     try {
-      const reader = await open(shapefilePath);
+      const dbfPath = shapefilePath.replace(/\.shp$/i, '.dbf');
+      //support feature properties with hebrew characters by setting encoding to 'utf-8'
+      const reader = await open(shapefilePath, dbfPath, { encoding: 'utf-8' });
 
       this.options.logger?.info({ msg: 'Reading started' });
       let readStart = performance.now();
