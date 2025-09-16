@@ -12,6 +12,7 @@ import { MetricsManager } from '../../../../src/files/shapefile/core/metricsMana
 import * as vertices from '../../../../src/geo/vertices';
 
 const shapefilePath = '/path/to/shapefile.shp';
+const dbfFilePath = shapefilePath.replace(/\.shp$/i, '.dbf');
 
 // Mock all dependencies
 jest.mock('shapefile');
@@ -123,7 +124,7 @@ describe('ShapefileChunkReader', () => {
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
-      expect(mockShapefile.open).toHaveBeenCalledWith(shapefilePath);
+      expect(mockShapefile.open).toHaveBeenCalledWith(shapefilePath, dbfFilePath, { encoding: 'utf-8' });
       expect(mockChunkBuilder.addFeature).toHaveBeenCalledTimes(2);
       expect(mockProcessor).toHaveBeenCalledTimes(1);
       expect(mockOptions.stateManager?.saveState).toHaveBeenCalled();
