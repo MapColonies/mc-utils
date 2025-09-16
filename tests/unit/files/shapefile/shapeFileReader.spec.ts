@@ -12,6 +12,7 @@ import { ChunkProcessor, ProcessingState, ReaderOptions, ShapefileChunk } from '
 import * as vertices from '../../../../src/geo/vertices';
 
 const shapefilePath = '/path/to/shapefile.shp';
+const dbfFilePath = shapefilePath.replace(/\.shp$/i, '.dbf');
 
 const mockRandomUUID = jest.fn<string, never>();
 
@@ -135,7 +136,7 @@ describe('ShapefileChunkReader', () => {
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
-      expect(mockShapefile.open).toHaveBeenCalledWith(shapefilePath);
+      expect(mockShapefile.open).toHaveBeenCalledWith(shapefilePath, dbfFilePath, { encoding: 'utf-8' });
       expect(mockChunkBuilder.addFeature).toHaveBeenCalledTimes(2);
       expect(mockProcessor).toHaveBeenCalledTimes(1);
       expect(mockOptions.stateManager?.saveState).toHaveBeenCalled();
