@@ -93,7 +93,7 @@ const processor: ChunkProcessor = {
 // Configure the reader
 const options: ReaderOptions = {
   maxVerticesPerChunk: 10000,
-  generateFeatureId: // Optional: for generating an UUID v4 for missing IDs
+  generateFeatureId: false, // Optional: for generating an UUID v4 for missing IDs
   logger: myLogger,
   stateManager: myStateManager, // Optional: for resumable processing
   metricsCollector: myMetricsCollector, // Optional: for performance monitoring
