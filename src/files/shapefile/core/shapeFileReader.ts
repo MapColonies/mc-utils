@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
+import { randomUUID } from 'node:crypto';
 import { open } from 'shapefile';
-import { ReaderOptions, ChunkProcessor, ShapefileChunk, ProcessingState, ProgressInfo } from '../types';
 import { countVertices } from '../../../geo/vertices';
+import { ChunkProcessor, ProcessingState, ProgressInfo, ReaderOptions, ShapefileChunk } from '../types';
 import { ChunkBuilder } from './chunkBuilder';
-import { IProgressTracker, ProgressTracker } from './progressTracker';
 import { IMetricsManager, MetricsManager } from './metricsManager';
+import { IProgressTracker, ProgressTracker } from './progressTracker';
 
 export class ShapefileChunkReader {
   private metricsManager?: IMetricsManager;
@@ -30,10 +31,13 @@ export class ShapefileChunkReader {
       const reader = await open(shapefilePath, dbfPath, { encoding: 'utf-8' });
 
       this.options.logger?.info({ msg: 'Reading started' });
+
+      const generateFeatureId = this.options.generateFeatureId ?? false;
+
       let readStart = performance.now();
       // eslint-disable-next-line no-constant-condition
       while (true) {
-        const { done, value: feature } = await reader.read();
+        const { done, value: shapeFeature } = await reader.read();
 
         if (done) {
           break;
@@ -43,6 +47,11 @@ export class ShapefileChunkReader {
 
         if (this.shouldSkipFeature(readFeatureIndex)) {
           continue;
+        }
+
+        const feature = { ...(generateFeatureId && { id: randomUUID() }), ...shapeFeature };
+        if (feature.id !== undefined) {
+          this.options.logger?.debug({ msg: `Feature ID: ${feature.id}` });
         }
 
         if (!chunkBuilder.canAddFeature(feature)) {

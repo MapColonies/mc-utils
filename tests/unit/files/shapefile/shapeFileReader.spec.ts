@@ -1,20 +1,32 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/naming-convention */
-import * as shapefile from 'shapefile';
 import jsLogger from '@map-colonies/js-logger';
 import { Feature } from 'geojson';
-import { ReaderOptions, ChunkProcessor, ProcessingState, ShapefileChunk } from '../../../../src/files/shapefile/types';
+import * as shapefile from 'shapefile';
 import { ShapefileChunkReader } from '../../../../src';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
-import { ProgressTracker } from '../../../../src/files/shapefile/core/progressTracker';
 import { MetricsManager } from '../../../../src/files/shapefile/core/metricsManager';
+import { ProgressTracker } from '../../../../src/files/shapefile/core/progressTracker';
+import { ChunkProcessor, ProcessingState, ReaderOptions, ShapefileChunk } from '../../../../src/files/shapefile/types';
 import * as vertices from '../../../../src/geo/vertices';
 
 const shapefilePath = '/path/to/shapefile.shp';
 const dbfFilePath = shapefilePath.replace(/\.shp$/i, '.dbf');
 
+const mockRandomUUID = jest.fn<string, never>();
+
 // Mock all dependencies
+jest.mock('node:crypto', () => {
+  const originalModule = jest.requireActual<typeof import('node:crypto')>('node:crypto');
+
+  return {
+    ...originalModule,
+    randomUUID: jest.fn(() => {
+      return mockRandomUUID();
+    }),
+  };
+});
 jest.mock('shapefile');
 jest.mock('../../../../src/files/shapefile/core/chunkBuilder');
 jest.mock('../../../../src/files/shapefile/core/progressTracker');
@@ -256,6 +268,55 @@ describe('ShapefileChunkReader', () => {
 
       expect(mockMetricsManager.sendChunkMetrics).toHaveBeenCalledWith(chunk, expect.any(Number), expect.any(Number));
       expect(mockMetricsManager.sendFileMetrics).toHaveBeenCalled();
+    });
+
+    it('should handle feature with exceeding vertex count, when feature ids are generated', async () => {
+      const largeFeature: Feature = {
+        type: 'Feature',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        id: expect.stringMatching(/^[A-F\d]{8}-[A-F\d]{4}-4[A-F\d]{3}-[89AB][A-F\d]{3}-[A-F\d]{12}$/i),
+        geometry: {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [-1, -1],
+              [-1, 1],
+              [1, 1],
+              [1, -1],
+              [-1, -1],
+              [-1, -1],
+              [-1, -1],
+              [-1, -1],
+            ],
+          ],
+        },
+        properties: {},
+      };
+      const chunk: ShapefileChunk = {
+        id: 0,
+        features: [],
+        skippedFeatures: [largeFeature],
+        verticesCount: 0,
+      };
+      const finalChunk: ShapefileChunk = {
+        id: 1,
+        features: [],
+        skippedFeatures: [],
+        verticesCount: 0,
+      };
+      mockSource.read.mockResolvedValueOnce({ done: false, value: largeFeature }).mockResolvedValueOnce({ done: true, value: largeFeature });
+      mockChunkBuilder.canAddFeature.mockReturnValue(false);
+      mockChunkBuilder.build.mockReturnValueOnce(chunk).mockReturnValueOnce(finalChunk);
+      mockOptions.generateFeatureId = true;
+
+      await reader.readAndProcess(shapefilePath, { process: mockProcessor });
+
+      expect(mockRandomUUID).toHaveBeenCalledTimes(1);
+      expect(mockChunkBuilder.canAddFeature).toHaveBeenCalledWith(largeFeature);
+      expect(mockChunkBuilder.build).toHaveBeenCalled();
+      expect(mockChunkBuilder.addFeature).toHaveBeenCalled();
+      expect(mockProcessor).toHaveBeenCalledWith(chunk);
+      expect(mockProcessor).toHaveBeenCalledTimes(1);
     });
   });
 
