@@ -1,6 +1,6 @@
 {
   "name": "@map-colonies/mc-utils",
-  "version": "3.4.1",
+  "version": "3.5.0",
   "description": "This is template for map colonies typescript packages",
   "main": "./dist/index.js",
   "scripts": {

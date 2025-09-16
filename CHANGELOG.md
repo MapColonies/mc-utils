@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [3.5.0](https://github.com/MapColonies/mc-utils/compare/v3.4.1...v3.5.0) (2025-09-16)
+
+
+### Features
+
+* generate missing id in shapefile ([#42](https://github.com/MapColonies/mc-utils/issues/42)) ([9632f03](https://github.com/MapColonies/mc-utils/commit/9632f036a0e1f2483cdb4ac0e1800e115e592abc))
+
+
+### Bug Fixes
+
+* support hebrew characters in feature properties by adding UTF-8 encoding to shapefile reader ([#43](https://github.com/MapColonies/mc-utils/issues/43)) ([a329be5](https://github.com/MapColonies/mc-utils/commit/a329be5591d9a2b5d5d198510f4bb058bd83c5e2))
+
 ### [3.4.1](https://github.com/MapColonies/mc-utils/compare/v3.4.0...v3.4.1) (2025-08-13)
 
 
