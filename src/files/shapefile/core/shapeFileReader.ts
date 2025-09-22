@@ -57,7 +57,7 @@ export class ShapefileChunkReader {
         };
 
         if (feature.properties.id !== undefined) {
-          this.options.logger?.debug({ msg: `Feature ID: ${feature.id}` });
+          this.options.logger?.debug({ msg: `Feature ID: ${feature.properties.id}` });
         }
 
         if (!chunkBuilder.canAddFeature(feature)) {
