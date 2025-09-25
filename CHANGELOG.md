@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.5.1](https://github.com/MapColonies/mc-utils/compare/v3.5.0...v3.5.1) (2025-09-25)
+
+
+### Bug Fixes
+
+* generated feature id to append to feature properties ([#44](https://github.com/MapColonies/mc-utils/issues/44)) ([c1f8ce5](https://github.com/MapColonies/mc-utils/commit/c1f8ce55bdb6b737c8c10524ab74fa6a88e6d659))
+
 ## [3.5.0](https://github.com/MapColonies/mc-utils/compare/v3.4.1...v3.5.0) (2025-09-16)
 
 
