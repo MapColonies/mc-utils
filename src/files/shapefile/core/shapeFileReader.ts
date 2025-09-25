@@ -50,10 +50,11 @@ export class ShapefileChunkReader {
         }
 
         const feature = {
-          ...shapeFeature, properties: {
-            ...(shapeFeature.properties?? {}),
-            ...(generateFeatureId && { id: randomUUID() })
-          }
+          ...shapeFeature,
+          properties: {
+            ...(shapeFeature.properties ?? {}),
+            ...(generateFeatureId && { id: randomUUID() }),
+          },
         };
 
         if (feature.properties.id !== undefined) {
