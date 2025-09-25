@@ -49,9 +49,16 @@ export class ShapefileChunkReader {
           continue;
         }
 
-        const feature = { ...(generateFeatureId && { id: randomUUID() }), ...shapeFeature };
-        if (feature.id !== undefined) {
-          this.options.logger?.debug({ msg: `Feature ID: ${feature.id}` });
+        const feature = {
+          ...shapeFeature,
+          properties: {
+            ...shapeFeature.properties,
+            ...(generateFeatureId && { id: randomUUID() }),
+          },
+        };
+
+        if (feature.properties.id !== undefined) {
+          this.options.logger?.debug({ msg: `Feature ID: ${feature.properties.id}` });
         }
 
         if (!chunkBuilder.canAddFeature(feature)) {
