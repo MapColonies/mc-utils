@@ -52,7 +52,7 @@ export class ShapefileChunkReader {
         const feature = {
           ...shapeFeature,
           properties: {
-            ...(shapeFeature.properties ?? {}),
+            ...shapeFeature.properties,
             ...(generateFeatureId && { id: randomUUID() }),
           },
         };
