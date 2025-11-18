@@ -24,7 +24,9 @@ export class ChunkBuilder {
     const featureVertices = countVertices(feature.geometry);
 
     if (featureVertices > this.maxVertices) {
-      this.skippedFeatures.push(feature);
+      // eslint-disable-next-line @typescript-eslint/naming-convention
+      const featureWithVertices: Feature = { ...feature, properties: { ...feature.properties, e_vertices: featureVertices } };
+      this.skippedFeatures.push(featureWithVertices);
       return false;
     }
 
