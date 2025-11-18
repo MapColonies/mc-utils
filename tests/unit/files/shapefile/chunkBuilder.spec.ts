@@ -126,8 +126,7 @@ describe('ChunkBuilder', () => {
 
       expect(canAdd).toBe(false);
       expect(chunkBuilder.build().skippedFeatures).toStrictEqual([
-        // eslint-disable-next-line @typescript-eslint/naming-convention
-        { ...largeFeature, properties: { ...largeFeature.properties, e_vertices: verticesCount } },
+        { ...largeFeature, properties: { ...largeFeature.properties, vertices: verticesCount } },
       ]);
     });
 
