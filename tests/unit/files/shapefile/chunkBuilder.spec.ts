@@ -1,4 +1,5 @@
 import { Feature, Polygon } from 'geojson';
+import { countVertices } from '../../../../src/geo/vertices';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
 import { createPolygonFeature } from './utils';
 
@@ -121,9 +122,12 @@ describe('ChunkBuilder', () => {
       ); // 11 vertices
 
       const canAdd = chunkBuilder.canAddFeature(largeFeature);
+      const verticesCount = countVertices(largeFeature.geometry);
 
       expect(canAdd).toBe(false);
-      expect(chunkBuilder.build().skippedFeatures).toStrictEqual([largeFeature]);
+      expect(chunkBuilder.build().skippedFeatures).toStrictEqual([
+        { ...largeFeature, properties: { ...largeFeature.properties, vertices: verticesCount } },
+      ]);
     });
 
     it('should not add feature that is already in skipped array', () => {

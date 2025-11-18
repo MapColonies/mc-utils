@@ -24,7 +24,8 @@ export class ChunkBuilder {
     const featureVertices = countVertices(feature.geometry);
 
     if (featureVertices > this.maxVertices) {
-      this.skippedFeatures.push(feature);
+      const featureWithVertices: Feature = { ...feature, properties: { ...feature.properties, vertices: featureVertices } };
+      this.skippedFeatures.push(featureWithVertices);
       return false;
     }
 
