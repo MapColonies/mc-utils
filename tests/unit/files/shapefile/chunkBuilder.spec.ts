@@ -1,7 +1,7 @@
 import { Feature, Polygon } from 'geojson';
+import { countVertices } from '../../../../src/geo/vertices';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
 import { createPolygonFeature } from './utils';
-import { countVertices } from '../../../../src/geo/vertices';
 
 describe('ChunkBuilder', () => {
   let chunkBuilder: ChunkBuilder;
