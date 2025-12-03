@@ -1,6 +1,7 @@
 import { Feature, Polygon } from 'geojson';
 import { countVertices } from '../../../../src/geo/vertices';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
+import { FeatureStatus } from '../../../../src/files/shapefile/types';
 import { createPolygonFeature } from './utils';
 
 describe('ChunkBuilder', () => {
@@ -25,7 +26,7 @@ describe('ChunkBuilder', () => {
   });
 
   describe('canAddFeature', () => {
-    it('should return true when feature can be added within vertex limit', () => {
+    it('should return ADD when feature can be added within vertex limit', () => {
       const feature = createPolygonFeature(
         [
           [0, 0],
@@ -39,7 +40,7 @@ describe('ChunkBuilder', () => {
 
       const canAdd = chunkBuilder.canAddFeature(feature);
 
-      expect(canAdd).toBe(true);
+      expect(canAdd).toBe(FeatureStatus.ADD);
       expect(chunkBuilder.build().skippedFeatures).toHaveLength(0);
     });
 
@@ -55,7 +56,7 @@ describe('ChunkBuilder', () => {
       expect(() => chunkBuilder.canAddFeature(feature)).toThrow('Feature must have an id');
     });
 
-    it('should return false when adding feature would exceed vertex limit', () => {
+    it('should return SKIPPED when adding feature would exceed vertex limit', () => {
       // 11 vertices
       const feature1 = createPolygonFeature(
         [
@@ -76,10 +77,10 @@ describe('ChunkBuilder', () => {
 
       const canAdd = chunkBuilder.canAddFeature(feature1); // Would be 11 > 10
 
-      expect(canAdd).toBe(false);
+      expect(canAdd).toBe(FeatureStatus.SKIPPED);
     });
 
-    it('should return true when adding feature exactly matches vertex limit', () => {
+    it('should return ADD when adding feature exactly matches vertex limit', () => {
       // 10 vertices
       const feature1 = createPolygonFeature(
         [
@@ -99,7 +100,7 @@ describe('ChunkBuilder', () => {
 
       const canAdd = chunkBuilder.canAddFeature(feature1); // Would be exactly 10
 
-      expect(canAdd).toBe(true);
+      expect(canAdd).toBe(FeatureStatus.ADD);
       expect(chunkBuilder.build().skippedFeatures).toHaveLength(0);
     });
 
@@ -124,7 +125,7 @@ describe('ChunkBuilder', () => {
       const canAdd = chunkBuilder.canAddFeature(largeFeature);
       const verticesCount = countVertices(largeFeature.geometry);
 
-      expect(canAdd).toBe(false);
+      expect(canAdd).toBe(FeatureStatus.SKIPPED);
       expect(chunkBuilder.build().skippedFeatures).toStrictEqual([
         { ...largeFeature, properties: { ...largeFeature.properties, vertices: verticesCount } },
       ]);
@@ -150,7 +151,7 @@ describe('ChunkBuilder', () => {
 
       // First, feature gets added to skipped array via canAddFeature
       const canAdd = chunkBuilder.canAddFeature(largeFeature);
-      expect(canAdd).toBe(false);
+      expect(canAdd).toBe(FeatureStatus.SKIPPED);
       expect(chunkBuilder.build().skippedFeatures).toHaveLength(1);
 
       // Now try to add the same feature - it should be ignored
@@ -408,14 +409,14 @@ describe('ChunkBuilder', () => {
       ];
 
       // Add first two features (exactly at limit)
-      expect(chunkBuilder.canAddFeature(features[0])).toBe(true);
+      expect(chunkBuilder.canAddFeature(features[0])).toBe(FeatureStatus.ADD);
       chunkBuilder.addFeature(features[0]);
 
-      expect(chunkBuilder.canAddFeature(features[1])).toBe(true);
+      expect(chunkBuilder.canAddFeature(features[1])).toBe(FeatureStatus.ADD);
       chunkBuilder.addFeature(features[1]);
 
       // Third feature would exceed limit
-      expect(chunkBuilder.canAddFeature(features[2])).toBe(false);
+      expect(chunkBuilder.canAddFeature(features[2])).toBe(FeatureStatus.FULL);
 
       // Build first chunk
       const chunk1 = chunkBuilder.build();
@@ -425,7 +426,7 @@ describe('ChunkBuilder', () => {
 
       // nextChunk and add third feature
       chunkBuilder.nextChunk();
-      expect(chunkBuilder.canAddFeature(features[2])).toBe(true);
+      expect(chunkBuilder.canAddFeature(features[2])).toBe(FeatureStatus.ADD);
       chunkBuilder.addFeature(features[2]);
 
       // Build second chunk
@@ -481,7 +482,7 @@ describe('ChunkBuilder', () => {
         '05fcd4e9-adf5-4258-b582-42ff983b67ce'
       );
 
-      expect(chunkBuilder.canAddFeature(feature)).toBe(true);
+      expect(chunkBuilder.canAddFeature(feature)).toBe(FeatureStatus.ADD);
       chunkBuilder.addFeature(feature);
 
       const chunk = chunkBuilder.build();
@@ -501,7 +502,7 @@ describe('ChunkBuilder', () => {
         '05fcd4e9-adf5-4258-b582-42ff983b67ce'
       );
 
-      expect(chunkBuilder.canAddFeature(feature)).toBe(true);
+      expect(chunkBuilder.canAddFeature(feature)).toBe(FeatureStatus.ADD);
       chunkBuilder.addFeature(feature);
 
       const chunk = chunkBuilder.build();

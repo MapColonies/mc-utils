@@ -1,5 +1,5 @@
 import { Feature } from 'geojson';
-import { ShapefileChunk } from '../types/index';
+import { FeatureStatus, ShapefileChunk } from '../types/index';
 import { countVertices } from '../../../geo/vertices';
 import { featurePropertiesSchema } from '../../../utils/validation';
 
@@ -18,7 +18,7 @@ export class ChunkBuilder {
     return this.chunkIndex;
   }
 
-  public canAddFeature(feature: Feature): boolean {
+  public canAddFeature(feature: Feature): FeatureStatus {
     this.validateFeatureId(feature);
 
     const featureVertices = countVertices(feature.geometry);
@@ -26,10 +26,11 @@ export class ChunkBuilder {
     if (featureVertices > this.maxVertices) {
       const featureWithVertices: Feature = { ...feature, properties: { ...feature.properties, vertices: featureVertices } };
       this.skippedFeatures.push(featureWithVertices);
-      return false;
+      return FeatureStatus.SKIPPED;
     }
+    const canAdd = this.currentVerticesCount + featureVertices <= this.maxVertices;
 
-    return this.currentVerticesCount + featureVertices <= this.maxVertices;
+    return canAdd ? FeatureStatus.ADD : FeatureStatus.FULL;
   }
 
   public addFeature(feature: Feature): void {
