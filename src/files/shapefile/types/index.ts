@@ -29,3 +29,13 @@ export interface ReaderOptions {
   /** Metrics collector for performance monitoring */
   metricsCollector?: MetricsCollector;
 }
+
+/* eslint-disable @typescript-eslint/naming-convention */
+export const CanAddFeatureMode = {
+  ADD: 'ADD',
+  FULL: 'FULL',
+  SKIPPED: 'SKIPPED',
+} as const;
+/* eslint-enable @typescript-eslint/naming-convention */
+
+export type CanAddFeatureMode = keyof typeof CanAddFeatureMode;
