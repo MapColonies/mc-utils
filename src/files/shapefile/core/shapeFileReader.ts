@@ -3,7 +3,7 @@
 import { randomUUID } from 'node:crypto';
 import { open } from 'shapefile';
 import { countVertices } from '../../../geo/vertices';
-import { CanAddFeatureMode, ChunkProcessor, ProcessingState, ProgressInfo, ReaderOptions, ShapefileChunk } from '../types';
+import { FeatureStatus, ChunkProcessor, ProcessingState, ProgressInfo, ReaderOptions, ShapefileChunk } from '../types';
 import { ChunkBuilder } from './chunkBuilder';
 import { IMetricsManager, MetricsManager } from './metricsManager';
 import { IProgressTracker, ProgressTracker } from './progressTracker';
@@ -62,7 +62,7 @@ export class ShapefileChunkReader {
         }
 
         const canAddFeature = chunkBuilder.canAddFeature(feature);
-        if (canAddFeature === CanAddFeatureMode.SKIPPED) {
+        if (canAddFeature === FeatureStatus.SKIPPED) {
           this.options.logger?.warn({
             msg: `Feature skipped due to exceeding max vertices`,
             featureId: feature.properties.id,
@@ -70,7 +70,7 @@ export class ShapefileChunkReader {
           continue;
         }
 
-        if (canAddFeature === CanAddFeatureMode.FULL) {
+        if (canAddFeature === FeatureStatus.FULL) {
           const readTime = performance.now() - readStart;
           const chunk = chunkBuilder.build();
           this.options.logger?.info({ msg: 'Chunk reading finished', readTime, chunkIndex: chunk.id, featuresCount: chunk.features.length });

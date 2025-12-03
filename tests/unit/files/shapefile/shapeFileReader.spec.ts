@@ -8,7 +8,7 @@ import { ShapefileChunkReader } from '../../../../src';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
 import { MetricsManager } from '../../../../src/files/shapefile/core/metricsManager';
 import { ProgressTracker } from '../../../../src/files/shapefile/core/progressTracker';
-import { ChunkProcessor, CanAddFeatureMode, ProcessingState, ReaderOptions, ShapefileChunk } from '../../../../src/files/shapefile/types';
+import { ChunkProcessor, FeatureStatus, ProcessingState, ReaderOptions, ShapefileChunk } from '../../../../src/files/shapefile/types';
 import * as vertices from '../../../../src/geo/vertices';
 
 const shapefilePath = '/path/to/shapefile.shp';
@@ -126,7 +126,7 @@ describe('ShapefileChunkReader', () => {
         .mockResolvedValueOnce({ done: false, value: mockFeature })
         .mockResolvedValueOnce({ done: true, value: mockFeature });
 
-      mockChunkBuilder.canAddFeature.mockReturnValue(CanAddFeatureMode.ADD);
+      mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.ADD);
       mockChunkBuilder.build.mockReturnValue({
         id: 0,
         features: [mockFeature, mockFeature],
@@ -150,9 +150,9 @@ describe('ShapefileChunkReader', () => {
         .mockResolvedValueOnce({ done: true, value: mockFeature });
 
       mockChunkBuilder.canAddFeature
-        .mockReturnValueOnce(CanAddFeatureMode.ADD)
-        .mockReturnValueOnce(CanAddFeatureMode.FULL)
-        .mockReturnValueOnce(CanAddFeatureMode.ADD);
+        .mockReturnValueOnce(FeatureStatus.ADD)
+        .mockReturnValueOnce(FeatureStatus.FULL)
+        .mockReturnValueOnce(FeatureStatus.ADD);
 
       const chunk1: ShapefileChunk = { id: 0, features: [mockFeature], skippedFeatures: [], verticesCount: 50 };
       const chunk2: ShapefileChunk = { id: 1, features: [mockFeature, mockFeature], skippedFeatures: [], verticesCount: 100 };
@@ -185,7 +185,7 @@ describe('ShapefileChunkReader', () => {
         .mockResolvedValueOnce({ done: false, value: mockFeature }) // index 4 - process
         .mockResolvedValueOnce({ done: true, value: mockFeature });
 
-      mockChunkBuilder.canAddFeature.mockReturnValue(CanAddFeatureMode.ADD);
+      mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.ADD);
       mockChunkBuilder.build.mockReturnValue({
         id: 3,
         features: [mockFeature],
@@ -227,7 +227,7 @@ describe('ShapefileChunkReader', () => {
       };
 
       mockSource.read.mockResolvedValueOnce({ done: false, value: largeFeature }).mockResolvedValueOnce({ done: true, value: largeFeature });
-      mockChunkBuilder.canAddFeature.mockReturnValue(CanAddFeatureMode.SKIPPED);
+      mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.SKIPPED);
       mockChunkBuilder.build.mockReturnValue(chunk);
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
       expect(mockChunkBuilder.canAddFeature).toHaveBeenCalledWith(largeFeature);
@@ -239,7 +239,7 @@ describe('ShapefileChunkReader', () => {
     it('should handle processing errors and save state', async () => {
       mockSource.read.mockResolvedValueOnce({ done: false, value: mockFeature }).mockResolvedValueOnce({ done: false, value: mockFeature });
 
-      mockChunkBuilder.canAddFeature.mockReturnValue(CanAddFeatureMode.FULL);
+      mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.FULL);
       mockChunkBuilder.build.mockReturnValue({
         id: 0,
         features: [mockFeature],
@@ -264,7 +264,7 @@ describe('ShapefileChunkReader', () => {
     it('should send metrics for each chunk', async () => {
       mockSource.read.mockResolvedValueOnce({ done: false, value: mockFeature }).mockResolvedValueOnce({ done: true, value: mockFeature });
 
-      mockChunkBuilder.canAddFeature.mockReturnValue(CanAddFeatureMode.ADD);
+      mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.ADD);
       const chunk = { id: 0, features: [mockFeature], skippedFeatures: [], verticesCount: 50 } as ShapefileChunk;
       mockChunkBuilder.build.mockReturnValue(chunk);
 
@@ -309,7 +309,7 @@ describe('ShapefileChunkReader', () => {
         verticesCount: 0,
       };
       mockSource.read.mockResolvedValueOnce({ done: false, value: largeFeature }).mockResolvedValueOnce({ done: true, value: largeFeature });
-      mockChunkBuilder.canAddFeature.mockReturnValue(CanAddFeatureMode.SKIPPED);
+      mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.SKIPPED);
       mockChunkBuilder.build.mockReturnValueOnce(chunk).mockReturnValueOnce(finalChunk);
       mockOptions.generateFeatureId = true;
 
@@ -360,7 +360,7 @@ describe('ShapefileChunkReader', () => {
 
       // First feature: chunk is full after adding it
       // Second feature: exceeds max vertices, should be SKIPPED
-      mockChunkBuilder.canAddFeature.mockReturnValueOnce(CanAddFeatureMode.FULL).mockReturnValueOnce(CanAddFeatureMode.SKIPPED);
+      mockChunkBuilder.canAddFeature.mockReturnValueOnce(FeatureStatus.FULL).mockReturnValueOnce(FeatureStatus.SKIPPED);
 
       const chunk1: ShapefileChunk = { id: 0, features: [normalFeature], skippedFeatures: [], verticesCount: 50 };
       const chunk2: ShapefileChunk = { id: 1, features: [], skippedFeatures: [largeFeature], verticesCount: 0 };

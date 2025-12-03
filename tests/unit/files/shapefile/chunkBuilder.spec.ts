@@ -1,7 +1,7 @@
 import { Feature, Polygon } from 'geojson';
 import { countVertices } from '../../../../src/geo/vertices';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
-import { CanAddFeatureMode } from '../../../../src/files/shapefile/types';
+import { FeatureStatus } from '../../../../src/files/shapefile/types';
 import { createPolygonFeature } from './utils';
 
 describe('ChunkBuilder', () => {
@@ -40,7 +40,7 @@ describe('ChunkBuilder', () => {
 
       const canAdd = chunkBuilder.canAddFeature(feature);
 
-      expect(canAdd).toBe(CanAddFeatureMode.ADD);
+      expect(canAdd).toBe(FeatureStatus.ADD);
       expect(chunkBuilder.build().skippedFeatures).toHaveLength(0);
     });
 
@@ -77,7 +77,7 @@ describe('ChunkBuilder', () => {
 
       const canAdd = chunkBuilder.canAddFeature(feature1); // Would be 11 > 10
 
-      expect(canAdd).toBe(CanAddFeatureMode.SKIPPED);
+      expect(canAdd).toBe(FeatureStatus.SKIPPED);
     });
 
     it('should return ADD when adding feature exactly matches vertex limit', () => {
@@ -100,7 +100,7 @@ describe('ChunkBuilder', () => {
 
       const canAdd = chunkBuilder.canAddFeature(feature1); // Would be exactly 10
 
-      expect(canAdd).toBe(CanAddFeatureMode.ADD);
+      expect(canAdd).toBe(FeatureStatus.ADD);
       expect(chunkBuilder.build().skippedFeatures).toHaveLength(0);
     });
 
@@ -125,7 +125,7 @@ describe('ChunkBuilder', () => {
       const canAdd = chunkBuilder.canAddFeature(largeFeature);
       const verticesCount = countVertices(largeFeature.geometry);
 
-      expect(canAdd).toBe(CanAddFeatureMode.SKIPPED);
+      expect(canAdd).toBe(FeatureStatus.SKIPPED);
       expect(chunkBuilder.build().skippedFeatures).toStrictEqual([
         { ...largeFeature, properties: { ...largeFeature.properties, vertices: verticesCount } },
       ]);
@@ -151,7 +151,7 @@ describe('ChunkBuilder', () => {
 
       // First, feature gets added to skipped array via canAddFeature
       const canAdd = chunkBuilder.canAddFeature(largeFeature);
-      expect(canAdd).toBe(CanAddFeatureMode.SKIPPED);
+      expect(canAdd).toBe(FeatureStatus.SKIPPED);
       expect(chunkBuilder.build().skippedFeatures).toHaveLength(1);
 
       // Now try to add the same feature - it should be ignored
@@ -409,14 +409,14 @@ describe('ChunkBuilder', () => {
       ];
 
       // Add first two features (exactly at limit)
-      expect(chunkBuilder.canAddFeature(features[0])).toBe(CanAddFeatureMode.ADD);
+      expect(chunkBuilder.canAddFeature(features[0])).toBe(FeatureStatus.ADD);
       chunkBuilder.addFeature(features[0]);
 
-      expect(chunkBuilder.canAddFeature(features[1])).toBe(CanAddFeatureMode.ADD);
+      expect(chunkBuilder.canAddFeature(features[1])).toBe(FeatureStatus.ADD);
       chunkBuilder.addFeature(features[1]);
 
       // Third feature would exceed limit
-      expect(chunkBuilder.canAddFeature(features[2])).toBe(CanAddFeatureMode.FULL);
+      expect(chunkBuilder.canAddFeature(features[2])).toBe(FeatureStatus.FULL);
 
       // Build first chunk
       const chunk1 = chunkBuilder.build();
@@ -426,7 +426,7 @@ describe('ChunkBuilder', () => {
 
       // nextChunk and add third feature
       chunkBuilder.nextChunk();
-      expect(chunkBuilder.canAddFeature(features[2])).toBe(CanAddFeatureMode.ADD);
+      expect(chunkBuilder.canAddFeature(features[2])).toBe(FeatureStatus.ADD);
       chunkBuilder.addFeature(features[2]);
 
       // Build second chunk
@@ -482,7 +482,7 @@ describe('ChunkBuilder', () => {
         '05fcd4e9-adf5-4258-b582-42ff983b67ce'
       );
 
-      expect(chunkBuilder.canAddFeature(feature)).toBe(CanAddFeatureMode.ADD);
+      expect(chunkBuilder.canAddFeature(feature)).toBe(FeatureStatus.ADD);
       chunkBuilder.addFeature(feature);
 
       const chunk = chunkBuilder.build();
@@ -502,7 +502,7 @@ describe('ChunkBuilder', () => {
         '05fcd4e9-adf5-4258-b582-42ff983b67ce'
       );
 
-      expect(chunkBuilder.canAddFeature(feature)).toBe(CanAddFeatureMode.ADD);
+      expect(chunkBuilder.canAddFeature(feature)).toBe(FeatureStatus.ADD);
       chunkBuilder.addFeature(feature);
 
       const chunk = chunkBuilder.build();

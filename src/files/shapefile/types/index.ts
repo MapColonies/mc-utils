@@ -31,11 +31,11 @@ export interface ReaderOptions {
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
-export const CanAddFeatureMode = {
+export const FeatureStatus = {
   ADD: 'ADD',
   FULL: 'FULL',
   SKIPPED: 'SKIPPED',
 } as const;
 /* eslint-enable @typescript-eslint/naming-convention */
 
-export type CanAddFeatureMode = keyof typeof CanAddFeatureMode;
+export type FeatureStatus = keyof typeof FeatureStatus;
