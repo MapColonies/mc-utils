@@ -79,5 +79,9 @@
   "peerDependencies": {
     "@map-colonies/error-types": "^1.3.1",
     "@map-colonies/js-logger": "^1.0.1"
+  },
+  "//OverrideComment": "https://github.com/Turfjs/turf/issues/2922",
+  "overrides": {
+    "concaveman": "1.2.1"
   }
 }
