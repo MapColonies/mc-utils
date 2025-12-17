@@ -120,15 +120,12 @@ export class ProgressTracker implements IProgressTracker {
       estimatedRemainingTimeMs = totalEstimatedTimeMs - elapsedTimeMs;
     }
 
-    const estimatedTotalChunks = this.totalVertices > 0 ? Math.ceil(this.totalVertices / this.maxVerticesPerChunk) : this.processedChunks;
-
     const endTime = this.processedFeatures === this.totalFeatures ? currentTime : undefined;
 
     return {
       processedFeatures: this.processedFeatures,
       totalFeatures: this.totalFeatures,
       processedChunks: this.processedChunks,
-      totalChunks: estimatedTotalChunks,
       processedVertices: this.processedVertices,
       totalVertices: this.totalVertices,
       skippedFeatures: this.skippedFeatures,

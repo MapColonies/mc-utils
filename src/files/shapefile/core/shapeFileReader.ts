@@ -136,10 +136,8 @@ export class ShapefileChunkReader {
             msg: `Feature exceeds maximum vertices limit: ${vertices} > ${this.options.maxVerticesPerChunk}`,
             featureId: feature.id,
           });
-          continue; // Skip features that exceed the limit
         }
         totalFeatures++;
-
         totalVertices += vertices;
       }
     } catch (error) {
@@ -172,7 +170,9 @@ export class ShapefileChunkReader {
 
     this.metricsManager?.sendChunkMetrics(chunk, readTime, processTime);
 
-    this.progressTracker?.addProcessedFeatures(chunk.features.length, chunk.verticesCount);
+    const chunkTotalFeatures = chunk.features.length + chunk.skippedFeatures.length;
+    const chunkTotalVertices = chunk.verticesCount + chunk.skippedVerticesCount;
+    this.progressTracker?.addProcessedFeatures(chunkTotalFeatures, chunkTotalVertices);
     this.progressTracker?.addSkippedFeatures(chunk.skippedFeatures.length);
     this.progressTracker?.incrementChunks();
     const lastFeatureIndex = (this.progressTracker?.getProcessedFeatures() ?? 0) - 1;

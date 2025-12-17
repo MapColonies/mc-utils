@@ -9,7 +9,6 @@ export interface ProgressInfo {
   processedFeatures: number;
   totalFeatures: number;
   processedChunks: number;
-  totalChunks: number;
   processedVertices: number;
   totalVertices: number;
   skippedFeatures: number;
