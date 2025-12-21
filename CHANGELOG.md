@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [3.5.5](https://github.com/MapColonies/mc-utils/compare/v3.5.4...v3.5.5) (2025-12-21)
+
+
+### Bug Fixes
+
+* track skipped features and vertices to avoid throwing error of missing features or vertices ([#49](https://github.com/MapColonies/mc-utils/issues/49)) ([094913a](https://github.com/MapColonies/mc-utils/commit/094913a75d00615072cd8229efa62e1b99beef9c))
+
 ### [3.5.1](https://github.com/MapColonies/mc-utils/compare/v3.5.0...v3.5.1) (2025-09-25)
 
 
