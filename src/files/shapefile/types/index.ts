@@ -9,8 +9,9 @@ export * from './state';
 export interface ShapefileChunk {
   id: number;
   features: Feature[];
-  skippedFeatures: Feature[];
   verticesCount: number;
+  skippedFeatures: Feature[];
+  skippedVerticesCount: number;
 }
 
 export interface ChunkProcessor {

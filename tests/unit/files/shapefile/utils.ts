@@ -28,7 +28,8 @@ export function createTestChunk(id: number, featuresCount: number, verticesCount
   return {
     id,
     features,
-    skippedFeatures: [],
     verticesCount,
+    skippedFeatures: [],
+    skippedVerticesCount: 0,
   };
 }

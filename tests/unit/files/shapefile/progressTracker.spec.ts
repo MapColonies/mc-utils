@@ -176,7 +176,6 @@ describe('ProgressTracker', () => {
         processedFeatures: 0,
         totalFeatures: mockTotalFeatures,
         processedChunks: 0,
-        totalChunks: 10, // Math.ceil(1000 / 100)
         processedVertices: 0,
         totalVertices: mockTotalVertices,
         percentage: 0,
@@ -269,12 +268,6 @@ describe('ProgressTracker', () => {
       expect(progress.estimatedRemainingTimeMs).toBe(0);
     });
 
-    it('should calculate total chunks correctly based on vertices and chunk size', () => {
-      const progress = progressTracker.calculateProgress();
-
-      expect(progress.totalChunks).toBe(10); // Math.ceil(1000 / 100)
-    });
-
     it('should handle edge case when total vertices is zero', () => {
       progressTracker = new ProgressTracker({
         totalVertices: 0,
@@ -285,7 +278,6 @@ describe('ProgressTracker', () => {
       const progress = progressTracker.calculateProgress();
 
       expect(progress.percentage).toBe(0);
-      expect(progress.totalChunks).toBe(0);
     });
 
     it('should set endTime when all features are processed', () => {
@@ -304,20 +296,6 @@ describe('ProgressTracker', () => {
       const progress = progressTracker.calculateProgress();
 
       expect(progress.endTime).toBeUndefined();
-    });
-
-    it('should use processed chunks as total when total vertices is zero', () => {
-      progressTracker = new ProgressTracker({
-        totalVertices: 0,
-        totalFeatures: mockTotalFeatures,
-        maxVerticesPerChunk: mockMaxVerticesPerChunk,
-      });
-      progressTracker.incrementChunks();
-      progressTracker.incrementChunks();
-
-      const progress = progressTracker.calculateProgress();
-
-      expect(progress.totalChunks).toBe(2); // Uses processedChunks when totalVertices is 0
     });
   });
 

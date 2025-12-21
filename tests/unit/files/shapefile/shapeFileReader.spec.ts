@@ -14,7 +14,7 @@ import * as vertices from '../../../../src/geo/vertices';
 const shapefilePath = '/path/to/shapefile.shp';
 const dbfFilePath = shapefilePath.replace(/\.shp$/i, '.dbf');
 
-const mockRandomUUID = jest.fn<string, never>();
+const mockRandomUUID = jest.fn<string, []>();
 
 // Mock all dependencies
 jest.mock('node:crypto', () => {
@@ -130,8 +130,9 @@ describe('ShapefileChunkReader', () => {
       mockChunkBuilder.build.mockReturnValue({
         id: 0,
         features: [mockFeature, mockFeature],
-        skippedFeatures: [],
         verticesCount: 100,
+        skippedFeatures: [],
+        skippedVerticesCount: 0,
       });
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
@@ -154,8 +155,14 @@ describe('ShapefileChunkReader', () => {
         .mockReturnValueOnce(FeatureStatus.FULL)
         .mockReturnValueOnce(FeatureStatus.ADD);
 
-      const chunk1: ShapefileChunk = { id: 0, features: [mockFeature], skippedFeatures: [], verticesCount: 50 };
-      const chunk2: ShapefileChunk = { id: 1, features: [mockFeature, mockFeature], skippedFeatures: [], verticesCount: 100 };
+      const chunk1: ShapefileChunk = { id: 0, features: [mockFeature], skippedFeatures: [], verticesCount: 50, skippedVerticesCount: 0 };
+      const chunk2: ShapefileChunk = {
+        id: 1,
+        features: [mockFeature, mockFeature],
+        skippedFeatures: [],
+        verticesCount: 100,
+        skippedVerticesCount: 0,
+      };
       mockChunkBuilder.build.mockReturnValueOnce(chunk1).mockReturnValueOnce(chunk2);
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
@@ -191,6 +198,7 @@ describe('ShapefileChunkReader', () => {
         features: [mockFeature],
         verticesCount: 50,
         skippedFeatures: [],
+        skippedVerticesCount: 0,
       });
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
@@ -222,8 +230,9 @@ describe('ShapefileChunkReader', () => {
       const chunk: ShapefileChunk = {
         id: 0,
         features: [],
-        skippedFeatures: [largeFeature],
         verticesCount: 0,
+        skippedFeatures: [largeFeature],
+        skippedVerticesCount: 8,
       };
 
       mockSource.read.mockResolvedValueOnce({ done: false, value: largeFeature }).mockResolvedValueOnce({ done: true, value: largeFeature });
@@ -245,6 +254,7 @@ describe('ShapefileChunkReader', () => {
         features: [mockFeature],
         verticesCount: 50,
         skippedFeatures: [],
+        skippedVerticesCount: 0,
       });
 
       Object.defineProperty(mockChunkBuilder, 'chunkId', { value: 0, writable: true });
@@ -265,7 +275,7 @@ describe('ShapefileChunkReader', () => {
       mockSource.read.mockResolvedValueOnce({ done: false, value: mockFeature }).mockResolvedValueOnce({ done: true, value: mockFeature });
 
       mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.ADD);
-      const chunk = { id: 0, features: [mockFeature], skippedFeatures: [], verticesCount: 50 } as ShapefileChunk;
+      const chunk = { id: 0, features: [mockFeature], verticesCount: 50, skippedFeatures: [], skippedVerticesCount: 0 } as ShapefileChunk;
       mockChunkBuilder.build.mockReturnValue(chunk);
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
@@ -299,14 +309,16 @@ describe('ShapefileChunkReader', () => {
       const chunk: ShapefileChunk = {
         id: 0,
         features: [],
-        skippedFeatures: [largeFeature],
         verticesCount: 0,
+        skippedFeatures: [largeFeature],
+        skippedVerticesCount: 8,
       };
       const finalChunk: ShapefileChunk = {
         id: 1,
         features: [],
         skippedFeatures: [],
         verticesCount: 0,
+        skippedVerticesCount: 0,
       };
       mockSource.read.mockResolvedValueOnce({ done: false, value: largeFeature }).mockResolvedValueOnce({ done: true, value: largeFeature });
       mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.SKIPPED);
@@ -362,8 +374,8 @@ describe('ShapefileChunkReader', () => {
       // Second feature: exceeds max vertices, should be SKIPPED
       mockChunkBuilder.canAddFeature.mockReturnValueOnce(FeatureStatus.FULL).mockReturnValueOnce(FeatureStatus.SKIPPED);
 
-      const chunk1: ShapefileChunk = { id: 0, features: [normalFeature], skippedFeatures: [], verticesCount: 50 };
-      const chunk2: ShapefileChunk = { id: 1, features: [], skippedFeatures: [largeFeature], verticesCount: 0 };
+      const chunk1: ShapefileChunk = { id: 0, features: [normalFeature], verticesCount: 50, skippedFeatures: [], skippedVerticesCount: 0 };
+      const chunk2: ShapefileChunk = { id: 1, features: [], verticesCount: 0, skippedFeatures: [largeFeature], skippedVerticesCount: 8 };
       mockChunkBuilder.build.mockReturnValueOnce(chunk1).mockReturnValueOnce(chunk2);
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
@@ -399,7 +411,7 @@ describe('ShapefileChunkReader', () => {
       });
     });
 
-    it('should skip features exceeding vertex limit', async () => {
+    it('should include skip features exceeding vertex limit', async () => {
       jest.spyOn(vertices, 'countVertices').mockReturnValueOnce(100).mockReturnValueOnce(2000).mockReturnValueOnce(100);
 
       mockSource.read
@@ -411,8 +423,8 @@ describe('ShapefileChunkReader', () => {
       const stats = await reader.getShapefileStats(shapefilePath);
 
       expect(stats).toEqual({
-        totalVertices: 200, // Only features 1 and 3
-        totalFeatures: 2,
+        totalVertices: 2200,
+        totalFeatures: 3,
       });
     });
 
