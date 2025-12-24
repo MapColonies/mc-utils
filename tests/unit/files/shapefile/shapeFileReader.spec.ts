@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import jsLogger from '@map-colonies/js-logger';
 import { Feature } from 'geojson';
-import * as shapefile from 'shapefile';
+import * as gdalShapefileReader from '../../../../src/files/shapefile/core/gdalShapefileReader';
 import { ShapefileChunkReader } from '../../../../src';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
 import { MetricsManager } from '../../../../src/files/shapefile/core/metricsManager';
@@ -12,7 +12,6 @@ import { ChunkProcessor, FeatureStatus, ProcessingState, ReaderOptions, Shapefil
 import * as vertices from '../../../../src/geo/vertices';
 
 const shapefilePath = '/path/to/shapefile.shp';
-const dbfFilePath = shapefilePath.replace(/\.shp$/i, '.dbf');
 
 const mockRandomUUID = jest.fn<string, []>();
 
@@ -27,14 +26,14 @@ jest.mock('node:crypto', () => {
     }),
   };
 });
-jest.mock('shapefile');
+jest.mock('../../../../src/files/shapefile/core/gdalShapefileReader');
 jest.mock('../../../../src/files/shapefile/core/chunkBuilder');
 jest.mock('../../../../src/files/shapefile/core/progressTracker');
 jest.mock('../../../../src/files/shapefile/core/metricsManager');
 jest.mock('../../../../src/geo/vertices');
 
 // Import mocked modules
-const mockShapefile = shapefile as jest.Mocked<typeof shapefile>;
+const mockGdalShapefileReader = gdalShapefileReader as jest.Mocked<typeof gdalShapefileReader>;
 const MockChunkBuilder = ChunkBuilder as jest.MockedClass<typeof ChunkBuilder>;
 const MockProgressTracker = ProgressTracker as jest.MockedClass<typeof ProgressTracker>;
 const MockMetricsManager = MetricsManager as jest.MockedClass<typeof MetricsManager>;
@@ -49,7 +48,7 @@ describe('ShapefileChunkReader', () => {
   let reader: ShapefileChunkReader;
   let mockOptions: ReaderOptions;
   let mockProcessor: jest.MockedFunction<ChunkProcessor['process']>;
-  let mockSource: jest.Mocked<shapefile.Source<Feature>>;
+  let mockSource: jest.Mocked<gdalShapefileReader.IShapefileSource>;
   let mockChunkBuilder: jest.Mocked<ChunkBuilder>;
   let mockProgressTracker: jest.Mocked<ProgressTracker>;
   let mockMetricsManager: jest.Mocked<MetricsManager>;
@@ -77,9 +76,10 @@ describe('ShapefileChunkReader', () => {
     // Setup mock shapefile source
     mockSource = {
       read: jest.fn(),
-    } as unknown as jest.Mocked<shapefile.Source<Feature>>;
+      close: jest.fn(),
+    } as unknown as jest.Mocked<gdalShapefileReader.IShapefileSource>;
 
-    mockShapefile.open.mockResolvedValue(mockSource);
+    mockGdalShapefileReader.openShapefile.mockResolvedValue(mockSource);
 
     // Setup mock chunk builder
     mockChunkBuilder = {
@@ -137,7 +137,7 @@ describe('ShapefileChunkReader', () => {
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
-      expect(mockShapefile.open).toHaveBeenCalledWith(shapefilePath, dbfFilePath, { encoding: 'utf-8' });
+      expect(mockGdalShapefileReader.openShapefile).toHaveBeenCalledWith(shapefilePath);
       expect(mockChunkBuilder.addFeature).toHaveBeenCalledTimes(2);
       expect(mockProcessor).toHaveBeenCalledTimes(1);
       expect(mockOptions.stateManager?.saveState).toHaveBeenCalled();
@@ -389,6 +389,42 @@ describe('ShapefileChunkReader', () => {
       expect(mockProcessor).toHaveBeenCalledTimes(2);
       expect(mockChunkBuilder.nextChunk).toHaveBeenCalledTimes(1);
     });
+
+    it('should close the reader after successful processing', async () => {
+      mockSource.read.mockResolvedValueOnce({ done: true, value: undefined as unknown as Feature });
+      mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.ADD);
+      mockChunkBuilder.build.mockReturnValue({
+        id: 0,
+        features: [],
+        verticesCount: 0,
+        skippedFeatures: [],
+        skippedVerticesCount: 0,
+      });
+
+      await reader.readAndProcess(shapefilePath, { process: mockProcessor });
+
+      expect(mockSource.close).toHaveBeenCalledTimes(1);
+    });
+
+    it('should close the reader even when an error occurs', async () => {
+      const error = new Error('Processing failed');
+      mockSource.read.mockResolvedValueOnce({ done: false, value: mockFeature });
+      mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.FULL);
+      mockChunkBuilder.build.mockReturnValue({
+        id: 0,
+        features: [mockFeature],
+        verticesCount: 50,
+        skippedFeatures: [],
+        skippedVerticesCount: 0,
+      });
+      Object.defineProperty(mockChunkBuilder, 'chunkId', { value: 0, writable: true });
+      mockProcessor.mockRejectedValue(error);
+      mockProgressTracker.getProcessedFeatures.mockReturnValue(1);
+
+      await expect(reader.readAndProcess(shapefilePath, { process: mockProcessor })).rejects.toThrow(error);
+
+      expect(mockSource.close).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('getShapefileStats', () => {
@@ -432,6 +468,24 @@ describe('ShapefileChunkReader', () => {
       mockSource.read.mockRejectedValue(new Error('Read error'));
 
       await expect(reader.getShapefileStats(shapefilePath)).rejects.toThrow('Read error');
+    });
+
+    it('should close the reader after getting stats', async () => {
+      mockSource.read
+        .mockResolvedValueOnce({ done: false, value: mockFeature })
+        .mockResolvedValueOnce({ done: true, value: undefined as unknown as Feature });
+
+      await reader.getShapefileStats(shapefilePath);
+
+      expect(mockSource.close).toHaveBeenCalledTimes(1);
+    });
+
+    it('should close the reader even when an error occurs', async () => {
+      mockSource.read.mockRejectedValue(new Error('Read error'));
+
+      await expect(reader.getShapefileStats(shapefilePath)).rejects.toThrow('Read error');
+
+      expect(mockSource.close).toHaveBeenCalledTimes(1);
     });
   });
 });
