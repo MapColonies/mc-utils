@@ -16,6 +16,7 @@ export interface ShapefileReadResult {
  */
 export interface IShapefileSource {
   read: () => Promise<ShapefileReadResult>;
+  close: () => void;
 }
 
 /**

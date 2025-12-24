@@ -4,7 +4,7 @@ import { randomUUID } from 'node:crypto';
 import { countVertices } from '../../../geo/vertices';
 import { FeatureStatus, ChunkProcessor, ProcessingState, ProgressInfo, ReaderOptions, ShapefileChunk } from '../types';
 import { ChunkBuilder } from './chunkBuilder';
-import { openShapefile } from './gdalShapefileReader';
+import { IShapefileSource, openShapefile } from './gdalShapefileReader';
 import { IMetricsManager, MetricsManager } from './metricsManager';
 import { IProgressTracker, ProgressTracker } from './progressTracker';
 
@@ -25,9 +25,9 @@ export class ShapefileChunkReader {
     let readFeatureIndex = -1;
 
     const chunkBuilder = new ChunkBuilder(this.options.maxVerticesPerChunk, chunkIndex);
+    let reader: IShapefileSource | undefined;
     try {
-      const reader = await openShapefile(shapefilePath);
-
+      reader = await openShapefile(shapefilePath);
       this.options.logger?.info({ msg: 'Reading started' });
 
       const generateFeatureId = this.options.generateFeatureId ?? false;
@@ -105,6 +105,8 @@ export class ShapefileChunkReader {
         lastFeatureIndex,
       });
       throw error;
+    } finally {
+      reader?.close();
     }
   }
 
@@ -114,11 +116,12 @@ export class ShapefileChunkReader {
    * @returns Total number of features and vertices in the shapefile
    */
   public async getShapefileStats(shapefilePath: string): Promise<Pick<ProgressInfo, 'totalVertices' | 'totalFeatures'>> {
-    const reader = await openShapefile(shapefilePath);
+    let reader: Awaited<ReturnType<typeof openShapefile>> | undefined;
     let totalVertices = 0;
     let totalFeatures = 0;
 
     try {
+      reader = await openShapefile(shapefilePath);
       // eslint-disable-next-line no-constant-condition
       while (true) {
         const { done, value: feature } = await reader.read();
@@ -141,6 +144,8 @@ export class ShapefileChunkReader {
     } catch (error) {
       this.options.logger?.error({ msg: 'Error counting vertices in shapefile', shapefilePath, error });
       throw error;
+    } finally {
+      reader?.close();
     }
 
     if (totalFeatures === 0 || totalVertices === 0) {

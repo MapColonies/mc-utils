@@ -76,6 +76,7 @@ describe('ShapefileChunkReader', () => {
     // Setup mock shapefile source
     mockSource = {
       read: jest.fn(),
+      close: jest.fn(),
     } as unknown as jest.Mocked<gdalShapefileReader.IShapefileSource>;
 
     mockGdalShapefileReader.openShapefile.mockResolvedValue(mockSource);
@@ -388,6 +389,42 @@ describe('ShapefileChunkReader', () => {
       expect(mockProcessor).toHaveBeenCalledTimes(2);
       expect(mockChunkBuilder.nextChunk).toHaveBeenCalledTimes(1);
     });
+
+    it('should close the reader after successful processing', async () => {
+      mockSource.read.mockResolvedValueOnce({ done: true, value: undefined as unknown as Feature });
+      mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.ADD);
+      mockChunkBuilder.build.mockReturnValue({
+        id: 0,
+        features: [],
+        verticesCount: 0,
+        skippedFeatures: [],
+        skippedVerticesCount: 0,
+      });
+
+      await reader.readAndProcess(shapefilePath, { process: mockProcessor });
+
+      expect(mockSource.close).toHaveBeenCalledTimes(1);
+    });
+
+    it('should close the reader even when an error occurs', async () => {
+      const error = new Error('Processing failed');
+      mockSource.read.mockResolvedValueOnce({ done: false, value: mockFeature });
+      mockChunkBuilder.canAddFeature.mockReturnValue(FeatureStatus.FULL);
+      mockChunkBuilder.build.mockReturnValue({
+        id: 0,
+        features: [mockFeature],
+        verticesCount: 50,
+        skippedFeatures: [],
+        skippedVerticesCount: 0,
+      });
+      Object.defineProperty(mockChunkBuilder, 'chunkId', { value: 0, writable: true });
+      mockProcessor.mockRejectedValue(error);
+      mockProgressTracker.getProcessedFeatures.mockReturnValue(1);
+
+      await expect(reader.readAndProcess(shapefilePath, { process: mockProcessor })).rejects.toThrow(error);
+
+      expect(mockSource.close).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('getShapefileStats', () => {
@@ -431,6 +468,24 @@ describe('ShapefileChunkReader', () => {
       mockSource.read.mockRejectedValue(new Error('Read error'));
 
       await expect(reader.getShapefileStats(shapefilePath)).rejects.toThrow('Read error');
+    });
+
+    it('should close the reader after getting stats', async () => {
+      mockSource.read
+        .mockResolvedValueOnce({ done: false, value: mockFeature })
+        .mockResolvedValueOnce({ done: true, value: undefined as unknown as Feature });
+
+      await reader.getShapefileStats(shapefilePath);
+
+      expect(mockSource.close).toHaveBeenCalledTimes(1);
+    });
+
+    it('should close the reader even when an error occurs', async () => {
+      mockSource.read.mockRejectedValue(new Error('Read error'));
+
+      await expect(reader.getShapefileStats(shapefilePath)).rejects.toThrow('Read error');
+
+      expect(mockSource.close).toHaveBeenCalledTimes(1);
     });
   });
 });
