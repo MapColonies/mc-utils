@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { randomUUID } from 'node:crypto';
-import { open } from 'shapefile';
 import { countVertices } from '../../../geo/vertices';
 import { FeatureStatus, ChunkProcessor, ProcessingState, ProgressInfo, ReaderOptions, ShapefileChunk } from '../types';
 import { ChunkBuilder } from './chunkBuilder';
+import { openShapefile } from './gdalShapefileReader';
 import { IMetricsManager, MetricsManager } from './metricsManager';
 import { IProgressTracker, ProgressTracker } from './progressTracker';
 
@@ -27,8 +27,9 @@ export class ShapefileChunkReader {
     const chunkBuilder = new ChunkBuilder(this.options.maxVerticesPerChunk, chunkIndex);
     try {
       const dbfPath = shapefilePath.replace(/\.shp$/i, '.dbf');
-      //support feature properties with hebrew characters by setting encoding to 'utf-8'
-      const reader = await open(shapefilePath, dbfPath, { encoding: 'utf-8' });
+      // GDAL handles encoding automatically (reads from .cpg file if present, defaults to UTF-8)
+      // This supports feature properties with Hebrew characters
+      const reader = await openShapefile(shapefilePath, dbfPath, { encoding: 'utf-8' });
 
       this.options.logger?.info({ msg: 'Reading started' });
 
@@ -116,7 +117,7 @@ export class ShapefileChunkReader {
    * @returns Total number of features and vertices in the shapefile
    */
   public async getShapefileStats(shapefilePath: string): Promise<Pick<ProgressInfo, 'totalVertices' | 'totalFeatures'>> {
-    const reader = await open(shapefilePath);
+    const reader = await openShapefile(shapefilePath);
     let totalVertices = 0;
     let totalFeatures = 0;
 

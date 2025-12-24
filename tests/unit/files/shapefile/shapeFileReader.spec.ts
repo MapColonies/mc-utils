@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import jsLogger from '@map-colonies/js-logger';
 import { Feature } from 'geojson';
-import * as shapefile from 'shapefile';
+import * as gdalShapefileReader from '../../../../src/files/shapefile/core/gdalShapefileReader';
 import { ShapefileChunkReader } from '../../../../src';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
 import { MetricsManager } from '../../../../src/files/shapefile/core/metricsManager';
@@ -27,14 +27,14 @@ jest.mock('node:crypto', () => {
     }),
   };
 });
-jest.mock('shapefile');
+jest.mock('../../../../src/files/shapefile/core/gdalShapefileReader');
 jest.mock('../../../../src/files/shapefile/core/chunkBuilder');
 jest.mock('../../../../src/files/shapefile/core/progressTracker');
 jest.mock('../../../../src/files/shapefile/core/metricsManager');
 jest.mock('../../../../src/geo/vertices');
 
 // Import mocked modules
-const mockShapefile = shapefile as jest.Mocked<typeof shapefile>;
+const mockGdalShapefileReader = gdalShapefileReader as jest.Mocked<typeof gdalShapefileReader>;
 const MockChunkBuilder = ChunkBuilder as jest.MockedClass<typeof ChunkBuilder>;
 const MockProgressTracker = ProgressTracker as jest.MockedClass<typeof ProgressTracker>;
 const MockMetricsManager = MetricsManager as jest.MockedClass<typeof MetricsManager>;
@@ -49,7 +49,7 @@ describe('ShapefileChunkReader', () => {
   let reader: ShapefileChunkReader;
   let mockOptions: ReaderOptions;
   let mockProcessor: jest.MockedFunction<ChunkProcessor['process']>;
-  let mockSource: jest.Mocked<shapefile.Source<Feature>>;
+  let mockSource: jest.Mocked<gdalShapefileReader.IShapefileSource>;
   let mockChunkBuilder: jest.Mocked<ChunkBuilder>;
   let mockProgressTracker: jest.Mocked<ProgressTracker>;
   let mockMetricsManager: jest.Mocked<MetricsManager>;
@@ -77,9 +77,9 @@ describe('ShapefileChunkReader', () => {
     // Setup mock shapefile source
     mockSource = {
       read: jest.fn(),
-    } as unknown as jest.Mocked<shapefile.Source<Feature>>;
+    } as unknown as jest.Mocked<gdalShapefileReader.IShapefileSource>;
 
-    mockShapefile.open.mockResolvedValue(mockSource);
+    mockGdalShapefileReader.openShapefile.mockResolvedValue(mockSource);
 
     // Setup mock chunk builder
     mockChunkBuilder = {
@@ -137,7 +137,7 @@ describe('ShapefileChunkReader', () => {
 
       await reader.readAndProcess(shapefilePath, { process: mockProcessor });
 
-      expect(mockShapefile.open).toHaveBeenCalledWith(shapefilePath, dbfFilePath, { encoding: 'utf-8' });
+      expect(mockGdalShapefileReader.openShapefile).toHaveBeenCalledWith(shapefilePath, dbfFilePath, { encoding: 'utf-8' });
       expect(mockChunkBuilder.addFeature).toHaveBeenCalledTimes(2);
       expect(mockProcessor).toHaveBeenCalledTimes(1);
       expect(mockOptions.stateManager?.saveState).toHaveBeenCalled();
