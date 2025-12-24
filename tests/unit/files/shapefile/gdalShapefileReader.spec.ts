@@ -156,6 +156,21 @@ describe('GdalShapefileReader', () => {
       expect(result.value).toBeUndefined();
     });
 
+    it('should handle empty shapefile with zero features', async () => {
+      mockLayerFeatures.first.mockReturnValue(null as unknown as gdal.Feature);
+      mockLayerFeatures.next.mockReturnValue(null as unknown as gdal.Feature);
+      mockLayerFeatures.count.mockReturnValue(0);
+
+      const reader = await GdalShapefileReader.open(shapefilePath);
+
+      const result = await reader.read();
+      expect(result.done).toBe(true);
+      expect(result.value).toBeUndefined();
+
+      // eslint-disable-next-line @typescript-eslint/unbound-method
+      expect(mockLayerFeatures.first).toHaveBeenCalledTimes(1);
+    });
+
     it('should return done=true after iterating through all features', async () => {
       const mockGeometry: Polygon = {
         type: 'Polygon',

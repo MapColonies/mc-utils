@@ -116,7 +116,7 @@ export class ShapefileChunkReader {
    * @returns Total number of features and vertices in the shapefile
    */
   public async getShapefileStats(shapefilePath: string): Promise<Pick<ProgressInfo, 'totalVertices' | 'totalFeatures'>> {
-    let reader: Awaited<ReturnType<typeof openShapefile>> | undefined;
+    let reader: IShapefileSource | undefined;
     let totalVertices = 0;
     let totalFeatures = 0;
 
