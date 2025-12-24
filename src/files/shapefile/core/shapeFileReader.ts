@@ -26,10 +26,7 @@ export class ShapefileChunkReader {
 
     const chunkBuilder = new ChunkBuilder(this.options.maxVerticesPerChunk, chunkIndex);
     try {
-      const dbfPath = shapefilePath.replace(/\.shp$/i, '.dbf');
-      // GDAL handles encoding automatically (reads from .cpg file if present, defaults to UTF-8)
-      // This supports feature properties with Hebrew characters
-      const reader = await openShapefile(shapefilePath, dbfPath, { encoding: 'utf-8' });
+      const reader = await openShapefile(shapefilePath);
 
       this.options.logger?.info({ msg: 'Reading started' });
 

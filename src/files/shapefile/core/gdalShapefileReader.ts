@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
-/* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import gdal from 'gdal-async';
 import { Feature, Geometry, GeoJsonProperties } from 'geojson';
 
@@ -41,17 +38,9 @@ export class GdalShapefileReader implements IShapefileSource {
    * This is the async factory method to create a GdalShapefileReader.
    *
    * @param shapefilePath - Path to the .shp file
-   * @param _dbfPath - Path to the .dbf file (not used by GDAL as it handles this automatically)
-   * @param _options - Options object (encoding is handled automatically by GDAL)
    * @returns Promise resolving to a GdalShapefileReader instance
    */
-  public static async open(
-    shapefilePath: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _dbfPath?: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    _options?: { encoding?: string }
-  ): Promise<GdalShapefileReader> {
+  public static async open(shapefilePath: string): Promise<GdalShapefileReader> {
     // Note: GDAL handles .dbf file association automatically based on the .shp path
     // and typically reads encoding from .cpg file if present, or uses UTF-8 by default
     const dataset = await gdal.openAsync(shapefilePath);
@@ -76,6 +65,7 @@ export class GdalShapefileReader implements IShapefileSource {
       gdalFeature = this.layer.features.next();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition, @typescript-eslint/strict-boolean-expressions
     if (!gdalFeature) {
       return Promise.resolve({
         done: true,
@@ -123,6 +113,7 @@ export class GdalShapefileReader implements IShapefileSource {
 
     // Preserve feature ID if present
     const fid = gdalFeature.fid;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (fid !== undefined) {
       feature.id = fid;
     }
@@ -133,13 +124,10 @@ export class GdalShapefileReader implements IShapefileSource {
 
 /**
  * Factory function to open a shapefile using gdal-async.
- * This function provides the same interface as `shapefile.open()` for easy migration.
  *
  * @param shapefilePath - Path to the .shp file
- * @param dbfPath - Path to the .dbf file (optional, not used by GDAL)
- * @param options - Options object with encoding (optional, GDAL handles encoding automatically)
  * @returns Promise resolving to a shapefile reader
  */
-export async function openShapefile(shapefilePath: string, dbfPath?: string, options?: { encoding?: string }): Promise<IShapefileSource> {
-  return GdalShapefileReader.open(shapefilePath, dbfPath, options);
+export async function openShapefile(shapefilePath: string): Promise<IShapefileSource> {
+  return GdalShapefileReader.open(shapefilePath);
 }
