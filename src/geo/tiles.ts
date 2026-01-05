@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
 import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
 import { bbox, Feature, FeatureCollection, MultiPolygon, Polygon } from '@turf/turf';
+import { ZoomLevel } from '../models';
 import { ITile, ITileRange } from '../models/interfaces/geo/iTile';
 import { bboxToTileRange, snapBBoxToTileGrid } from './bboxUtils';
 import { tileToDegrees } from './geoConvertor';
 
-const zoomToResolutionDegMapper: Record<number, number> = {
+const zoomToResolutionDegMapper: Record<ZoomLevel, number> = {
   /* eslint-disable @typescript-eslint/naming-convention */
   0: 0.703125,
   1: 0.3515625,
@@ -33,7 +34,7 @@ const zoomToResolutionDegMapper: Record<number, number> = {
   /* eslint-enable @typescript-eslint/naming-convention */
 };
 
-const zoomToResolutionMeterMapper: Record<number, number> = {
+const zoomToResolutionMeterMapper: Record<ZoomLevel, number> = {
   /* eslint-disable @typescript-eslint/naming-convention */
   0: 78271.52,
   1: 39135.76,
@@ -101,7 +102,7 @@ export function flipYAxis(tile: ITile): ITile {
  * @param zoom zoom level in range of 0-22
  * @returns resolution represented in degrees, or undefined if zoom level is out of range
  */
-export function zoomLevelToResolutionDeg(zoom: number): number | undefined {
+export function zoomLevelToResolutionDeg(zoom: ZoomLevel): number {
   return zoomToResolutionDegMapper[zoom];
 }
 
@@ -110,7 +111,7 @@ export function zoomLevelToResolutionDeg(zoom: number): number | undefined {
  * @param zoom zoom level in range of 0-22
  * @returns resolution represented in Meters, or undefined if zoom level is out of range
  */
-export function zoomLevelToResolutionMeter(zoom: number): number | undefined {
+export function zoomLevelToResolutionMeter(zoom: ZoomLevel): number {
   return zoomToResolutionMeterMapper[zoom];
 }
 
