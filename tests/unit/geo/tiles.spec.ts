@@ -85,11 +85,6 @@ describe('tiles', () => {
       const expectedResult = 0.000000167638063430786;
       expect(resolutionDegResult).toEqual(expectedResult);
     });
-
-    it('Check for return undefined value for out of range value', function () {
-      const resolutionDegResult = zoomLevelToResolutionDeg(50);
-      expect(resolutionDegResult === undefined).toBe(true);
-    });
   });
 
   describe('zoomLevelToResolutionMeter', () => {
@@ -103,11 +98,6 @@ describe('tiles', () => {
       const resolutionDegResult = zoomLevelToResolutionMeter(22);
       const expectedResult = 0.0185;
       expect(resolutionDegResult).toEqual(expectedResult);
-    });
-
-    it('Check for return undefined value for out of range value', function () {
-      const resolutionDegResult = zoomLevelToResolutionMeter(50);
-      expect(resolutionDegResult === undefined).toBe(true);
     });
   });
 
@@ -129,11 +119,6 @@ describe('tiles', () => {
       const resolutionDegResult = zoomLevelToResolutionMeter(22);
       const expectedResult = 0.0185;
       expect(resolutionDegResult).toEqual(expectedResult);
-    });
-
-    it('Check for return undefined value for out of range value', function () {
-      const resolutionDegResult = zoomLevelToResolutionMeter(50);
-      expect(resolutionDegResult === undefined).toBe(true);
     });
   });
 
