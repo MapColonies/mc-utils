@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.4](https://github.com/MapColonies/mc-utils/compare/v4.0.3...v4.0.4) (2026-02-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* Minimum Node.js version updated from v20 to v24
+* adapt generator to work async  ([#26](https://github.com/MapColonies/mc-utils/issues/26))
+* update depencies ([#24](https://github.com/MapColonies/mc-utils/issues/24))
+
+### Features
+
+* adapt generator to work async  ([#26](https://github.com/MapColonies/mc-utils/issues/26)) ([604182e](https://github.com/MapColonies/mc-utils/commit/604182e5d06cd64ec1d981635bc3e1371888f88a))
+* add promiseTimeout function ([#27](https://github.com/MapColonies/mc-utils/issues/27)) ([55059b0](https://github.com/MapColonies/mc-utils/commit/55059b0ce13836590d0292a7bdbb1ecf3d675e42))
+* Add Shapefile Chunked Reader with Progress Tracking and Metrics ([#31](https://github.com/MapColonies/mc-utils/issues/31)) ([5b55679](https://github.com/MapColonies/mc-utils/commit/5b556792d17bcebdef0ff4c5a5f72837c3790989))
+* added http client ([#1](https://github.com/MapColonies/mc-utils/issues/1)) ([48ebf45](https://github.com/MapColonies/mc-utils/commit/48ebf45a62f07ae71cb1b23e8a6ad662da56590f))
+* added utc-datetime model ([#16](https://github.com/MapColonies/mc-utils/issues/16)) ([5b9d6aa](https://github.com/MapColonies/mc-utils/commit/5b9d6aa20a355139de885e45d97acf88b27819ab))
+* adding http-client new errors cases ([#29](https://github.com/MapColonies/mc-utils/issues/29)) ([8ecf9bf](https://github.com/MapColonies/mc-utils/commit/8ecf9bf9d580e8097ec1069b1f6fea4d6d3f9ef3))
+* gdal types and utils ([#19](https://github.com/MapColonies/mc-utils/issues/19)) ([ede57ef](https://github.com/MapColonies/mc-utils/commit/ede57ef3d62d8511ccad59b0ebaf092a59e163eb))
+* generate missing id in shapefile ([#42](https://github.com/MapColonies/mc-utils/issues/42)) ([9632f03](https://github.com/MapColonies/mc-utils/commit/9632f036a0e1f2483cdb4ac0e1800e115e592abc))
+* Handle 405 error ([#28](https://github.com/MapColonies/mc-utils/issues/28)) ([9af84ae](https://github.com/MapColonies/mc-utils/commit/9af84aed974654059d83d795abfb40a6a4a36983))
+* refactor publish workflow to use workflow_dispatch and simplify steps ([625b9b0](https://github.com/MapColonies/mc-utils/commit/625b9b0296523412daa5a318be3e719c6ff631bf))
+* support basic auth and external headers ([#7](https://github.com/MapColonies/mc-utils/issues/7)) ([26b0c5d](https://github.com/MapColonies/mc-utils/commit/26b0c5d79ab38c6346de611dd415cf9e64bf1123))
+* Tile calculations ([#5](https://github.com/MapColonies/mc-utils/issues/5)) ([ea4c5ac](https://github.com/MapColonies/mc-utils/commit/ea4c5ac0941c7ee3d7c999e4034c0c44339db643))
+* tiles size estimation functions utilities (MAPCO-2836) ([#23](https://github.com/MapColonies/mc-utils/issues/23)) ([5f727c6](https://github.com/MapColonies/mc-utils/commit/5f727c6b5de158f089f1f61457620cba8c59af8d))
+* update depencies ([#24](https://github.com/MapColonies/mc-utils/issues/24)) ([0cd2d37](https://github.com/MapColonies/mc-utils/commit/0cd2d37811db184bdcff01809ffa35e91774bddb))
+* update to Node.js 24 and modernize tooling (MAPCO-9810) ([#54](https://github.com/MapColonies/mc-utils/issues/54)) ([38730ad](https://github.com/MapColonies/mc-utils/commit/38730ad1d9b01c7d8920d1ad63c9fbb63507ac91))
+* zoomToResDeg and zoomToResMeter ([#20](https://github.com/MapColonies/mc-utils/issues/20)) ([18faefa](https://github.com/MapColonies/mc-utils/commit/18faefadeaa59c6e81ace5c2e6589a284a67b8bd))
+
+
+### Bug Fixes
+
+* concaveman bug by overiding his vesrion to v1.2.1 ([#47](https://github.com/MapColonies/mc-utils/issues/47)) ([68c0376](https://github.com/MapColonies/mc-utils/commit/68c0376c5271118d8fbdeb7bdafb30c841839cc7))
+* fixed axios option for requests ([#12](https://github.com/MapColonies/mc-utils/issues/12)) ([9ce0212](https://github.com/MapColonies/mc-utils/commit/9ce0212650ea62981e5c23578affef2a7fd83946))
+* generated feature id to append to feature properties ([#44](https://github.com/MapColonies/mc-utils/issues/44)) ([c1f8ce5](https://github.com/MapColonies/mc-utils/commit/c1f8ce55bdb6b737c8c10524ab74fa6a88e6d659))
+* http client global config ([#10](https://github.com/MapColonies/mc-utils/issues/10)) ([55a94bc](https://github.com/MapColonies/mc-utils/commit/55a94bc38ebefaface019d8e2535728386734e88))
+* include vertex count in skipped features for better tracking ([#45](https://github.com/MapColonies/mc-utils/issues/45)) ([b6513d4](https://github.com/MapColonies/mc-utils/commit/b6513d4c3a33f52fdb45d5f17ad1f6d901f8ffd4))
+* making by value instead by reference ([#14](https://github.com/MapColonies/mc-utils/issues/14)) ([f16ea7f](https://github.com/MapColonies/mc-utils/commit/f16ea7f375465e537084992b6d34c70bd26cb767))
+* prepublish for npm v7 ([#4](https://github.com/MapColonies/mc-utils/issues/4)) ([382bf72](https://github.com/MapColonies/mc-utils/commit/382bf7236622668fd213bfa86911288d33cb24da))
+* prevent skipped features from being added to chunk features ([#46](https://github.com/MapColonies/mc-utils/issues/46)) ([3df5336](https://github.com/MapColonies/mc-utils/commit/3df5336b6ad5eeea1dff4f91aad9d17150db2dc7))
+* release command ([#2](https://github.com/MapColonies/mc-utils/issues/2)) ([8bad6a9](https://github.com/MapColonies/mc-utils/commit/8bad6a98de6359aa94ca22723a5ab7968e8b22a1))
+* snap bbox to tile grid ([#13](https://github.com/MapColonies/mc-utils/issues/13)) ([6ec33ae](https://github.com/MapColonies/mc-utils/commit/6ec33aeb97b3f579471c1512943a321e5afb7119))
+* support hebrew characters in feature properties by adding UTF-8 encoding to shapefile reader ([#43](https://github.com/MapColonies/mc-utils/issues/43)) ([a329be5](https://github.com/MapColonies/mc-utils/commit/a329be5591d9a2b5d5d198510f4bb058bd83c5e2))
+* track skipped features and vertices to avoid throwing error of missing features or vertices ([#49](https://github.com/MapColonies/mc-utils/issues/49)) ([094913a](https://github.com/MapColonies/mc-utils/commit/094913a75d00615072cd8229efa62e1b99beef9c))
+* trusting feature propetirs id instead of first levle feature id ([#41](https://github.com/MapColonies/mc-utils/issues/41)) ([5d6054b](https://github.com/MapColonies/mc-utils/commit/5d6054bbb517174ba08fa982d04fc0511cf9c107))
+
 ### [3.5.6](https://github.com/MapColonies/mc-utils/compare/v3.5.5...v3.5.6) (2025-12-24)
 
 ### [3.5.5](https://github.com/MapColonies/mc-utils/compare/v3.5.4...v3.5.5) (2025-12-21)
