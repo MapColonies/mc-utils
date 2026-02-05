@@ -350,6 +350,43 @@ describe('countVertices', () => {
     });
   });
 
+  describe('GeometryCollection geometries', () => {
+    it('should count vertices in a geometry collection', () => {
+      const geometryCollection: Geometry = {
+        type: 'GeometryCollection',
+        geometries: [
+          {
+            type: 'Point',
+            coordinates: [0, 0],
+          },
+          {
+            type: 'LineString',
+            coordinates: [
+              [1, 1],
+              [2, 2],
+              [3, 3],
+            ],
+          },
+          {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [4, 4],
+                [5, 4],
+                [5, 5],
+                [4, 4],
+              ],
+            ],
+          },
+        ],
+      };
+
+      const result = countVertices(geometryCollection);
+
+      expect(result).toBe(8); // 1 + 3 + 4 vertices
+    });
+  });
+
   describe('Error handling', () => {
     it('should throw error for GeometryCollection', () => {
       const geometryCollection = {
