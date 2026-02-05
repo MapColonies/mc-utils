@@ -1,4 +1,4 @@
-import { Geometry, Polygon, MultiPolygon } from 'geojson';
+import type { Geometry, Polygon, MultiPolygon } from 'geojson';
 import { countVertices } from '../../../src/geo/vertices';
 
 describe('countVertices', () => {

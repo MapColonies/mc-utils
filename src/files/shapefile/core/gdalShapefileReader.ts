@@ -1,5 +1,5 @@
 import gdal from 'gdal-async';
-import { Feature, Geometry, GeoJsonProperties } from 'geojson';
+import type { Feature, Geometry, GeoJsonProperties } from 'geojson';
 
 /**
  * Result of reading a feature from the shapefile

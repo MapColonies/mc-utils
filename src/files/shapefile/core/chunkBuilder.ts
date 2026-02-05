@@ -1,4 +1,4 @@
-import { Feature } from 'geojson';
+import type { Feature } from 'geojson';
 import { FeatureStatus, ShapefileChunk } from '../types/index';
 import { countVertices } from '../../../geo/vertices';
 import { featurePropertiesSchema } from '../../../utils/validation';

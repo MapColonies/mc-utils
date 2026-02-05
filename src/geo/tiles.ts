@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { bbox } from '@turf/turf';
 import { ITile, ITileRange } from '../models/interfaces/geo/iTile';
 import { BBox2d } from '../models/types';

@@ -1,4 +1,4 @@
-import { Feature, Polygon } from 'geojson';
+import type { Feature, Polygon } from 'geojson';
 import { countVertices } from '../../../../src/geo/vertices';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
 import { FeatureStatus } from '../../../../src/files/shapefile/types';

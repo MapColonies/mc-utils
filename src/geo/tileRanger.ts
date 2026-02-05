@@ -1,4 +1,4 @@
-import { Feature, MultiPolygon, Polygon } from 'geojson';
+import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import { area, bbox as polygonToBbox, bboxPolygon, booleanEqual, intersect } from '@turf/turf';
 import { ITile, ITileRange } from '../models/interfaces/geo/iTile';
 import { BBox2d } from '../models/types';

@@ -1,4 +1,4 @@
-import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 import { intersect } from '@turf/turf';
 import { find, isEqual, isEqualWith } from 'lodash';
 

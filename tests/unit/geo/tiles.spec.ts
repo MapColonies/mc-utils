@@ -1,4 +1,4 @@
-import { Feature, MultiPolygon, Polygon } from 'geojson';
+import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import { ITileRange } from '../../../src';
 import {
   tileRangeToTilesCount,

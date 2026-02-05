@@ -1,4 +1,4 @@
-import { Feature, Polygon } from 'geojson';
+import type { Feature, Polygon } from 'geojson';
 import { ShapefileChunk } from '../../../../src';
 
 // Helper function to create a simple polygon feature

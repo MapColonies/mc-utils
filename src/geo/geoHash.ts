@@ -1,5 +1,5 @@
 import { area, bbox as polygonToBbox, bboxPolygon, intersect } from '@turf/turf';
-import { Feature, MultiPolygon, Polygon } from 'geojson';
+import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import * as ngeohash from 'ngeohash';
 import { BBox2d } from '../models/types';
 import { ITile } from '../models/interfaces/geo/iTile';

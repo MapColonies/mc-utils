@@ -1,5 +1,5 @@
 import gdal from 'gdal-async';
-import { Feature, Polygon } from 'geojson';
+import type { Feature, Polygon } from 'geojson';
 import { GdalShapefileReader, openShapefile } from '../../../../src/files/shapefile/core/gdalShapefileReader';
 
 // Mock gdal-async

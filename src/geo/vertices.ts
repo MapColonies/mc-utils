@@ -1,4 +1,4 @@
-import { Geometry } from 'geojson';
+import type { Geometry } from 'geojson';
 
 /**
  * Counts the number of vertices in a given geometry.

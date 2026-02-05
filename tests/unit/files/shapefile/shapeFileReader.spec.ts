@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 /* eslint-disable @typescript-eslint/naming-convention */
 import jsLogger from '@map-colonies/js-logger';
-import { Feature } from 'geojson';
+import type { Feature } from 'geojson';
 import * as gdalShapefileReader from '../../../../src/files/shapefile/core/gdalShapefileReader';
 import { ShapefileChunkReader } from '../../../../src';
 import { ChunkBuilder } from '../../../../src/files/shapefile/core/chunkBuilder';
