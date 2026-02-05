@@ -38,7 +38,7 @@
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
     "@map-colonies/eslint-config": "^6.0.0",
-    "@map-colonies/prettier-config": "0.0.1",
+    "@map-colonies/prettier-config": "1.0.0",
     "@types/express": "^5.0.3",
     "@types/geojson": "^7946.0.16",
     "@types/jest": "^30.0.0",
