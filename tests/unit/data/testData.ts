@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { FeatureCollection } from '@turf/helpers';
-import { Feature, MultiPolygon, Polygon } from '@turf/turf';
+import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
 
 export const feature1: Feature<Polygon | MultiPolygon> = {
   type: 'Feature',

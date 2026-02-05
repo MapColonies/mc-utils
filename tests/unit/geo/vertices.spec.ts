@@ -1,4 +1,4 @@
-import { Geometry, Polygon, MultiPolygon } from 'geojson';
+import type { Geometry, Polygon, MultiPolygon } from 'geojson';
 import { countVertices } from '../../../src/geo/vertices';
 
 describe('countVertices', () => {
@@ -350,10 +350,47 @@ describe('countVertices', () => {
     });
   });
 
-  describe('Error handling', () => {
-    it('should throw error for GeometryCollection', () => {
+  describe('GeometryCollection geometries', () => {
+    it('should count vertices in a geometry collection', () => {
       const geometryCollection: Geometry = {
         type: 'GeometryCollection',
+        geometries: [
+          {
+            type: 'Point',
+            coordinates: [0, 0],
+          },
+          {
+            type: 'LineString',
+            coordinates: [
+              [1, 1],
+              [2, 2],
+              [3, 3],
+            ],
+          },
+          {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [4, 4],
+                [5, 4],
+                [5, 5],
+                [4, 4],
+              ],
+            ],
+          },
+        ],
+      };
+
+      const result = countVertices(geometryCollection);
+
+      expect(result).toBe(8); // 1 + 3 + 4 vertices
+    });
+  });
+
+  describe('Error handling', () => {
+    it('should throw error for GeometryCollection', () => {
+      const geometryCollection = {
+        type: 'unknown',
         geometries: [
           {
             type: 'Point',
@@ -362,7 +399,7 @@ describe('countVertices', () => {
         ],
       };
 
-      expect(() => countVertices(geometryCollection)).toThrow('Unsupported geometry type: GeometryCollection');
+      expect(() => countVertices(geometryCollection as Geometry)).toThrow('Unsupported geometry type');
     });
   });
 

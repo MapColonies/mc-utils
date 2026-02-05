@@ -1,5 +1,6 @@
-import { Feature, FeatureCollection, intersect, MultiPolygon, Polygon } from '@turf/turf';
-import _ from 'lodash';
+import type { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import { intersect } from '@turf/turf';
+import { find, isEqual, isEqualWith } from 'lodash';
 
 /**
  * tuft intersect supported footprint types
@@ -10,17 +11,17 @@ const featuresCustomizer = (objectValue: Feature[], otherValue: Feature[]): bool
   // compare features
   // https://lodash.com/docs/4.17.15#find
 
-  if (!_.isEqual(objectValue.length, otherValue.length)) {
+  if (!isEqual(objectValue.length, otherValue.length)) {
     return false;
   }
   for (let i = 0; i < objectValue.length; i++) {
-    const isFeatureContained = _.find(otherValue, objectValue[i]);
+    const isFeatureContained = find(otherValue, objectValue[i]);
     if (isFeatureContained === undefined) {
       return false;
     }
   }
   for (let i = 0; i < otherValue.length; i++) {
-    const isFeatureContained = _.find(objectValue, otherValue[i]);
+    const isFeatureContained = find(objectValue, otherValue[i]);
     if (isFeatureContained === undefined) {
       return false;
     }
@@ -30,11 +31,11 @@ const featuresCustomizer = (objectValue: Feature[], otherValue: Feature[]): bool
 
 const featureCollectionCustomized = (objectValue: FeatureCollection, otherValue: FeatureCollection): boolean => {
   // compare type
-  if (!_.isEqual(objectValue.type, otherValue.type)) {
+  if (!isEqual(objectValue.type, otherValue.type)) {
     return false;
   }
   // compare features
-  const isFeaturesEqual = _.isEqualWith(objectValue.features, otherValue.features, featuresCustomizer);
+  const isFeaturesEqual = isEqualWith(objectValue.features, otherValue.features, featuresCustomizer);
   return isFeaturesEqual;
 };
 
@@ -67,7 +68,7 @@ const multiIntersect = (footprints: Footprint[]): Footprint | null => {
  * @returns true if same featureCollection, false if not
  */
 const featureCollectionBooleanEqual = (fc1: FeatureCollection, fc2: FeatureCollection): boolean => {
-  return _.isEqualWith(fc1, fc2, featureCollectionCustomized);
+  return isEqualWith(fc1, fc2, featureCollectionCustomized);
 };
 
 export { multiIntersect, featureCollectionBooleanEqual, Footprint };

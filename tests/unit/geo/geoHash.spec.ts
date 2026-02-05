@@ -1,5 +1,5 @@
 import { bboxPolygon } from '@turf/turf';
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
+import { BBox2d } from '../../../src/models/types';
 import { createGeoHashGenerator, decodeGeoHash, tileGenerator } from '../../../src/geo/geoHash';
 import { TileOrigin } from '../../../src/models/enums/geo/tileOrigin';
 

@@ -1,4 +1,5 @@
-import { bboxPolygon, FeatureCollection } from '@turf/turf';
+import type { FeatureCollection } from 'geojson';
+import { bboxPolygon } from '@turf/turf';
 import { multiIntersect, featureCollectionBooleanEqual } from '../../../src';
 import { fc1, fc2, fcNoProperties } from '../data/testData';
 

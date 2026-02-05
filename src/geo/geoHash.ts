@@ -1,6 +1,7 @@
-import { area, bbox as polygonToBbox, bboxPolygon, Feature, intersect, MultiPolygon, Polygon } from '@turf/turf';
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
+import { area, bbox as polygonToBbox, bboxPolygon, intersect } from '@turf/turf';
+import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import * as ngeohash from 'ngeohash';
+import { BBox2d } from '../models/types';
 import { ITile } from '../models/interfaces/geo/iTile';
 import { TileOrigin } from '../models/enums/geo/tileOrigin';
 import { degreesToTile } from './geoConvertor';
@@ -95,7 +96,7 @@ export async function* tileGenerator(
   origin: TileOrigin = TileOrigin.LOWER_LEFT
 ): AsyncGenerator<ITile> {
   const hashGen = createGeoHashGenerator(polygon, tileZoom);
-  for await (const hash of hashGen) {
+  for (const hash of hashGen) {
     const bbox = decodeGeoHash(hash);
     const minTile = degreesToTile(
       {

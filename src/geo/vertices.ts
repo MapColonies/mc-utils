@@ -1,4 +1,4 @@
-import { Geometry } from 'geojson';
+import type { Geometry } from 'geojson';
 
 /**
  * Counts the number of vertices in a given geometry.
@@ -36,8 +36,13 @@ export function countVertices(geometry: Geometry): number {
     case 'MultiPoint':
       count = geometry.coordinates.length; // Each point is a vertex
       break;
+    case 'GeometryCollection':
+      geometry.geometries.forEach((geom) => {
+        count += countVertices(geom);
+      });
+      break;
     default:
-      throw new Error(`Unsupported geometry type: ${geometry.type}`);
+      throw new Error(`Unsupported geometry type`);
   }
 
   return count;
