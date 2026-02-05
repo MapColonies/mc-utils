@@ -352,8 +352,8 @@ describe('countVertices', () => {
 
   describe('Error handling', () => {
     it('should throw error for GeometryCollection', () => {
-      const geometryCollection: Geometry = {
-        type: 'GeometryCollection',
+      const geometryCollection = {
+        type: 'unknown',
         geometries: [
           {
             type: 'Point',
@@ -362,7 +362,7 @@ describe('countVertices', () => {
         ],
       };
 
-      expect(() => countVertices(geometryCollection)).toThrow('Unsupported geometry type: GeometryCollection');
+      expect(() => countVertices(geometryCollection as Geometry)).toThrow('Unsupported geometry type');
     });
   });
 

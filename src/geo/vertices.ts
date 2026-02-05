@@ -41,6 +41,8 @@ export function countVertices(geometry: Geometry): number {
         count += countVertices(geom);
       });
       break;
+    default:
+      throw new Error(`Unsupported geometry type`);
   }
 
   return count;
