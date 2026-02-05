@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [4.0.0](https://github.com/MapColonies/mc-utils/compare/v3.5.6...v4.0.0) (2026-02-05)
+
+
+### ⚠ BREAKING CHANGES
+
+* Minimum Node.js version updated from v20 to v24
+
+### Features
+
+* update to Node.js 24 and modernize tooling (MAPCO-9810) ([#54](https://github.com/MapColonies/mc-utils/issues/54)) ([38730ad](https://github.com/MapColonies/mc-utils/commit/38730ad1d9b01c7d8920d1ad63c9fbb63507ac91))
+
 ### [3.5.6](https://github.com/MapColonies/mc-utils/compare/v3.5.5...v3.5.6) (2025-12-24)
 
 ### [3.5.5](https://github.com/MapColonies/mc-utils/compare/v3.5.4...v3.5.5) (2025-12-21)
