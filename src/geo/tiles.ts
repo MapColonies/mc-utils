@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-magic-numbers */
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
-import { bbox, Feature, FeatureCollection, MultiPolygon, Polygon } from '@turf/turf';
+import { Feature, FeatureCollection, MultiPolygon, Polygon } from 'geojson';
+import { bbox } from '@turf/turf';
 import { ITile, ITileRange } from '../models/interfaces/geo/iTile';
+import { BBox2d } from '../models/types';
 import { bboxToTileRange, snapBBoxToTileGrid } from './bboxUtils';
 import { tileToDegrees } from './geoConvertor';
 
 const zoomToResolutionDegMapper: Record<number, number> = {
-  /* eslint-disable @typescript-eslint/naming-convention */
   0: 0.703125,
   1: 0.3515625,
   2: 0.17578125,
@@ -30,11 +30,9 @@ const zoomToResolutionDegMapper: Record<number, number> = {
   20: 0.000000670552253723145,
   21: 0.000000335276126861572,
   22: 0.000000167638063430786,
-  /* eslint-enable @typescript-eslint/naming-convention */
 };
 
 const zoomToResolutionMeterMapper: Record<number, number> = {
-  /* eslint-disable @typescript-eslint/naming-convention */
   0: 78271.52,
   1: 39135.76,
   2: 19567.88,
@@ -58,7 +56,6 @@ const zoomToResolutionMeterMapper: Record<number, number> = {
   20: 0.075,
   21: 0.037,
   22: 0.0185,
-  /* eslint-enable @typescript-eslint/naming-convention */
 };
 
 /**
@@ -121,7 +118,7 @@ export function zoomLevelToResolutionMeter(zoom: number): number | undefined {
  */
 export function degreesPerPixelToZoomLevel(resolution: number): number {
   const MIN_ZOOM_LEVEL = 0;
-  // eslint-disable-next-line @typescript-eslint/no-magic-numbers
+
   const zoomLevel = Math.floor(Math.log2(180 / (resolution * 256)));
   if (zoomLevel < MIN_ZOOM_LEVEL) {
     throw new Error(`Invalid zoom level ${zoomLevel} for resolution ${resolution}`);

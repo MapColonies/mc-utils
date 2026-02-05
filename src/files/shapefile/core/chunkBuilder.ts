@@ -9,7 +9,10 @@ export class ChunkBuilder {
   private currentVerticesCount: number;
   private skippedVerticesCount: number;
 
-  public constructor(private readonly maxVertices: number, private chunkIndex: number = 0) {
+  public constructor(
+    private readonly maxVertices: number,
+    private chunkIndex: number = 0
+  ) {
     this.features = [];
     this.skippedFeatures = [];
     this.currentVerticesCount = 0;

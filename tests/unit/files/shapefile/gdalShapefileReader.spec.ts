@@ -295,7 +295,7 @@ describe('GdalShapefileReader', () => {
       const reader = await GdalShapefileReader.open(shapefilePath);
       const features: Feature[] = [];
 
-      // eslint-disable-next-line no-constant-condition, @typescript-eslint/no-unnecessary-condition
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       while (true) {
         const { done, value } = await reader.read();
         if (done) {

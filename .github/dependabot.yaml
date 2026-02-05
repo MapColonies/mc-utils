@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=https://json.schemastore.org/dependabot-2.0.json
+version: 2
+updates:
+  # npm dependencies
+  - package-ecosystem: npm
+    target-branch: 'master'
+    schedule:
+      interval: weekly
+    allow:
+      - dependency-type: production
+    directory: /
+    commit-message:
+      prefix: 'deps'
+    groups:
+      map-colonies:
+        patterns:
+          - '@map-colonies/*'
+      opentelemetry:
+        patterns:
+          - '@opentelemetry/*'
+      patch:
+        update-types:
+          - patch
+
+  # npm dev dependencies
+  - package-ecosystem: npm
+    schedule:
+      interval: weekly
+    allow:
+      - dependency-type: development
+    directory: /
+    commit-message:
+      prefix: 'devdeps'
+    groups:
+      map-colonies:
+        patterns:
+          - '@map-colonies/*'
+      opentelemetry:
+        patterns:
+          - '@opentelemetry/*'
+      types:
+        patterns:
+          - '@types/*'
+      dev-patch:
+        update-types:
+          - patch
+
+  # GitHub Actions
+  - package-ecosystem: github-actions
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: 'ci'
+    directory: '/'

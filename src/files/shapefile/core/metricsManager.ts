@@ -1,5 +1,4 @@
-import { ChunkMetrics, FileMetrics, MetricsCollector } from '../types';
-import { ShapefileChunk } from '../types';
+import { ChunkMetrics, FileMetrics, MetricsCollector, ShapefileChunk } from '../types';
 
 export interface IMetricsManager {
   /**
@@ -18,7 +17,7 @@ export interface IMetricsManager {
 }
 
 export class MetricsManager implements IMetricsManager {
-  private fileMetrics: FileMetrics;
+  private readonly fileMetrics: FileMetrics;
 
   public constructor(private readonly metricsCollector?: MetricsCollector) {
     this.fileMetrics = this.initializeFileMetrics();

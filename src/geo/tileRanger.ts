@@ -1,6 +1,7 @@
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
-import { area, bbox as polygonToBbox, bboxPolygon, booleanEqual, Feature, intersect, MultiPolygon, Polygon } from '@turf/turf';
+import { Feature, MultiPolygon, Polygon } from 'geojson';
+import { area, bbox as polygonToBbox, bboxPolygon, booleanEqual, intersect } from '@turf/turf';
 import { ITile, ITileRange } from '../models/interfaces/geo/iTile';
+import { BBox2d } from '../models/types';
 import { bboxToTileRange } from './bboxUtils';
 import { tileToBbox } from './tiles';
 import { tilesGenerator } from './tilesGenerator';

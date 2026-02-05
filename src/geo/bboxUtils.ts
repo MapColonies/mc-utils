@@ -1,5 +1,5 @@
-import { BBox2d } from '@turf/helpers/dist/js/lib/geojson';
 import { ITile, ITileRange } from '../models/interfaces/geo/iTile';
+import { BBox2d } from '../models/types';
 import { degreesToTile, tileToDegrees } from './geoConvertor';
 import { degreesPerTile } from './tiles';
 

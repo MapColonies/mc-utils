@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-magic-numbers */
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import { randomUUID } from 'node:crypto';
 import { countVertices } from '../../../geo/vertices';
@@ -33,7 +32,7 @@ export class ShapefileChunkReader {
       const generateFeatureId = this.options.generateFeatureId ?? false;
 
       let readStart = performance.now();
-      // eslint-disable-next-line no-constant-condition
+
       while (true) {
         const { done, value: shapeFeature } = await reader.read();
 
@@ -122,7 +121,7 @@ export class ShapefileChunkReader {
 
     try {
       reader = await openShapefile(shapefilePath);
-      // eslint-disable-next-line no-constant-condition
+
       while (true) {
         const { done, value: feature } = await reader.read();
 
@@ -165,7 +164,7 @@ export class ShapefileChunkReader {
       await processor.process(chunk);
       this.options.logger?.info({ msg: 'Chunk processing finished', chunkIndex: chunk.id });
     } catch (error) {
-      this.options.logger?.error(`Error processing chunk ${chunk.id}`, error);
+      this.options.logger?.error({ msg: `Error processing chunk ${chunk.id}`, error });
       throw error;
     }
 
