@@ -36,8 +36,11 @@ export function countVertices(geometry: Geometry): number {
     case 'MultiPoint':
       count = geometry.coordinates.length; // Each point is a vertex
       break;
-    default:
-      throw new Error(`Unsupported geometry type: ${geometry.type}`);
+    case 'GeometryCollection':
+      geometry.geometries.forEach((geom) => {
+        count += countVertices(geom);
+      });
+      break;
   }
 
   return count;
