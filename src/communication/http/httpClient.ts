@@ -14,7 +14,7 @@ import {
   ContentTooLarge,
   TooManyRequestsError,
 } from '@map-colonies/error-types';
-import { Logger } from '@map-colonies/js-logger';
+import { Logger } from '@map-colonies/types';
 
 export interface IHttpRetryConfig {
   attempts: number;

@@ -9,13 +9,12 @@ import {
   ContentTooLarge,
   TooManyRequestsError,
 } from '@map-colonies/error-types';
-import jsLogger from '@map-colonies/js-logger';
 import { AxiosError, AxiosRequestConfig } from 'axios';
 import { exponentialDelay, IAxiosRetryConfig } from 'axios-retry';
 import { HttpClient } from '../../../../src';
 import { axiosMocks, initAxiosMock } from '../../../mocks/externalDeps/axios';
+import { loggerMock } from '../../../mocks/externalDeps/logger';
 
-const logger = jsLogger({ enabled: false });
 class TestClient extends HttpClient {
   public callGet = this.get.bind(this);
   public callPost = this.post.bind(this);
@@ -59,7 +58,7 @@ describe('HttpClient', function () {
 
   beforeEach(() => {
     initAxiosMock();
-    client = new TestClient(logger, 'baseUrl', 'Unit tests');
+    client = new TestClient(loggerMock, 'baseUrl', 'Unit tests');
   });
 
   afterEach(() => {
