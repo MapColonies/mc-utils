@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [5.0.0](https://github.com/MapColonies/mc-utils/compare/v4.0.4...v5.0.0) (2026-03-16)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove ShapefileReader, moved to external package ([#72](https://github.com/MapColonies/mc-utils/issues/72))
+
+### Bug Fixes
+
+* publish action ([319fa8e](https://github.com/MapColonies/mc-utils/commit/319fa8e539e4a77695760a203f74fcfd654c64d2))
+
+
+### Code Refactoring
+
+* remove ShapefileReader, moved to external package ([#72](https://github.com/MapColonies/mc-utils/issues/72)) ([bef5e04](https://github.com/MapColonies/mc-utils/commit/bef5e04632c88b53d2682774f7fd9f2b50959264))
+
 ## [4.0.4](https://github.com/MapColonies/mc-utils/compare/v4.0.3...v4.0.4) (2026-02-05)
 
 
