@@ -163,8 +163,8 @@ export class TileRanger {
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //find base hashes
     const minimalRange = bboxToTileRange(bbox, minZoom);
-    for (let x = minimalRange.minX; x < minimalRange.maxX; x++) {
-      for (let y = minimalRange.minY; y < minimalRange.maxY; y++) {
+    for (let x = minimalRange.minX; x <= minimalRange.maxX; x++) {
+      for (let y = minimalRange.minY; y <= minimalRange.maxY; y++) {
         /////////////////////////////////////////////////////////////////////////////////////////////////
         /// Step 6: for every tile in the current range:
         /// Step 7: check the tile intersection with the footprint

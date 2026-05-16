@@ -41,8 +41,8 @@ describe('bboxUtils', () => {
       const expectedRange = {
         minX: 4,
         minY: 2,
-        maxX: 5,
-        maxY: 3,
+        maxX: 4,
+        maxY: 2,
         zoom: 2,
       };
       expect(range).toEqual(expectedRange);
@@ -56,8 +56,8 @@ describe('bboxUtils', () => {
       const expectedRange = {
         minX: 4,
         minY: 2,
-        maxX: 6,
-        maxY: 3,
+        maxX: 5,
+        maxY: 2,
         zoom: 2,
       };
       expect(range).toEqual(expectedRange);
@@ -71,8 +71,8 @@ describe('bboxUtils', () => {
       const expectedRange = {
         minX: 2,
         minY: 1,
-        maxX: 3,
-        maxY: 2,
+        maxX: 2,
+        maxY: 1,
         zoom: 1,
       };
       expect(range).toEqual(expectedRange);
@@ -86,8 +86,8 @@ describe('bboxUtils', () => {
       const expectedRange = {
         minX: 8,
         minY: 4,
-        maxX: 10,
-        maxY: 7,
+        maxX: 9,
+        maxY: 6,
         zoom: 3,
       };
       expect(range).toEqual(expectedRange);

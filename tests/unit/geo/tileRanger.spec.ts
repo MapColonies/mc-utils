@@ -82,9 +82,9 @@ describe('TileRanger', () => {
       const expectedRanges = [
         {
           minX: 3,
-          maxX: 5,
+          maxX: 4,
           minY: 2,
-          maxY: 3,
+          maxY: 2,
           zoom: 2,
         },
       ];

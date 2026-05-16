@@ -90,8 +90,8 @@ export const bboxToTileRange = (bbox: BBox2d, zoom: number): ITileRange => {
   return {
     minX: minTile.x,
     minY: minTile.y,
-    maxX: maxTile.x,
-    maxY: maxTile.y,
+    maxX: maxTile.x - 1, // exclusive upper bound: maxTile is the first tile outside the bbox (right/above)
+    maxY: maxTile.y - 1, // exclusive upper bound: maxTile is the first tile outside the bbox (right/above)
     zoom,
   };
 };
