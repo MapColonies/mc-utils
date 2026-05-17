@@ -10,22 +10,22 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
   let targetRanges: ITileRange[] = [];
   let requiredForFullBatch = batchSize;
   for await (const range of ranges) {
-    const dx = range.maxX - range.minX;
-    let dy = range.maxY - range.minY;
-    if (dx === 0 || dy === 0) {
+    const dx = range.maxX - range.minX + 1;
+    let dy = range.maxY - range.minY + 1;
+    if (range.maxX < range.minX || range.maxY < range.minY) {
       continue;
     }
-    let reminderX = range.maxX;
-    while (range.minY < range.maxY) {
-      //remaining tiles in batch row row
-      if (reminderX < range.maxX) {
-        const remaining = range.maxX - reminderX;
+    let reminderX = range.maxX + 1; // sentinel: no partial row (one past inclusive end)
+    while (range.minY <= range.maxY) {
+      //remaining tiles in partial row
+      if (reminderX <= range.maxX) {
+        const remaining = range.maxX - reminderX + 1;
         if (remaining > requiredForFullBatch) {
           targetRanges.push({
             minX: reminderX,
-            maxX: reminderX + requiredForFullBatch,
+            maxX: reminderX + requiredForFullBatch - 1,
             minY: range.minY,
-            maxY: range.minY + 1,
+            maxY: range.minY,
             zoom: range.zoom,
           });
           yield await Promise.resolve(targetRanges);
@@ -36,13 +36,13 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
         } else {
           targetRanges.push({
             minX: reminderX,
-            maxX: reminderX + remaining,
+            maxX: range.maxX,
             minY: range.minY,
-            maxY: range.minY + 1,
+            maxY: range.minY,
             zoom: range.zoom,
           });
           range.minY++;
-          reminderX += remaining;
+          reminderX += remaining; // becomes range.maxX + 1 (sentinel)
           requiredForFullBatch -= remaining;
           dy--;
         }
@@ -55,27 +55,26 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
           minX: range.minX,
           maxX: range.maxX,
           minY: range.minY,
-          maxY: range.minY + yRange,
+          maxY: range.minY + yRange - 1,
           zoom: range.zoom,
         });
         range.minY += yRange;
         dy -= yRange;
         requiredForFullBatch -= yRange * dx;
       }
-      //add partial lines beginning
-      if (requiredForFullBatch > 0 && range.minY < range.maxY) {
-        const endX = Math.min(range.minX + requiredForFullBatch, range.maxX);
+      //add partial line at row beginning
+      if (requiredForFullBatch > 0 && range.minY <= range.maxY) {
+        const endX = Math.min(range.minX + requiredForFullBatch - 1, range.maxX);
         targetRanges.push({
           minX: range.minX,
           maxX: endX,
           minY: range.minY,
-          maxY: range.minY + 1,
+          maxY: range.minY,
           zoom: range.zoom,
         });
-        requiredForFullBatch -= endX - range.minX;
-        if (endX < range.maxX) {
-          reminderX = endX;
-        } else {
+        requiredForFullBatch -= endX - range.minX + 1;
+        reminderX = endX + 1; // next partial start, or sentinel if endX === maxX
+        if (endX >= range.maxX) {
           range.minY++;
         }
       }
