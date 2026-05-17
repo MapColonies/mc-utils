@@ -32,21 +32,21 @@ export class TileRanger {
   public tileToRange(tile: ITile, zoom: number): ITileRange {
     let minX: number, minY: number, maxX: number, maxY: number;
     minX = tile.x;
-    maxX = tile.x + 1;
+    maxX = tile.x;
     minY = tile.y;
-    maxY = tile.y + 1;
+    maxY = tile.y;
     if (tile.zoom < zoom) {
       const dz = zoom - tile.zoom;
       minX = minX << dz;
-      maxX = maxX << dz;
+      maxX = ((tile.x + 1) << dz) - 1;
       minY = minY << dz;
-      maxY = maxY << dz;
+      maxY = ((tile.y + 1) << dz) - 1;
     } else if (tile.zoom > zoom) {
       const dz = tile.zoom - zoom;
       minX = minX >> dz;
       minY = minY >> dz;
-      maxX = minX + 1;
-      maxY = minY + 1;
+      maxX = minX;
+      maxY = minY;
     }
     return {
       minX,

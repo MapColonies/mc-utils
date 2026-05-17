@@ -143,7 +143,7 @@ export function tileToBbox(tile: ITile): BBox2d {
  * @returns
  */
 export function tileRangeToTilesCount(batch: ITileRange): number {
-  return (batch.maxX - batch.minX) * (batch.maxY - batch.minY);
+  return (batch.maxX - batch.minX + 1) * (batch.maxY - batch.minY + 1);
 }
 
 /**

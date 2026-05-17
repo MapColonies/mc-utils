@@ -121,7 +121,7 @@ describe('tiles', () => {
         zoom: 0,
       };
       const areaResult = tileRangeToTilesCount(batch);
-      const expectedResult = 64800;
+      const expectedResult = 65341;
       expect(areaResult).toEqual(expectedResult);
     });
 
