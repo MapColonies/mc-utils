@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
-## [5.1.1](https://github.com/MapColonies/mc-utils/compare/v5.1.0...v5.1.1) (2026-05-18)
+## [6.0.0](https://github.com/MapColonies/mc-utils/compare/v5.1.0...v6.0.0) (2026-05-18)
 
 
 ### Bug Fixes
