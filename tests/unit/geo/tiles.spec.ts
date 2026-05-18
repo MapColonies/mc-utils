@@ -113,15 +113,16 @@ describe('tiles', () => {
 
   describe('tileRangeToTilesCount', () => {
     it('Check calculation for area calculation - tiles count by tiles range', function () {
+      // zoom 2: full-world grid is 8 columns (x: 0-7) x 4 rows (y: 0-3) = 32 tiles
       const batch: ITileRange = {
-        maxX: 180,
-        minX: -180,
-        maxY: 90,
-        minY: -90,
-        zoom: 0,
+        minX: 0,
+        maxX: 7,
+        minY: 0,
+        maxY: 3,
+        zoom: 2,
       };
       const areaResult = tileRangeSize(batch);
-      const expectedResult = 65341;
+      const expectedResult = 32;
       expect(areaResult).toEqual(expectedResult);
     });
 

@@ -66,7 +66,7 @@ export const bboxFromTiles = (minTile: ITile, maxTile: ITile): BBox2d => {
 };
 
 /**
- * coverts bbox to covering tile range of specified zoom level
+ * converts bbox to covering tile range of specified zoom level
  * @param bbox
  * @param zoom target zoom level
  * @returns covering tile range

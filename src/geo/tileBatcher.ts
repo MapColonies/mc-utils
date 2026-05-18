@@ -10,18 +10,18 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
   let targetRanges: ITileRange[] = [];
   let requiredForFullBatch = batchSize;
   for await (const range of ranges) {
-    const dx = range.maxX - range.minX + 1; // +1: maxX is inclusive, so width = maxX - minX + 1
-    let dy = range.maxY - range.minY + 1; // +1: same reasoning for height
+    const dx = range.maxX - range.minX + 1;
+    let dy = range.maxY - range.minY + 1;
     if (range.maxX < range.minX || range.maxY < range.minY) {
       // guard: degenerate/empty range
       continue;
     }
-    let reminderX = range.maxX + 1; // sentinel: no partial row (one past inclusive end)
+    let reminderX = range.maxX + 1; // no partial row (one past inclusive end)
     while (range.minY <= range.maxY) {
       // <= because maxY is inclusive
       //remaining tiles in partial row from a previous cut
       if (reminderX <= range.maxX) {
-        // reminderX > maxX means sentinel (no partial row)
+        // reminderX > maxX means (no partial row)
         const remaining = range.maxX - reminderX + 1; // +1: maxX is inclusive
         if (remaining > requiredForFullBatch) {
           targetRanges.push({
@@ -45,12 +45,11 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
             zoom: range.zoom,
           });
           range.minY++;
-          reminderX += remaining; // advance past the partial row; equals maxX+1 (sentinel) when row is exhausted
+          reminderX += remaining;
           requiredForFullBatch -= remaining;
           dy--;
         }
       }
-      //add max full lines
       const requiredLines = Math.floor(requiredForFullBatch / dx);
       const yRange = Math.min(requiredLines, dy);
       if (yRange > 0) {
@@ -58,7 +57,7 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
           minX: range.minX,
           maxX: range.maxX,
           minY: range.minY,
-          maxY: range.minY + yRange - 1, // -1: yRange rows starting at minY, last inclusive row is minY + yRange - 1
+          maxY: range.minY + yRange - 1,
           zoom: range.zoom,
         });
         range.minY += yRange;
@@ -76,7 +75,7 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
           zoom: range.zoom,
         });
         requiredForFullBatch -= endX - range.minX + 1; // +1: endX is inclusive
-        reminderX = endX + 1; // next unclaimed X; equals maxX+1 (sentinel) when the full row was consumed
+        reminderX = endX + 1;
         if (endX >= range.maxX) {
           range.minY++;
         }

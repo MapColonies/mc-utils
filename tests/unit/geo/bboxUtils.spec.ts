@@ -33,7 +33,7 @@ describe('bboxUtils', () => {
   });
 
   describe('bboxToTileRange', () => {
-    it('coverts bbox to expected tile range (no rounding, single tile)', () => {
+    it('converts bbox to expected tile range (no rounding, single tile)', () => {
       const bbox = [0, 0, 45, 45] as BBox2d;
 
       const range = bboxToTileRange(bbox, 2);
@@ -48,7 +48,7 @@ describe('bboxUtils', () => {
       expect(range).toEqual(expectedRange);
     });
 
-    it('coverts bbox to expected tile range (no rounding)', () => {
+    it('converts bbox to expected tile range (no rounding)', () => {
       const bbox = [0, 0, 90, 45] as BBox2d;
 
       const range = bboxToTileRange(bbox, 2);
@@ -63,7 +63,7 @@ describe('bboxUtils', () => {
       expect(range).toEqual(expectedRange);
     });
 
-    it('coverts bbox to expected tile range (rounding down)', () => {
+    it('converts bbox to expected tile range (rounding down)', () => {
       const bbox = [0, 0, 45, 45] as BBox2d;
 
       const range = bboxToTileRange(bbox, 1);
@@ -78,7 +78,7 @@ describe('bboxUtils', () => {
       expect(range).toEqual(expectedRange);
     });
 
-    it('coverts bbox to expected tile range  (rounding up)', () => {
+    it('converts bbox to expected tile range  (rounding up)', () => {
       const bbox = [0, 0, 45, 45.1] as BBox2d;
 
       const range = bboxToTileRange(bbox, 3);

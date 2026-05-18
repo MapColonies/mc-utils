@@ -80,7 +80,7 @@ export function degreesPerPixel(zoomLevel: number): number {
 }
 
 /**
- * coverts tile coordinates between ll and ul
+ * converts tile coordinates between ll and ul
  * @param tile source tile
  * @returns converted tile
  */

@@ -98,7 +98,7 @@ describe('GeoHashBatcher', () => {
       expect(batches).toEqual(expectedBatches);
     });
 
-    it('return proper tiles for batch size that is power of 2', async function () {
+    it('yields each tile individually when batch size is 1', async function () {
       const ranges = [{ minX: 0, minY: 16, maxX: 15, maxY: 31, zoom: 5 }];
       const rangeAsyncGen = (async function* () {
         yield await Promise.resolve(ranges[0]);
