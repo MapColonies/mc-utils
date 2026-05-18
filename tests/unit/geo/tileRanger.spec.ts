@@ -91,7 +91,7 @@ describe('TileRanger', () => {
       expect(ranges).toEqual(expectedRanges);
     });
 
-    it('encodes none bbox polygon properly', async () => {
+    it('encodes non-bbox polygon properly', async () => {
       const poly = polygon([
         [
           [-45, 0],

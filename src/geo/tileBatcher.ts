@@ -18,11 +18,10 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
     }
     let reminderX = range.maxX + 1; // no partial row (one past inclusive end)
     while (range.minY <= range.maxY) {
-      // <= because maxY is inclusive
       //remaining tiles in partial row from a previous cut
       if (reminderX <= range.maxX) {
         // reminderX > maxX means (no partial row)
-        const remaining = range.maxX - reminderX + 1; // +1: maxX is inclusive
+        const remaining = range.maxX - reminderX + 1;
         if (remaining > requiredForFullBatch) {
           targetRanges.push({
             minX: reminderX,
@@ -74,7 +73,7 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
           maxY: range.minY,
           zoom: range.zoom,
         });
-        requiredForFullBatch -= endX - range.minX + 1; // +1: endX is inclusive
+        requiredForFullBatch -= endX - range.minX + 1;
         reminderX = endX + 1;
         if (endX >= range.maxX) {
           range.minY++;
