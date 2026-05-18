@@ -80,7 +80,7 @@ export function degreesPerPixel(zoomLevel: number): number {
 }
 
 /**
- * coverts tile coordinates between ll and ul
+ * converts tile coordinates between ll and ul
  * @param tile source tile
  * @returns converted tile
  */
@@ -142,8 +142,8 @@ export function tileToBbox(tile: ITile): BBox2d {
  * @param ITileRange
  * @returns
  */
-export function tileRangeToTilesCount(batch: ITileRange): number {
-  return (batch.maxX - batch.minX) * (batch.maxY - batch.minY);
+export function tileRangeToTilesCount(tileRange: ITileRange): number {
+  return (tileRange.maxX - tileRange.minX + 1) * (tileRange.maxY - tileRange.minY + 1);
 }
 
 /**

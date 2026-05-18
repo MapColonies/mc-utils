@@ -32,21 +32,21 @@ export class TileRanger {
   public tileToRange(tile: ITile, zoom: number): ITileRange {
     let minX: number, minY: number, maxX: number, maxY: number;
     minX = tile.x;
-    maxX = tile.x + 1;
+    maxX = tile.x;
     minY = tile.y;
-    maxY = tile.y + 1;
+    maxY = tile.y;
     if (tile.zoom < zoom) {
       const dz = zoom - tile.zoom;
       minX = minX << dz;
-      maxX = maxX << dz;
+      maxX = ((tile.x + 1) << dz) - 1; // (tile.x+1) is the exclusive next tile; shift then -1 gives the inclusive last sub-tile
       minY = minY << dz;
-      maxY = maxY << dz;
+      maxY = ((tile.y + 1) << dz) - 1; // same logic for Y axis
     } else if (tile.zoom > zoom) {
       const dz = tile.zoom - zoom;
       minX = minX >> dz;
       minY = minY >> dz;
-      maxX = minX + 1;
-      maxY = minY + 1;
+      maxX = minX; // tile maps to a single parent tile; inclusive range collapses to one tile
+      maxY = minY;
     }
     return {
       minX,
@@ -163,8 +163,8 @@ export class TileRanger {
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //find base hashes
     const minimalRange = bboxToTileRange(bbox, minZoom);
-    for (let x = minimalRange.minX; x < minimalRange.maxX; x++) {
-      for (let y = minimalRange.minY; y < minimalRange.maxY; y++) {
+    for (let x = minimalRange.minX; x <= minimalRange.maxX; x++) {
+      for (let y = minimalRange.minY; y <= minimalRange.maxY; y++) {
         /////////////////////////////////////////////////////////////////////////////////////////////////
         /// Step 6: for every tile in the current range:
         /// Step 7: check the tile intersection with the footprint

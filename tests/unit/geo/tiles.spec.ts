@@ -114,14 +114,14 @@ describe('tiles', () => {
   describe('tileRangeToTilesCount', () => {
     it('Check calculation for area calculation - tiles count by tiles range', function () {
       const batch: ITileRange = {
-        maxX: 180,
-        minX: -180,
-        maxY: 90,
-        minY: -90,
-        zoom: 0,
+        minX: 0,
+        maxX: 7,
+        minY: 0,
+        maxY: 3,
+        zoom: 2,
       };
       const areaResult = tileRangeToTilesCount(batch);
-      const expectedResult = 64800;
+      const expectedResult = 32;
       expect(areaResult).toEqual(expectedResult);
     });
 
