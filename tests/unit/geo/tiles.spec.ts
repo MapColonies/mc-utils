@@ -1,7 +1,7 @@
 import type { Feature, MultiPolygon, Polygon } from 'geojson';
 import { ITileRange } from '../../../src';
 import {
-  tileRangeToTilesCount,
+  tileRangeSize,
   degreesPerPixel,
   degreesPerPixelToZoomLevel,
   degreesPerTile,
@@ -120,7 +120,7 @@ describe('tiles', () => {
         minY: -90,
         zoom: 0,
       };
-      const areaResult = tileRangeToTilesCount(batch);
+      const areaResult = tileRangeSize(batch);
       const expectedResult = 65341;
       expect(areaResult).toEqual(expectedResult);
     });

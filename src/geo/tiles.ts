@@ -142,7 +142,7 @@ export function tileToBbox(tile: ITile): BBox2d {
  * @param ITileRange
  * @returns
  */
-export function tileRangeToTilesCount(batch: ITileRange): number {
+export function tileRangeSize(batch: ITileRange): number {
   return (batch.maxX - batch.minX + 1) * (batch.maxY - batch.minY + 1); // +1 on each axis because maxX/maxY are inclusive
 }
 
@@ -182,7 +182,7 @@ export function featureToTilesCount(feature: Feature<Polygon | MultiPolygon>, de
 
     for (let i = targetMinZoom; i <= targetMaxZoom; i++) {
       const zoomTilesBatch = bboxToTileRange(sanitized, i);
-      tilesTotalAmount += tileRangeToTilesCount(zoomTilesBatch);
+      tilesTotalAmount += tileRangeSize(zoomTilesBatch);
     }
 
     return tilesTotalAmount;
