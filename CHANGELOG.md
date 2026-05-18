@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.0](https://github.com/MapColonies/mc-utils/compare/v5.1.0...v6.0.0) (2026-05-18)
+
+
+### Bug Fixes
+
+* tile generator logic MAPCO-10634 ([#90](https://github.com/MapColonies/mc-utils/issues/90)) ([3a29396](https://github.com/MapColonies/mc-utils/commit/3a29396d820b3fcd3645d90e7f2e3c30430c62e4))
+
 ## [5.1.0](https://github.com/MapColonies/mc-utils/compare/v5.0.0...v5.1.0) (2026-03-16)
 
 
