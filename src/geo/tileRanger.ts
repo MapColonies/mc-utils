@@ -151,9 +151,9 @@ export class TileRanger {
     }
     const dx = boundingRange.maxX - boundingRange.minX;
     const dy = boundingRange.maxY - boundingRange.minY;
-    const minXZoom = Math.max(Math.floor(Math.log2(1 << (zoom + 1)) / dx) - 1, 0);
-    const minYZoom = Math.max(Math.floor(Math.log2(1 << zoom) / dy), 0);
-    const minZoom = Math.min(minXZoom, minYZoom);
+    const minXZoom = dx > 0 ? Math.max(Math.floor(Math.log2(1 << (zoom + 1)) / dx) - 1, 0) : zoom;
+    const minYZoom = dy > 0 ? Math.max(Math.floor(Math.log2(1 << zoom) / dy), 0) : zoom;
+    const minZoom = Math.min(minXZoom, minYZoom, zoom);
 
     if (verbose) {
       console.log(`MinZoom: ${minZoom}`);
