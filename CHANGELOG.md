@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.0.1](https://github.com/MapColonies/mc-utils/compare/v6.0.0...v6.0.1) (2026-05-19)
+
+
+### Bug Fixes
+
+* improve minimum zoom calculation in TileRanger ([#92](https://github.com/MapColonies/mc-utils/issues/92)) ([5e4b91e](https://github.com/MapColonies/mc-utils/commit/5e4b91e811e50e2a8fb043c290c7b0cd97a4e02f))
+
 ## [6.0.0](https://github.com/MapColonies/mc-utils/compare/v5.1.0...v6.0.0) (2026-05-18)
 
 
