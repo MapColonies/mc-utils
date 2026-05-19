@@ -35,7 +35,7 @@
   ],
   "homepage": "https://github.com/MapColonies/mc-utils#readme",
   "devDependencies": {
-    "@commitlint/cli": "^19.8.1",
+    "@commitlint/cli": "^20.5.3",
     "@commitlint/config-conventional": "^19.8.1",
     "@map-colonies/eslint-config": "^6.0.0",
     "@map-colonies/prettier-config": "0.0.1",
