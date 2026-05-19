@@ -141,6 +141,28 @@ describe('TileRanger', () => {
       ];
       expect(tileRanges).toEqual(expectedRanges);
     });
+
+    it('encodes non-bbox polygon whose bounding range is a single tile', async () => {
+      // Triangle fully within tile {x: 0, y: 1, zoom: 1}, which covers lon [-180, -90] lat [0, 90].
+      // This exercises the single-tile edge case where xTilesCount=1, yTilesCount=1.
+      const poly = polygon([
+        [
+          [-170, 10],
+          [-100, 10],
+          [-135, 80],
+          [-170, 10],
+        ],
+      ]);
+
+      const tileRanges = [];
+      const gen = ranger.encodeFootprint(poly, 1);
+      for await (const range of gen) {
+        tileRanges.push(range);
+      }
+
+      const expectedRanges = [{ minX: 0, maxX: 0, minY: 1, maxY: 1, zoom: 1 }];
+      expect(tileRanges).toEqual(expectedRanges);
+    });
   });
 
   describe('generateTiles', () => {

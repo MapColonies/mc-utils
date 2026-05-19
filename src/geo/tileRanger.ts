@@ -150,10 +150,10 @@ export class TileRanger {
       console.log("find minimal zoom where the the area can be converted by area the size of single tile to skip levels that can't have full hashes");
     }
 
-    const dx = boundingRange.maxX - boundingRange.minX + 1;
-    const dy = boundingRange.maxY - boundingRange.minY + 1;
-    const minXZoom = Math.max(Math.floor((zoom + 1) / dx) - 1, 0);
-    const minYZoom = Math.max(Math.floor(zoom / dy), 0);
+    const xTilesCount = boundingRange.maxX - boundingRange.minX + 1;
+    const yTilesCount = boundingRange.maxY - boundingRange.minY + 1;
+    const minXZoom = Math.max(Math.floor((zoom + 1) / xTilesCount) - 1, 0);
+    const minYZoom = Math.max(Math.floor(zoom / yTilesCount), 0);
     const minZoom = Math.min(minXZoom, minYZoom);
 
     if (verbose) {
