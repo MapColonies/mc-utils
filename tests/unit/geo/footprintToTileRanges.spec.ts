@@ -79,7 +79,7 @@ describe('footprintToTileRanges', () => {
   });
 
   describe('tile coverage', () => {
-    it.only('should yield exactly the two root tiles for a world-covering footprint at zoom 0', () => {
+    it('should yield exactly the two root tiles for a world-covering footprint at zoom 0', () => {
       const footprint = squarePolygon(-180, -90, 180, 90);
 
       const tiles = expandToTileSet(footprintToTileRanges(footprint, { minZoom: 0, maxZoom: 0 }));
