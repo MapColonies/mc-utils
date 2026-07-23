@@ -1,9 +1,8 @@
 /**
- * Hierarchical precompute of the tiles intersecting a footprint (ADR 0001).
- * The tile pyramid is a quadtree — tile (z, x, y) contains tiles (z+1, 2x..2x+1, 2y..2y+1) —
+ * Hierarchical precompute of the tiles intersecting a footprint.
+ * The tile pyramid is a quadtree — tile (z, x, y) contains tiles (z+1, 2x..2x+1, 2y..2y+1) -
  * so classifying one coarse tile can settle its entire subtree; the walk only recurses where
  * the footprint's boundary passes, making total work O(boundary tiles), not O(bbox area).
- * Evidence and benchmarks: simulation/README.md. Domain terms: CONTEXT.md.
  */
 import type { Position } from 'geojson';
 import { ITileRange } from '../models/interfaces/geo/iTile';

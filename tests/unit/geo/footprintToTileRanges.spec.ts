@@ -5,7 +5,7 @@ import { footprintToTileRanges } from '../../../src/geo/footprintToTileRanges';
 import { Footprint } from '../../../src/geo/geoIntersection';
 import { degreesPerTile } from '../../../src/geo/tiles';
 
-// exhaustive ground truth (see ADR 0001): test every candidate tile in the footprint's bbox
+// exhaustive ground truth: test every candidate tile in the footprint's bbox
 // (padded by one tile so boundary-touching neighbors are candidates too) with the same
 // inclusive intersection predicate the production algorithm must honor
 const oracleTileSet = (footprint: Footprint, minZoom: number, maxZoom: number): Set<string> => {
