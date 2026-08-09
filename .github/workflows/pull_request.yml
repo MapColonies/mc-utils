@@ -48,7 +48,9 @@ jobs:
       - name: Check out TS Project Git repository
         uses: actions/checkout@v6
       - name: Init nodejs
-        uses: ./.github/actions/init-npm
+        uses: MapColonies/shared-workflows/actions/init-npm@init-npm-v1
+        with:
+          node-version: ${{ matrix.node }}
       - name: Pack the package
         run: npm pack
       - name: get properties
