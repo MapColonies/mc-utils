@@ -50,7 +50,7 @@ jobs:
       - name: Init nodejs
         uses: MapColonies/shared-workflows/actions/init-npm@init-npm-v1
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 24.x
       - name: Pack the package
         run: npm pack
       - name: get properties
