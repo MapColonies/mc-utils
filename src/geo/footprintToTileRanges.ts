@@ -9,7 +9,7 @@ import { ITileRange } from '../models/interfaces/geo/iTile';
 import { Footprint } from './geoIntersection';
 import { degreesPerTile } from './tiles';
 
-interface ZoomSpan {
+interface ZoomRange {
   minZoom: number;
   maxZoom: number;
 }
@@ -140,7 +140,7 @@ function tileBounds(zoom: number, x: number, y: number): TileBounds {
 
 // emits the whole subtree of a tile proven fully inside the footprint — pure arithmetic,
 // no geometry tests: a coarse interior tile can stand in for millions of deep tiles
-function* subtreeRanges(zoom: number, x: number, y: number, span: ZoomSpan): Generator<ITileRange> {
+function* subtreeRanges(zoom: number, x: number, y: number, span: ZoomRange): Generator<ITileRange> {
   // Math.max skips levels above the requested span; the block is still derived from THIS node
   for (let z = Math.max(zoom, span.minZoom); z <= span.maxZoom; z++) {
     const factor = Math.pow(SUBTILES_PER_AXIS, z - zoom); // each level doubles both axes
@@ -153,7 +153,7 @@ function* subtreeRanges(zoom: number, x: number, y: number, span: ZoomSpan): Gen
 //   no edges cross + center inside  -> whole subtree is inside: emit it arithmetically
 //   no edges cross + center outside -> whole subtree is outside: prune it
 //   edges cross                     -> the tile intersects: emit it, recurse into 4 children
-function* descend(zoom: number, x: number, y: number, edges: Segment[], rings: Position[][], span: ZoomSpan): Generator<ITileRange> {
+function* descend(zoom: number, x: number, y: number, edges: Segment[], rings: Position[][], span: ZoomRange): Generator<ITileRange> {
   const bounds = tileBounds(zoom, x, y);
   // `edges` only holds edges that crossed the PARENT tile; re-filter for this tile, so the
   // list keeps shrinking as the descent narrows onto the boundary
@@ -164,7 +164,6 @@ function* descend(zoom: number, x: number, y: number, edges: Segment[], rings: P
     // lies uniformly inside or uniformly outside; any single interior point decides which
     const centerLon = midpoint(bounds.minLon, bounds.maxLon);
     const centerLat = midpoint(bounds.minLat, bounds.maxLat);
-    // the center can never lie exactly on the boundary here (no edges cross this tile)
     if (pointInRings(centerLon, centerLat, rings)) {
       yield* subtreeRanges(zoom, x, y, span);
     }
@@ -192,22 +191,25 @@ function* descend(zoom: number, x: number, y: number, edges: Segment[], rings: P
  * deterministic but otherwise unspecified. A tile touching the footprint with zero overlap
  * area counts as intersecting.
  * @param footprint footprint to cover, holes are supported
- * @param span inclusive zoom span to emit ranges for
+ * @param zoomRange inclusive zoom span, must be within [0, 22] and minZoom <= maxZoom
+ * @returns a generator of disjoint tile ranges, each with a single zoom level
  */
-export function* footprintToTileRanges(footprint: Footprint, span: ZoomSpan): Generator<ITileRange> {
-  if (span.minZoom > span.maxZoom) {
-    throw new RangeError(`minZoom [${span.minZoom}] must not be greater than maxZoom [${span.maxZoom}]`);
+export function* footprintToTileRanges(footprint: Footprint, zoomRange: ZoomRange): Generator<ITileRange> {
+  if (zoomRange.minZoom > zoomRange.maxZoom) {
+    throw new RangeError(`minZoom [${zoomRange.minZoom}] must not be greater than maxZoom [${zoomRange.maxZoom}]`);
   }
-  if (span.minZoom < MIN_SUPPORTED_ZOOM || span.maxZoom > MAX_SUPPORTED_ZOOM) {
-    throw new RangeError(`zoom span [${span.minZoom}, ${span.maxZoom}] exceeds the supported range [${MIN_SUPPORTED_ZOOM}, ${MAX_SUPPORTED_ZOOM}]`);
+  if (zoomRange.minZoom < MIN_SUPPORTED_ZOOM || zoomRange.maxZoom > MAX_SUPPORTED_ZOOM) {
+    throw new RangeError(
+      `zoom span [${zoomRange.minZoom}, ${zoomRange.maxZoom}] exceeds the supported range [${MIN_SUPPORTED_ZOOM}, ${MAX_SUPPORTED_ZOOM}]`
+    );
   }
 
   const rings = ringsOf(footprint);
   const edges = ringsToEdges(rings);
   // the geodetic grid has two root tiles (2x1) at zoom 0 — west (x=0) and east (x=1)
   // hemispheres — so the descent starts from both; the walk can only visit real grid tiles
-  yield* descend(0, 0, 0, edges, rings, span);
-  yield* descend(0, 1, 0, edges, rings, span);
+  yield* descend(0, 0, 0, edges, rings, zoomRange);
+  yield* descend(0, 1, 0, edges, rings, zoomRange);
 }
 
-export type { ZoomSpan };
+export type { ZoomRange };
