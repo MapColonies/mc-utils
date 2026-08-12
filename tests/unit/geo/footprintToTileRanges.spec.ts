@@ -57,7 +57,7 @@ const squarePolygon = (minLon: number, minLat: number, maxLon: number, maxLat: n
 });
 
 describe('footprintToTileRanges', () => {
-  describe('zoom span validation', () => {
+  describe('zoom range validation', () => {
     it('should throw RangeError when minZoom is greater than maxZoom', () => {
       const footprint = squarePolygon(0, 0, 90, 90);
 
@@ -69,7 +69,7 @@ describe('footprintToTileRanges', () => {
     it.each([
       [-1, 5],
       [0, 23],
-    ])('should throw RangeError when the span [%i, %i] exceeds the supported zoom levels', (minZoom, maxZoom) => {
+    ])('should throw RangeError when the range [%i, %i] exceeds the supported zoom levels', (minZoom, maxZoom) => {
       const footprint = squarePolygon(0, 0, 90, 90);
 
       const generate = () => [...footprintToTileRanges(footprint, { minZoom, maxZoom })];
