@@ -1,0 +1,835 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>footprintToTileRanges — flow debugger</title>
+    <style>
+      :root {
+        --paper: #fafaf7;
+        --panel: #ffffff;
+        --ink: #26251f;
+        --mut: #6b6a63;
+        --line: #e4e2d8;
+        --orange: #d85a30;
+        --orangeT: #fbeae2;
+        --green: #1d9e75;
+        --greenF: #bfe8d6;
+        --greenT: #e4f5ee;
+        --pruned: #efeee8;
+        --prunedEdge: #dddcd2;
+        --blue: #2b5fd9;
+        --red: #c2402a;
+        --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--paper);
+        color: var(--ink);
+        font-family:
+          system-ui,
+          -apple-system,
+          sans-serif;
+      }
+      header {
+        border-bottom: 1px solid var(--line);
+        padding: 14px 20px;
+        display: flex;
+        align-items: baseline;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .eyebrow {
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        color: var(--mut);
+        font-weight: 700;
+      }
+      .fn {
+        font-family: var(--mono);
+        font-size: 17px;
+        font-weight: 700;
+      }
+      button {
+        background: var(--panel);
+        color: var(--ink);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 7px 14px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      button.primary {
+        background: var(--ink);
+        color: #fff;
+        border-color: var(--ink);
+      }
+      button:focus-visible,
+      input:focus-visible,
+      textarea:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 1px;
+      }
+      #inputDrawer {
+        border-bottom: 1px solid var(--line);
+        padding: 14px 20px;
+        background: var(--panel);
+      }
+      .drawerGrid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+      .geoCol {
+        flex: 1 1 380px;
+        min-width: 300px;
+      }
+      .label {
+        font-size: 12px;
+        color: var(--mut);
+        margin-bottom: 6px;
+      }
+      textarea {
+        width: 100%;
+        height: 150px;
+        font-family: var(--mono);
+        font-size: 12px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: 10px;
+        color: var(--ink);
+        background: var(--paper);
+        resize: vertical;
+      }
+      .sideCol {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .presets {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+      .presets button {
+        text-align: left;
+        font-weight: 500;
+      }
+      input[type='number'] {
+        width: 64px;
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 4px 8px;
+        font-family: var(--mono);
+        font-size: 13px;
+        background: var(--panel);
+      }
+      #err {
+        margin-top: 10px;
+        color: var(--red);
+        font-size: 13px;
+        font-family: var(--mono);
+      }
+      main {
+        display: flex;
+        flex-wrap: wrap;
+        min-height: 430px;
+      }
+      #mapWrap {
+        flex: 1 1 440px;
+        min-width: 320px;
+        height: 460px;
+        position: relative;
+        border-right: 1px solid var(--line);
+      }
+      canvas {
+        display: block;
+      }
+      #viewBtns {
+        position: absolute;
+        left: 12px;
+        bottom: 10px;
+        display: flex;
+        gap: 6px;
+      }
+      #viewBtns button {
+        padding: 3px 10px;
+        font-size: 11px;
+        color: var(--mut);
+      }
+      #viewBtns button.on {
+        background: var(--ink);
+        color: #fff;
+        border-color: var(--ink);
+      }
+      #legend {
+        position: absolute;
+        right: 12px;
+        top: 10px;
+        font-size: 11px;
+        color: var(--mut);
+        background: rgba(255, 255, 255, 0.85);
+        padding: 4px 8px;
+        border-radius: 6px;
+        border: 1px solid var(--line);
+      }
+      #ledger {
+        flex: 1 1 380px;
+        min-width: 320px;
+        background: var(--panel);
+        padding: 16px 20px;
+      }
+      .traceHead {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 8px;
+      }
+      #stepCount {
+        font-family: var(--mono);
+        font-size: 13px;
+      }
+      #chip {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 12px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 999px;
+      }
+      .mono {
+        font-family: var(--mono);
+        font-size: 12.5px;
+        line-height: 1.75;
+      }
+      .mut {
+        color: var(--mut);
+      }
+      .stack {
+        color: var(--mut);
+        font-size: 11.5px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .callLine {
+        font-size: 14px;
+        font-weight: 700;
+        margin: 6px 0 2px;
+      }
+      .pathLabel {
+        margin: 8px 0 2px;
+        font-weight: 700;
+        font-family: system-ui, sans-serif;
+      }
+      #tallies {
+        margin-top: 14px;
+        padding-top: 10px;
+        border-top: 1px solid var(--line);
+        font-family: var(--mono);
+        font-size: 13px;
+        display: flex;
+        gap: 18px;
+        flex-wrap: wrap;
+      }
+      #transport {
+        border-top: 1px solid var(--line);
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        background: var(--panel);
+      }
+      #scrub {
+        flex: 1 1 200px;
+        accent-color: var(--ink);
+      }
+      #speed {
+        width: 90px;
+        accent-color: var(--ink);
+      }
+      .speedLbl {
+        font-size: 12px;
+        color: var(--mut);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      footer {
+        padding: 10px 20px;
+        font-size: 11px;
+        color: var(--mut);
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <span class="eyebrow">FLOW DEBUGGER</span>
+      <span class="fn">footprintToTileRanges(footprint, span)</span>
+      <button id="toggleInput" style="margin-left: auto">Hide footprint input</button>
+    </header>
+
+    <div id="inputDrawer">
+      <div class="drawerGrid">
+        <div class="geoCol">
+          <div class="label">Footprint GeoJSON — Polygon, MultiPolygon, or Feature; holes supported</div>
+          <textarea id="geo" spellcheck="false"></textarea>
+        </div>
+        <div class="sideCol">
+          <div>
+            <div class="label">Presets</div>
+            <div class="presets" id="presets"></div>
+          </div>
+          <div>
+            <div class="label">Zoom span (inclusive)</div>
+            <input type="number" id="minZoom" min="0" max="22" value="0" aria-label="minZoom" />
+            <span class="mono mut">..</span>
+            <input type="number" id="maxZoom" min="0" max="22" value="5" aria-label="maxZoom" />
+          </div>
+          <button class="primary" id="runBtn">Run trace</button>
+        </div>
+      </div>
+      <div id="err"></div>
+    </div>
+
+    <main>
+      <div id="mapWrap">
+        <canvas id="cv"></canvas>
+        <div id="viewBtns" class="hidden">
+          <button data-v="auto" class="on">auto</button>
+          <button data-v="world">world</button>
+          <button data-v="fit">fit</button>
+        </div>
+        <div id="legend" class="hidden">
+          <span style="color: var(--green)">&#9632;</span> interior&nbsp;&nbsp; <span style="color: var(--orange)">&#9633;</span> boundary&nbsp;&nbsp;
+          <span style="color: var(--prunedEdge)">&#9632;</span> pruned&nbsp;&nbsp; <span style="color: var(--blue)">&#9633;</span> current
+        </div>
+      </div>
+      <div id="ledger">
+        <div id="intro" style="color: var(--mut); font-size: 14px; line-height: 1.6">
+          Paste a footprint (or pick a preset), set the zoom span, and run the trace. Then scrub, play, or step with &larr; &rarr; keys; space toggles
+          play. Scope IDs (FT-3.A / B / C) match the Confluence page anchors.
+        </div>
+        <div id="trace" class="hidden">
+          <div class="traceHead">
+            <span class="eyebrow">EXECUTION TRACE</span>
+            <span id="stepCount"></span>
+            <span id="chip"></span>
+          </div>
+          <div class="mono" id="lines"></div>
+          <div id="tallies"></div>
+        </div>
+      </div>
+    </main>
+
+    <div id="transport" class="hidden">
+      <button id="restart" aria-label="Restart">&#9198;</button>
+      <button id="back" aria-label="Step back">&larr;</button>
+      <button id="playBtn" class="primary" style="min-width: 82px">Play</button>
+      <button id="fwd" aria-label="Step forward">&rarr;</button>
+      <input type="range" id="scrub" min="0" max="0" value="0" aria-label="Scrub steps" />
+      <label class="speedLbl"
+        >speed
+        <input type="range" id="speed" min="1" max="30" value="6" aria-label="Playback speed" />
+        <span class="mono" id="speedVal">6/s</span>
+      </label>
+    </div>
+
+    <footer>
+      Faithful port of footprintToTileRanges on the WGS84 geodetic grid (two zoom-0 roots, 180/2^z&deg; tiles). Scope IDs match the Confluence pages:
+      FT-&hellip; and LB-&hellip;. Runs fully offline.
+    </footer>
+
+    <script>
+      'use strict';
+      // ── faithful ports of the algorithm ──────────────────────────────────────────
+      const GRID_MIN_LON = -180,
+        GRID_MIN_LAT = -90,
+        MAX_STEPS = 4000;
+      const degreesPerTile = (z) => 180 / Math.pow(2, z);
+      const tileBounds = (z, x, y) => {
+        const s = degreesPerTile(z),
+          minLon = GRID_MIN_LON + x * s,
+          minLat = GRID_MIN_LAT + y * s;
+        return { minLon, minLat, maxLon: minLon + s, maxLat: minLat + s };
+      };
+      function segmentIntersectsBounds(e, b) {
+        const dx = e.x2 - e.x1,
+          dy = e.y2 - e.y1;
+        const p = [-dx, dx, -dy, dy];
+        const q = [e.x1 - b.minLon, b.maxLon - e.x1, e.y1 - b.minLat, b.maxLat - e.y1];
+        let t0 = 0,
+          t1 = 1;
+        for (let i = 0; i < 4; i++) {
+          if (p[i] === 0) {
+            if (q[i] < 0) return false;
+          } else {
+            const r = q[i] / p[i];
+            if (p[i] < 0) {
+              if (r > t1) return false;
+              if (r > t0) t0 = r;
+            } else {
+              if (r < t0) return false;
+              if (r < t1) t1 = r;
+            }
+          }
+        }
+        return true;
+      }
+      function rayCrossings(lon, lat, rings) {
+        let n = 0;
+        for (const ring of rings)
+          for (let i = 0; i < ring.length - 1; i++) {
+            const x1 = ring[i][0],
+              y1 = ring[i][1],
+              x2 = ring[i + 1][0],
+              y2 = ring[i + 1][1];
+            if ((y1 <= lat && y2 > lat) || (y2 <= lat && y1 > lat)) {
+              const xc = x1 + ((lat - y1) * (x2 - x1)) / (y2 - y1);
+              if (xc > lon) n++;
+            }
+          }
+        return n;
+      }
+      function parseFootprint(text) {
+        let g;
+        try {
+          g = JSON.parse(text);
+        } catch {
+          throw new Error('Not valid JSON — check for missing brackets or commas.');
+        }
+        if (g && g.type === 'Feature') g = g.geometry;
+        if (!g || (g.type !== 'Polygon' && g.type !== 'MultiPolygon'))
+          throw new Error('Footprint must be a Polygon, MultiPolygon, or a Feature wrapping one.');
+        let rings = g.type === 'Polygon' ? g.coordinates : g.coordinates.flat();
+        if (!rings.length || rings.some((r) => !Array.isArray(r) || r.length < 3)) throw new Error('Each ring needs at least 3 positions.');
+        return rings.map((r) => {
+          const f = r[0],
+            l = r[r.length - 1];
+          return f[0] === l[0] && f[1] === l[1] ? r : r.concat([r[0]]); // auto-close open rings
+        });
+      }
+      function buildTrace(rings, span) {
+        if (span.minZoom > span.maxZoom) throw new Error(`minZoom [${span.minZoom}] must not be greater than maxZoom [${span.maxZoom}]`);
+        if (span.minZoom < 0 || span.maxZoom > 22)
+          throw new Error(`zoom span [${span.minZoom}, ${span.maxZoom}] exceeds the supported range [0, 22]`);
+        const edges = [];
+        for (const r of rings) for (let i = 0; i < r.length - 1; i++) edges.push({ x1: r[i][0], y1: r[i][1], x2: r[i + 1][0], y2: r[i + 1][1] });
+        const trace = [];
+        function descend(z, x, y, parentEdges, stack) {
+          if (trace.length >= MAX_STEPS) throw new Error(`Trace exceeds ${MAX_STEPS} steps — lower maxZoom or simplify the footprint.`);
+          const b = tileBounds(z, x, y);
+          const clipped = parentEdges.filter((e) => segmentIntersectsBounds(e, b));
+          const entry = { z, x, y, b, nIn: parentEdges.length, nClip: clipped.length, stack: stack.concat([[z, x, y]]) };
+          if (clipped.length === 0) {
+            const cLon = (b.minLon + b.maxLon) / 2,
+              cLat = (b.minLat + b.maxLat) / 2;
+            const n = rayCrossings(cLon, cLat, rings),
+              inside = n % 2 === 1;
+            entry.center = [cLon, cLat];
+            entry.ncross = n;
+            entry.path = inside ? 'B' : 'C';
+            entry.emitted = inside ? Math.max(0, span.maxZoom - Math.max(z, span.minZoom) + 1) : 0;
+            trace.push(entry);
+            return;
+          }
+          entry.path = 'A';
+          entry.emitted = z >= span.minZoom ? 1 : 0;
+          trace.push(entry);
+          if (z < span.maxZoom) {
+            descend(z + 1, 2 * x, 2 * y, clipped, entry.stack);
+            descend(z + 1, 2 * x + 1, 2 * y, clipped, entry.stack);
+            descend(z + 1, 2 * x, 2 * y + 1, clipped, entry.stack);
+            descend(z + 1, 2 * x + 1, 2 * y + 1, clipped, entry.stack);
+          }
+        }
+        descend(0, 0, 0, edges, []); // west hemisphere root
+        descend(0, 1, 0, edges, []); // east hemisphere root
+        let em = 0,
+          pr = 0;
+        const emittedPrefix = [],
+          prunedPrefix = [];
+        for (const t of trace) {
+          em += t.emitted;
+          pr += t.path === 'C' ? 1 : 0;
+          emittedPrefix.push(em);
+          prunedPrefix.push(pr);
+        }
+        return { trace, emittedPrefix, prunedPrefix, totalRanges: em, span };
+      }
+
+      // ── presets ───────────────────────────────────────────────────────────────────
+      const PRESETS = {
+        'Australia + desert hole': {
+          span: { minZoom: 0, maxZoom: 5 },
+          geo: {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [113.5, -22],
+                [115, -34],
+                [124, -33],
+                [129.5, -31.5],
+                [137.5, -35.5],
+                [140.5, -38],
+                [146.5, -39],
+                [150, -37.5],
+                [153.5, -28.5],
+                [146, -18.5],
+                [142, -10.8],
+                [135.5, -12],
+                [131, -11.5],
+                [125.5, -14],
+                [121.5, -19],
+                [113.5, -22],
+              ],
+              [
+                [126, -25],
+                [133, -26],
+                [132, -30],
+                [125, -29],
+                [126, -25],
+              ],
+            ],
+          },
+        },
+        'MultiPolygon (two islands)': {
+          span: { minZoom: 0, maxZoom: 6 },
+          geo: {
+            type: 'MultiPolygon',
+            coordinates: [
+              [
+                [
+                  [12.4, 38.2],
+                  [15.6, 38.3],
+                  [15.1, 36.7],
+                  [12.4, 37.5],
+                  [12.4, 38.2],
+                ],
+              ],
+              [
+                [
+                  [8.2, 41.2],
+                  [9.6, 41.3],
+                  [9.5, 39.1],
+                  [8.4, 38.9],
+                  [8.2, 41.2],
+                ],
+              ],
+            ],
+          },
+        },
+        'Tiny triangle (fast)': {
+          span: { minZoom: 0, maxZoom: 4 },
+          geo: {
+            type: 'Polygon',
+            coordinates: [
+              [
+                [34, 31],
+                [36, 33.5],
+                [35, 29.5],
+                [34, 31],
+              ],
+            ],
+          },
+        },
+      };
+
+      // ── state ─────────────────────────────────────────────────────────────────────
+      const $ = (id) => document.getElementById(id);
+      const css = (v) => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+      const PATH_META = {
+        A: { chip: 'FT-3.A', label: 'Boundary tile — emit 1×1, recurse', fg: css('--orange'), bg: css('--orangeT') },
+        B: { chip: 'FT-3.B', label: 'Interior — settle whole subtree', fg: css('--green'), bg: css('--greenT') },
+        C: { chip: 'FT-3.C', label: 'Exterior — prune subtree', fg: css('--mut'), bg: css('--pruned') },
+      };
+      const fmt = (v) => (Math.abs(v) < 1e-9 ? '0' : v.toFixed(3).replace(/\.?0+$/, ''));
+      let run = null,
+        step = 0,
+        playing = false,
+        timer = null,
+        speed = 6,
+        viewMode = 'auto';
+
+      // ── run ───────────────────────────────────────────────────────────────────────
+      function runTrace() {
+        stop();
+        try {
+          const rings = parseFootprint($('geo').value);
+          const built = buildTrace(rings, { minZoom: +$('minZoom').value, maxZoom: +$('maxZoom').value });
+          let bb = [Infinity, Infinity, -Infinity, -Infinity];
+          for (const r of rings) for (const p of r) bb = [Math.min(bb[0], p[0]), Math.min(bb[1], p[1]), Math.max(bb[2], p[0]), Math.max(bb[3], p[1])];
+          run = Object.assign(built, { rings, bbox: bb });
+          step = 0;
+          $('err').textContent = '';
+          setDrawer(false);
+          $('intro').classList.add('hidden');
+          ['trace', 'transport', 'viewBtns', 'legend'].forEach((id) => $(id).classList.remove('hidden'));
+          $('scrub').max = run.trace.length - 1;
+          render();
+        } catch (e) {
+          $('err').textContent = e.message;
+        }
+      }
+
+      // ── view + canvas ─────────────────────────────────────────────────────────────
+      function currentView() {
+        const world = { minLon: -184, minLat: -92, maxLon: 184, maxLat: 92 };
+        if (!run) return world;
+        const [a, b, c, d] = run.bbox;
+        const px = Math.max((c - a) * 0.35, 2),
+          py = Math.max((d - b) * 0.35, 2);
+        const fit = { minLon: a - px, minLat: b - py, maxLon: c + px, maxLat: d + py };
+        if (viewMode === 'world') return world;
+        if (viewMode === 'fit') return fit;
+        return run.trace[step].z <= 1 ? world : fit;
+      }
+      function draw() {
+        const wrap = $('mapWrap'),
+          cv = $('cv');
+        const dpr = window.devicePixelRatio || 1,
+          W = wrap.clientWidth,
+          H = wrap.clientHeight;
+        cv.width = W * dpr;
+        cv.height = H * dpr;
+        cv.style.width = W + 'px';
+        cv.style.height = H + 'px';
+        const g = cv.getContext('2d');
+        g.setTransform(dpr, 0, 0, dpr, 0, 0);
+        g.fillStyle = css('--paper');
+        g.fillRect(0, 0, W, H);
+        if (!run) {
+          g.fillStyle = css('--mut');
+          g.font = '13px ' + css('--mono');
+          g.textAlign = 'center';
+          g.fillText('Run a trace to see the tile grid here', W / 2, H / 2);
+          return;
+        }
+        const v = currentView();
+        const s = Math.min(W / (v.maxLon - v.minLon), H / (v.maxLat - v.minLat));
+        const ox = (W - (v.maxLon - v.minLon) * s) / 2,
+          oy = (H - (v.maxLat - v.minLat) * s) / 2;
+        const X = (lon) => ox + (lon - v.minLon) * s;
+        const Y = (lat) => H - oy - (lat - v.minLat) * s;
+        const rect = (b) => [X(b.minLon), Y(b.maxLat), (b.maxLon - b.minLon) * s, (b.maxLat - b.minLat) * s];
+
+        g.strokeStyle = css('--line');
+        g.lineWidth = 1;
+        g.strokeRect(X(-180), Y(90), 360 * s, 180 * s);
+        g.beginPath();
+        g.moveTo(X(0), Y(90));
+        g.lineTo(X(0), Y(-90));
+        g.stroke();
+
+        for (let k = 0; k <= step; k++) {
+          const t = run.trace[k],
+            r = rect(t.b);
+          if (t.path === 'B') {
+            g.fillStyle = css('--greenF');
+            g.fillRect(...r);
+            g.strokeStyle = css('--green');
+            g.lineWidth = 0.6;
+            g.strokeRect(...r);
+          } else if (t.path === 'C') {
+            g.fillStyle = css('--pruned');
+            g.fillRect(...r);
+            g.strokeStyle = css('--prunedEdge');
+            g.lineWidth = 0.5;
+            g.strokeRect(...r);
+          } else {
+            g.strokeStyle = css('--orange');
+            g.lineWidth = 1.1;
+            g.strokeRect(...r);
+          }
+        }
+        g.strokeStyle = css('--ink');
+        g.lineWidth = 1.8;
+        g.lineJoin = 'round';
+        for (const ring of run.rings) {
+          g.beginPath();
+          ring.forEach((p, i) => (i ? g.lineTo(X(p[0]), Y(p[1])) : g.moveTo(X(p[0]), Y(p[1]))));
+          g.stroke();
+        }
+        const cur = run.trace[step],
+          r = rect(cur.b);
+        g.strokeStyle = css('--blue');
+        g.lineWidth = 2.6;
+        g.strokeRect(...r);
+        if (cur.center) {
+          g.fillStyle = css('--blue');
+          g.beginPath();
+          g.arc(X(cur.center[0]), Y(cur.center[1]), 3.5, 0, Math.PI * 2);
+          g.fill();
+        }
+      }
+
+      // ── ledger ────────────────────────────────────────────────────────────────────
+      function esc(x) {
+        return String(x);
+      }
+      function renderLedger() {
+        const t = run.trace[step],
+          pm = PATH_META[t.path],
+          span = run.span;
+        $('stepCount').textContent = `step ${step + 1} / ${run.trace.length}`;
+        const chip = $('chip');
+        chip.textContent = pm.chip;
+        chip.style.background = pm.bg;
+        chip.style.color = pm.fg;
+        const rows = [];
+        rows.push(`<div class="stack">stack: ${t.stack.map((s) => `(${s[0]},${s[1]},${s[2]})`).join(' \u2192 ')}</div>`);
+        const rootNote = t.z === 0 ? `<span class="mut" style="font-weight:400"> — ${t.x === 0 ? 'west' : 'east'} hemisphere root</span>` : '';
+        rows.push(`<div class="callLine">descend(z=${t.z}, x=${t.x}, y=${t.y})${rootNote}</div>`);
+        rows.push(`<div class="mut">degreesPerTile(${t.z}) = ${fmt(degreesPerTile(t.z))}&deg;</div>`);
+        rows.push(
+          `<div class="mut">tileBounds \u2192 lon [${fmt(t.b.minLon)}, ${fmt(t.b.maxLon)}] lat [${fmt(t.b.minLat)}, ${fmt(t.b.maxLat)}]</div>`
+        );
+        rows.push(`<div>segmentIntersectsBounds \u00d7 ${t.nIn} parent edges \u2192 <b>${t.nClip} cross</b></div>`);
+        if (t.path !== 'A') {
+          const verdict = t.path === 'B' ? 'odd \u2192 inside' : 'even \u2192 outside';
+          rows.push(
+            `<div>pointInRings(${fmt(t.center[0])}&deg;, ${fmt(t.center[1])}&deg;) \u2192 ${t.ncross} crossing${t.ncross === 1 ? '' : 's'} \u2192 <b style="color:${pm.fg}">${verdict}</b></div>`
+          );
+        }
+        rows.push(`<div class="pathLabel" style="color:${pm.fg}">${pm.label}</div>`);
+        if (t.path === 'A') {
+          rows.push(
+            `<div>${t.emitted ? `yield {zoom:${t.z}, x:${t.x}..${t.x}, y:${t.y}..${t.y}}` : 'zoom &lt; minZoom \u2192 nothing emitted at this level'} <span class="mut">(FT-3.A.1)</span></div>`
+          );
+          rows.push(
+            `<div class="mut">${
+              t.z < span.maxZoom
+                ? `recurse \u2192 z=${t.z + 1}: (${2 * t.x},${2 * t.y}) (${2 * t.x + 1},${2 * t.y}) (${2 * t.x},${2 * t.y + 1}) (${2 * t.x + 1},${2 * t.y + 1})`
+                : 'z = maxZoom \u2192 no recursion (FT-3.A.2 skipped)'
+            }</div>`
+          );
+        } else if (t.path === 'B') {
+          rows.push(
+            `<div>yield subtreeRanges \u2192 ${t.emitted} block${t.emitted === 1 ? '' : 's'}, z = ${Math.max(t.z, span.minZoom)}..${span.maxZoom} <span class="mut">(FT-4.4)</span></div>`
+          );
+        } else {
+          rows.push(`<div class="mut">return — subtree never visited</div>`);
+        }
+        $('lines').innerHTML = rows.join('');
+        const doneTag = step === run.trace.length - 1 ? `<span style="color:${css('--green')};font-weight:700">done \u2713</span>` : '';
+        $('tallies').innerHTML =
+          `<span>ranges emitted <b>${run.emittedPrefix[step]}</b> / ${run.totalRanges}</span>` +
+          `<span>subtrees pruned <b>${run.prunedPrefix[step]}</b></span>` +
+          doneTag;
+      }
+      function render() {
+        if (!run) {
+          draw();
+          return;
+        }
+        step = Math.max(0, Math.min(step, run.trace.length - 1));
+        $('scrub').value = step;
+        renderLedger();
+        draw();
+      }
+
+      // ── playback ──────────────────────────────────────────────────────────────────
+      function stop() {
+        playing = false;
+        clearInterval(timer);
+        $('playBtn').textContent = 'Play';
+      }
+      function play() {
+        if (!run) return;
+        playing = true;
+        $('playBtn').textContent = 'Pause';
+        clearInterval(timer);
+        timer = setInterval(() => {
+          if (step >= run.trace.length - 1) {
+            stop();
+            return;
+          }
+          step++;
+          render();
+        }, 1000 / speed);
+      }
+
+      // ── wiring ────────────────────────────────────────────────────────────────────
+      function setDrawer(open) {
+        $('inputDrawer').classList.toggle('hidden', !open);
+        $('toggleInput').textContent = open ? 'Hide footprint input' : 'Edit footprint';
+      }
+      const presetsBox = $('presets');
+      Object.keys(PRESETS).forEach((name) => {
+        const b = document.createElement('button');
+        b.textContent = name;
+        b.onclick = () => {
+          $('geo').value = JSON.stringify(PRESETS[name].geo, null, 1);
+          $('minZoom').value = PRESETS[name].span.minZoom;
+          $('maxZoom').value = PRESETS[name].span.maxZoom;
+        };
+        presetsBox.appendChild(b);
+      });
+      $('geo').value = JSON.stringify(PRESETS['Australia + desert hole'].geo, null, 1);
+      $('runBtn').onclick = runTrace;
+      $('toggleInput').onclick = () => setDrawer($('inputDrawer').classList.contains('hidden'));
+      $('playBtn').onclick = () => (playing ? (stop(), render()) : play());
+      $('restart').onclick = () => {
+        stop();
+        step = 0;
+        render();
+      };
+      $('back').onclick = () => {
+        stop();
+        step--;
+        render();
+      };
+      $('fwd').onclick = () => {
+        stop();
+        step++;
+        render();
+      };
+      $('scrub').oninput = (e) => {
+        stop();
+        step = +e.target.value;
+        render();
+      };
+      $('speed').oninput = (e) => {
+        speed = +e.target.value;
+        $('speedVal').textContent = speed + '/s';
+        if (playing) play();
+      };
+      document.querySelectorAll('#viewBtns button').forEach((b) => {
+        b.onclick = () => {
+          viewMode = b.dataset.v;
+          document.querySelectorAll('#viewBtns button').forEach((x) => x.classList.toggle('on', x === b));
+          render();
+        };
+      });
+      window.addEventListener('keydown', (e) => {
+        if (!run || /TEXTAREA|INPUT/.test(e.target.tagName)) return;
+        if (e.key === 'ArrowRight') {
+          stop();
+          step++;
+          render();
+          e.preventDefault();
+        }
+        if (e.key === 'ArrowLeft') {
+          stop();
+          step--;
+          render();
+          e.preventDefault();
+        }
+        if (e.key === ' ') {
+          playing ? (stop(), render()) : play();
+          e.preventDefault();
+        }
+      });
+      window.addEventListener('resize', draw);
+      draw();
+    </script>
+  </body>
+</html>

@@ -39,3 +39,42 @@ jobs:
         uses: MapColonies/shared-workflows/actions/eslint@eslint-v1.0.1
         with:
           node_version: ${{ matrix.node }}
+
+  upload_package:
+    needs: [eslint, tests]
+    continue-on-error: true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out TS Project Git repository
+        uses: actions/checkout@v6
+      - name: Init nodejs
+        uses: MapColonies/shared-workflows/actions/init-npm@init-npm-v1
+        with:
+          node-version: 24.x
+      - name: Pack the package
+        run: npm pack
+      - name: get properties
+        id: json_properties
+        uses: ActionsTools/read-json-action@main
+        with:
+          file_path: 'package.json'
+      - uses: azure/CLI@v2
+        with:
+          inlineScript: |
+            az storage blob upload --name mc-utils-${{ github.sha }}.tgz --account-name ghatmpstorage --container-name=npm-packages --file map-colonies-mc-utils-${{steps.json_properties.outputs.version}}.tgz --sas-token "${{ secrets.SAS_TOKEN }}"
+      - name: Comment on PR
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          message: |
+            Hi it is me, your friendly bot helper! :wave:
+            I've packed this commit for you :blush:
+            You can install it like this:
+            ```json
+            {
+              "dependencies": {
+                  "@map-colonies/mc-utils": "https://ghatmpstorage.blob.core.windows.net/npm-packages/mc-utils-${{ github.sha }}.tgz"
+              }
+            }
+            ```
+            The link will expire in a week :hourglass:
+  

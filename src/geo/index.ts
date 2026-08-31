@@ -1,4 +1,5 @@
 export * from './bboxUtils';
+export * from './footprintToTileRanges';
 export * from './geoConvertor';
 export * from './geoHash';
 export * from './geoIntersection';
