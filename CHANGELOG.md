@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.1.0](https://github.com/MapColonies/mc-utils/compare/v6.0.1...v6.1.0) (2026-08-31)
+
+
+### Features
+
+* footprint to tiles (MAPCO-11173) ([#101](https://github.com/MapColonies/mc-utils/issues/101)) ([5989b56](https://github.com/MapColonies/mc-utils/commit/5989b5610aa548222026f4e577ebcc5e779c782b))
+
 ## [6.0.1](https://github.com/MapColonies/mc-utils/compare/v6.0.0...v6.0.1) (2026-05-19)
 
 
