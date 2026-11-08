@@ -25,6 +25,16 @@ for (const range of footprintToTileRanges(footprint, { minZoom: 0, maxZoom: 18 }
 }
 ```
 
+ `footprintsSharedTileRanges(first, second, { minZoom, maxZoom })` yields, in the same format, the tiles that touch **both** footprints, in a single descent over the two. a tile counts even when the two footprints don't overlap inside it (e.g. two areas sharing an edge, or both inside one coarse tile), so this is a superset of the tiles of their intersection. typical use is invalidating only the cached tiles of an existing layer that an update area can have changed. the result does not depend on the argument order.
+
+```typescript
+import { footprintsSharedTileRanges } from '@map-colonies/mc-utils';
+
+for (const range of footprintsSharedTileRanges(updateFootprint, previousFootprint, { minZoom: 0, maxZoom: 21 })) {
+  // same range shape as footprintToTileRanges
+}
+```
+
  ## http client
  this is abstract base class for sending http request with logging and request retries.
 
