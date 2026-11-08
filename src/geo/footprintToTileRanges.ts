@@ -28,8 +28,6 @@ interface TileBounds {
   maxLat: number;
 }
 
-// one footprint as seen by the descent: its flat rings, the edges that crossed the parent tile,
-// and whether the parent tile already lies entirely inside it
 interface FootprintClip {
   flatRings: Float64Array[]; // the rings of the footprint as flat arrays of coordinates
   edges: Segment[]; // edges that crossed the parent tile
