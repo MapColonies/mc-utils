@@ -1,5 +1,4 @@
 import { ITileRange } from '../models/interfaces/geo/iTile';
-import { timeout } from '../utils/timeout';
 
 /**
  * split collection of tile ranges to batches based on tile count
@@ -85,7 +84,8 @@ async function* tileBatchGenerator(batchSize: number, ranges: AsyncGenerator<ITi
         requiredForFullBatch = batchSize;
       }
     }
-    await timeout(0); // TODO: * This is a hot fix to keep work async and handle concurrency requests while handling the task batch merging, remove this when moving to the new utils package ! *
+    // let other work run between ranges; setImmediate avoids setTimeout's 1 ms minimum delay
+    await new Promise<void>((resolve) => setImmediate(resolve));
   }
   if (targetRanges.length > 0) {
     yield await Promise.resolve(targetRanges);
