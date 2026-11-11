@@ -56,6 +56,24 @@ const squarePolygon = (minLon: number, minLat: number, maxLon: number, maxLat: n
   ],
 });
 
+// true when some 1x1 range has a 1x1 neighbour of the same zoom to its east or north,
+// i.e. two ranges that should have been merged into one
+const hasNeighbouringSingleTiles = (ranges: Iterable<ITileRange>): boolean => {
+  const singles = new Set<string>();
+  for (const range of ranges) {
+    if (range.minX === range.maxX && range.minY === range.maxY) {
+      singles.add(`${range.zoom}/${range.minX}/${range.minY}`);
+    }
+  }
+  for (const key of singles) {
+    const [zoom, x, y] = key.split('/').map(Number);
+    if (singles.has(`${zoom}/${x + 1}/${y}`) || singles.has(`${zoom}/${x}/${y + 1}`)) {
+      return true;
+    }
+  }
+  return false;
+};
+
 describe('footprintToTileRanges', () => {
   describe('zoom range validation', () => {
     it('should throw RangeError when minZoom is greater than maxZoom', () => {
@@ -167,6 +185,44 @@ describe('footprintToTileRanges', () => {
       const second = [...footprintToTileRanges(thinSliver, { minZoom: 0, maxZoom: 10 })];
 
       expect(second).toEqual(first);
+    });
+  });
+  describe('boundary tile merging', () => {
+    it('should cover a straight horizontal edge with a single range', () => {
+      const [minLon, minLat, maxLon, maxLat] = [34.72, 31.23, 35.28, 31.87];
+      const zoom = 12;
+      const resolution = degreesPerTile(zoom);
+      const edgeMinX = Math.floor((minLon + 180) / resolution);
+      const edgeMaxX = Math.floor((maxLon + 180) / resolution);
+      const edgeY = Math.floor((minLat + 90) / resolution);
+
+      const ranges = [...footprintToTileRanges(squarePolygon(minLon, minLat, maxLon, maxLat), { minZoom: zoom, maxZoom: zoom })];
+
+      const coversEdge = (range: ITileRange): boolean =>
+        range.minX <= edgeMinX && range.maxX >= edgeMaxX && range.minY <= edgeY && range.maxY >= edgeY;
+      expect(ranges.filter(coversEdge)).toHaveLength(1);
+    });
+
+    it.each<[string, Footprint]>([
+      ['an off-grid rectangle', squarePolygon(34.72, 31.23, 35.28, 31.87)],
+      [
+        'a triangle',
+        {
+          type: 'Polygon',
+          coordinates: [
+            [
+              [34.5, 31.0],
+              [35.2, 31.1],
+              [34.8, 31.9],
+              [34.5, 31.0],
+            ],
+          ],
+        },
+      ],
+    ])('should not emit neighbouring single-tile ranges of the same zoom for %s', (_name, footprint) => {
+      const ranges = [...footprintToTileRanges(footprint, { minZoom: 0, maxZoom: 14 })];
+
+      expect(hasNeighbouringSingleTiles(ranges)).toBe(false);
     });
   });
 });

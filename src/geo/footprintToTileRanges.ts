@@ -242,6 +242,66 @@ function validateZoomRange(range: ZoomRange): void {
   }
 }
 
+const isSingleTile = (range: ITileRange): boolean => range.minX === range.maxX && range.minY === range.maxY;
+
+// the geodetic grid is two tiles wide at zoom 0, doubling with each level
+const columnsAt = (zoom: number): number => SUBTILES_PER_AXIS * Math.pow(SUBTILES_PER_AXIS, zoom);
+
+// merges the single tiles of one zoom, given as keys y * columns + x (so sorting the keys sorts
+// by row, then column): neighbours in a row join into runs, and runs spanning the same columns
+// on consecutive rows stack into blocks
+function mergeSingleTiles(zoom: number, keys: Float64Array): ITileRange[] {
+  const columns = columnsAt(zoom);
+  const rowOf = (key: number): number => Math.floor(key / columns);
+  keys.sort();
+  const blocks: ITileRange[] = [];
+  const lastBlockByColumns = new Map<string, ITileRange>();
+  let i = 0;
+  while (i < keys.length) {
+    const y = rowOf(keys[i]);
+    const minX = keys[i] % columns;
+    let maxX = minX;
+    while (i + 1 < keys.length && keys[i + 1] === keys[i] + 1 && rowOf(keys[i + 1]) === y) {
+      i++;
+      maxX++;
+    }
+    i++;
+    const columnsKey = `${minX}:${maxX}`;
+    const lastBlock = lastBlockByColumns.get(columnsKey);
+    if (lastBlock !== undefined && lastBlock.maxY + 1 === y) {
+      lastBlock.maxY = y;
+    } else {
+      const block = { zoom, minX, maxX, minY: y, maxY: y };
+      lastBlockByColumns.set(columnsKey, block);
+      blocks.push(block);
+    }
+  }
+  return blocks;
+}
+
+// the descent emits every boundary tile as its own 1x1 range, and depth-first order scatters
+// neighbours far apart, so they can't be merged on the fly. Interior blocks pass straight
+// through; single tiles are held per zoom as packed numeric keys and merged once the walk ends
+function* mergeBoundaryTiles(ranges: Generator<ITileRange>): Generator<ITileRange> {
+  const keysByZoom = new Map<number, number[]>();
+  for (const range of ranges) {
+    if (!isSingleTile(range)) {
+      yield range;
+      continue;
+    }
+    let keys = keysByZoom.get(range.zoom);
+    if (keys === undefined) {
+      keys = [];
+      keysByZoom.set(range.zoom, keys);
+    }
+    keys.push(range.minY * columnsAt(range.zoom) + range.minX);
+  }
+  for (const [zoom, keys] of [...keysByZoom].sort(([a], [b]) => a - b)) {
+    keysByZoom.delete(zoom); // free each zoom's keys once merged
+    yield* mergeSingleTiles(zoom, Float64Array.from(keys));
+  }
+}
+
 /**
  * computes the tile ranges of the tiles that touch the footprint, or every one of the given
  * footprints, for each zoom level in the range, on the WGS84 geodetic grid (2x1 root tiles at zoom 0).
@@ -252,6 +312,8 @@ function validateZoomRange(range: ZoomRange): void {
  *
  * Ranges of the same zoom are disjoint; their order is deterministic but otherwise unspecified.
  * Footprints are not validated and must be valid GeoJSON, otherwise the result is unspecified.
+ * Interior blocks are yielded during the walk; boundary tiles are held per zoom and yielded at
+ * the end, merged into row runs and blocks.
  * @param footprints a footprint, or a non-empty list of footprints whose shared tiles to compute; holes are supported
  * @param range inclusive zoom range, must be within [0, 22] and minZoom <= maxZoom
  * @returns a generator of disjoint tile ranges, each with a single zoom level
@@ -264,8 +326,11 @@ export function* footprintToTileRanges(footprints: Footprint | Footprint[], rang
   }
   const states = footprintList.map(toFootprintState);
   // the descent starts from both root tiles of the 2x1 grid; the walk can only visit real grid tiles
-  yield* descend(0, 0, 0, states, range);
-  yield* descend(0, 1, 0, states, range);
+  const walk = function* (): Generator<ITileRange> {
+    yield* descend(0, 0, 0, states, range);
+    yield* descend(0, 1, 0, states, range);
+  };
+  yield* mergeBoundaryTiles(walk());
 }
 
 export type { ZoomRange };

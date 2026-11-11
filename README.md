@@ -9,7 +9,7 @@ this is general utilities for usage in Map Colonies project.
  ## footprint to tile ranges
  `footprintToTileRanges(footprint, { minZoom, maxZoom })` lazily computes the tile ranges intersecting a footprint (Polygon / MultiPolygon / Feature, holes supported) for every zoom level in the span, on the WGS84 geodetic 2:1 grid.
 
- it uses hierarchical descent (see `docs/adr/0001-hierarchical-precompute-in-mc-utils.md`): fully-interior subtrees are emitted as compressed ranges with no per-tile work, so memory stays flat regardless of how many tiles the footprint covers. a tile touching the footprint with zero overlap area counts as intersecting. ranges of the same zoom are disjoint; their order is deterministic but unspecified.
+ it uses hierarchical descent (see `docs/adr/0001-hierarchical-precompute-in-mc-utils.md`): fully-interior subtrees are emitted as compressed ranges with no per-tile work, as the walk finds them. boundary tiles are held per zoom (one number each) and emitted at the end, merged into row runs and blocks, so memory grows with the length of the footprint's boundary, not with the number of tiles it covers. a tile touching the footprint with zero overlap area counts as intersecting. ranges of the same zoom are disjoint; their order is deterministic but unspecified.
 
  typical use is tile-cache invalidation: expand each range to your cache's key format and batch-delete.
 
