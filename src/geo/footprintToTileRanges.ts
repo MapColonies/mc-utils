@@ -1,5 +1,5 @@
 /**
- * Hierarchical precompute of the tiles intersecting a footprint (or two footprints at once).
+ * Hierarchical precompute of the tiles intersecting a footprint (or shared by several footprints at once).
  * The tile pyramid is a quadtree — tile (z, x, y) contains tiles (z+1, 2x..2x+1, 2y..2y+1) -
  * so classifying one coarse tile can settle its entire subtree; the walk only recurses where
  * the footprint's boundary passes, making total work O(boundary tiles), not O(bbox area).
@@ -161,12 +161,13 @@ function* subtreeRanges(zoom: number, x: number, y: number, range: ZoomRange): G
 // [[lon, lat], ...] -> [lon, lat, lon, lat, ...]: a flat typed ring keeps the point test fast
 const toFlatRing = (ring: Position[]): Float64Array => Float64Array.from(ring.flat());
 
-function clipOf(footprint: Footprint): FootprintClip {
+// the descent's starting state for a footprint: all of its edges, not yet narrowed to any tile
+function prepareFootprint(footprint: Footprint): FootprintClip {
   const rings = ringsOf(footprint);
   return {
     flatRings: rings.map(toFlatRing),
     edges: ringsToEdges(rings),
-    inside: false, //
+    inside: false,
   };
 }
 
@@ -184,7 +185,7 @@ function clipToTile(clip: FootprintClip, bounds: TileBounds): FootprintClip | un
     return { flatRings: clip.flatRings, edges, inside: false };
   }
   // the boundary does not pass through this tile, and a tile is a connected region — so it
-  // lies uniformly inside or uniformly outside; any single interior point decides which
+  // lies entirely inside or entirely outside; any single interior point decides which
   if (pointInRings(midpoint(bounds.minLon, bounds.maxLon), midpoint(bounds.minLat, bounds.maxLat), clip.flatRings)) {
     return { flatRings: clip.flatRings, edges, inside: true };
   }
@@ -239,40 +240,34 @@ function validateZoomRange(range: ZoomRange): void {
   }
 }
 
-function* descendFromRoots(footprints: Footprint[], range: ZoomRange): Generator<ITileRange> {
+/**
+ * computes, for every zoom level in the range, the tile ranges of the tiles that touch the
+ * given footprint, or every one of the given footprints, using hierarchical descent over the
+ * WGS84 geodetic grid. That grid is 2x1 at zoom 0: two root tiles, the western (x=0) and
+ * eastern (x=1) hemispheres, and each zoom level doubles both axes.
+ *
+ * A tile touching a footprint with zero overlap area counts as touching it. With several
+ * footprints a tile counts even if they don't overlap inside it, so the result can be more
+ * than the tiles of their intersection. The order of the footprints doesn't matter.
+ *
+ * Ranges of the same zoom are disjoint; their order is deterministic but otherwise unspecified.
+ *
+ * Footprints are not validated: they must be valid GeoJSON (closed rings, no self-intersections),
+ * otherwise the result is unspecified.
+ * @param footprints a footprint, or a non-empty list of footprints whose shared tiles to compute; holes are supported
+ * @param range inclusive zoom range, must be within [0, 22] and minZoom <= maxZoom
+ * @returns a generator of disjoint tile ranges, each with a single zoom level
+ */
+export function* footprintToTileRanges(footprints: Footprint | Footprint[], range: ZoomRange): Generator<ITileRange> {
   validateZoomRange(range);
-  const clips = footprints.map(clipOf);
-  // the geodetic grid has two root tiles (2x1) at zoom 0 — west (x=0) and east (x=1)
-  // hemispheres — so the descent starts from both; the walk can only visit real grid tiles
+  const footprintList = Array.isArray(footprints) ? footprints : [footprints];
+  if (footprintList.length === 0) {
+    throw new RangeError('at least one footprint is required');
+  }
+  const clips = footprintList.map(prepareFootprint);
+  // the descent starts from both root tiles of the 2x1 grid; the walk can only visit real grid tiles
   yield* descend(0, 0, 0, clips, range);
   yield* descend(0, 1, 0, clips, range);
-}
-
-/**
- * computes the tile ranges intersecting the given footprint for every zoom level in the
- * range, using hierarchical descent. Ranges of the same zoom are disjoint; their order is
- * deterministic but otherwise unspecified. A tile touching the footprint with zero overlap
- * area counts as intersecting.
- * @param footprint footprint to cover, holes are supported
- * @param range inclusive zoom range, must be within [0, 22] and minZoom <= maxZoom
- * @returns a generator of disjoint tile ranges, each with a single zoom level
- */
-export function* footprintToTileRanges(footprint: Footprint, range: ZoomRange): Generator<ITileRange> {
-  yield* descendFromRoots([footprint], range);
-}
-
-/**
- * computes the tile ranges of the tiles that touch both footprints, in a single descent.
- * A tile counts even if the footprints don't overlap inside it, so this is more than the
- * tiles of their intersection. Ranges of the same zoom are disjoint, and argument order
- * doesn't matter.
- * @param first first footprint, holes are supported
- * @param second second footprint, holes are supported
- * @param range inclusive zoom range, must be within [0, 22] and minZoom <= maxZoom
- * @returns a generator of disjoint tile ranges, each with a single zoom level
- */
-export function* footprintsSharedTileRanges(first: Footprint, second: Footprint, range: ZoomRange): Generator<ITileRange> {
-  yield* descendFromRoots([first, second], range);
 }
 
 export type { ZoomRange };

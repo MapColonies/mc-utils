@@ -25,13 +25,15 @@ for (const range of footprintToTileRanges(footprint, { minZoom: 0, maxZoom: 18 }
 }
 ```
 
- `footprintsSharedTileRanges(first, second, { minZoom, maxZoom })` yields, in the same format, the tiles that touch **both** footprints, in a single descent over the two. a tile counts even when the two footprints don't overlap inside it (e.g. two areas sharing an edge, or both inside one coarse tile), so this is a superset of the tiles of their intersection. typical use is invalidating only the cached tiles of an existing layer that an update area can have changed. the result does not depend on the argument order.
+ footprints are not validated: they must be valid GeoJSON (closed rings, no self-intersections), otherwise the result is unspecified. the zoom range must be within [0, 22] with `minZoom <= maxZoom`, otherwise a `RangeError` is thrown.
+
+ passing a list of footprints, `footprintToTileRanges([first, second, ...], { minZoom, maxZoom })`, yields in the same format the tiles that touch **every** footprint in the list, in a single descent over all of them. a tile counts even when the footprints don't overlap inside it (e.g. two areas sharing an edge, or both inside one coarse tile), so this is a superset of the tiles of their intersection. the order of the footprints does not matter. typical use is invalidating only the cached tiles of an existing layer that an update area can have changed.
 
 ```typescript
-import { footprintsSharedTileRanges } from '@map-colonies/mc-utils';
+import { footprintToTileRanges } from '@map-colonies/mc-utils';
 
-for (const range of footprintsSharedTileRanges(updateFootprint, previousFootprint, { minZoom: 0, maxZoom: 21 })) {
-  // same range shape as footprintToTileRanges
+for (const range of footprintToTileRanges([updateFootprint, previousFootprint], { minZoom: 0, maxZoom: 21 })) {
+  // same range shape as with a single footprint
 }
 ```
 

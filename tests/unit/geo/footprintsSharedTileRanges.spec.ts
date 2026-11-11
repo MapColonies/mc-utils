@@ -1,11 +1,10 @@
-import type { MultiPolygon, Polygon } from 'geojson';
-import { bboxPolygon, booleanDisjoint, bbox as turfBbox } from '@turf/turf';
+import { bboxPolygon, booleanDisjoint, multiPolygon, polygon, bbox as turfBbox } from '@turf/turf';
 import { ITileRange } from '../../../src/models/interfaces/geo/iTile';
-import { footprintsSharedTileRanges, footprintToTileRanges } from '../../../src/geo/footprintToTileRanges';
+import { footprintToTileRanges } from '../../../src/geo/footprintToTileRanges';
 import { Footprint } from '../../../src/geo/geoIntersection';
 import { degreesPerTile } from '../../../src/geo/tiles';
 
-// exhaustive ground truth: a tile belongs to the result iff it touches the first footprint AND
+// exhaustive ground truth: a tile belongs to the result if it touches the first footprint AND
 // touches the second one. Candidates are the tiles of the intersection of both bboxes, each
 // padded by one tile so boundary-touching neighbors are candidates too
 const oracleTileSet = (first: Footprint, second: Footprint, minZoom: number, maxZoom: number): Set<string> => {
@@ -49,30 +48,43 @@ const expandToTileSet = (ranges: Iterable<ITileRange>): Set<string> => {
 const tileCount = (ranges: ITileRange[]): number =>
   ranges.reduce((sum, range) => sum + (range.maxX - range.minX + 1) * (range.maxY - range.minY + 1), 0);
 
-const squarePolygon = (minLon: number, minLat: number, maxLon: number, maxLat: number): Polygon => ({
-  type: 'Polygon',
-  coordinates: [
-    [
-      [minLon, minLat],
-      [maxLon, minLat],
-      [maxLon, maxLat],
-      [minLon, maxLat],
-      [minLon, minLat],
-    ],
+const square = (minLon: number, minLat: number, maxLon: number, maxLat: number): Footprint => bboxPolygon([minLon, minLat, maxLon, maxLat]);
+
+const triangle = (a: [number, number], b: [number, number], c: [number, number]): Footprint => polygon([[a, b, c, a]]);
+
+const donut = polygon([
+  [
+    [34.7, 31.2],
+    [35.3, 31.2],
+    [35.3, 31.9],
+    [34.7, 31.9],
+    [34.7, 31.2],
   ],
-});
+  [
+    [34.9, 31.4],
+    [35.1, 31.4],
+    [35.1, 31.7],
+    [34.9, 31.7],
+    [34.9, 31.4],
+  ],
+]);
 
-const triangle = (a: [number, number], b: [number, number], c: [number, number]): Polygon => ({
-  type: 'Polygon',
-  coordinates: [[a, b, c, a]],
-});
+const twoParts = multiPolygon([
+  bboxPolygon([34.5, 31.3, 34.8, 31.6]).geometry.coordinates,
+  bboxPolygon([35.0, 31.3, 35.3, 31.6]).geometry.coordinates,
+]);
 
-describe('footprintsSharedTileRanges', () => {
-  describe('zoom range validation', () => {
+const twoOtherParts = multiPolygon([
+  bboxPolygon([34.6, 31.2, 34.9, 31.5]).geometry.coordinates,
+  bboxPolygon([35.2, 31.5, 35.5, 31.8]).geometry.coordinates,
+]);
+
+describe('footprintToTileRanges with multiple footprints', () => {
+  describe('input validation', () => {
     it('should throw RangeError when minZoom is greater than maxZoom', () => {
-      const footprint = squarePolygon(0, 0, 90, 90);
+      const footprint = square(0, 0, 90, 90);
 
-      const generate = () => [...footprintsSharedTileRanges(footprint, footprint, { minZoom: 5, maxZoom: 3 })];
+      const generate = () => [...footprintToTileRanges([footprint, footprint], { minZoom: 5, maxZoom: 3 })];
 
       expect(generate).toThrow(RangeError);
     });
@@ -81,9 +93,15 @@ describe('footprintsSharedTileRanges', () => {
       [-1, 5],
       [0, 23],
     ])('should throw RangeError when the range [%i, %i] exceeds the supported zoom levels', (minZoom, maxZoom) => {
-      const footprint = squarePolygon(0, 0, 90, 90);
+      const footprint = square(0, 0, 90, 90);
 
-      const generate = () => [...footprintsSharedTileRanges(footprint, footprint, { minZoom, maxZoom })];
+      const generate = () => [...footprintToTileRanges([footprint, footprint], { minZoom, maxZoom })];
+
+      expect(generate).toThrow(RangeError);
+    });
+
+    it('should throw RangeError when the footprint list is empty', () => {
+      const generate = () => [...footprintToTileRanges([], { minZoom: 0, maxZoom: 3 })];
 
       expect(generate).toThrow(RangeError);
     });
@@ -91,81 +109,71 @@ describe('footprintsSharedTileRanges', () => {
 
   describe('tile coverage', () => {
     it('should keep only the coarse tiles that contain both of two far apart footprints', () => {
-      const first = squarePolygon(35.4, 33.8, 35.6, 34.0);
-      const second = squarePolygon(34.2, 31.2, 34.4, 31.5);
+      const first = square(35.4, 33.8, 35.6, 34.0);
+      const second = square(34.2, 31.2, 34.4, 31.5);
 
-      const ranges = [...footprintsSharedTileRanges(first, second, { minZoom: 0, maxZoom: 12 })];
+      const ranges = [...footprintToTileRanges([first, second], { minZoom: 0, maxZoom: 12 })];
 
       expect(expandToTileSet(ranges)).toEqual(oracleTileSet(first, second, 0, 12));
-      expect(Math.max(...ranges.map((range) => range.zoom))).toBeLessThan(12);
+      expect(Math.max(...ranges.map((range) => range.zoom))).toBe(3);
     });
 
     it('should keep the tiles along a shared edge at every zoom', () => {
-      const first = squarePolygon(34.4, 31.3, 34.5, 31.4);
-      const second = squarePolygon(34.3, 31.3, 34.4, 31.4);
+      const first = square(34.4, 31.3, 34.5, 31.4);
+      const second = square(34.3, 31.3, 34.4, 31.4);
 
-      const ranges = [...footprintsSharedTileRanges(first, second, { minZoom: 16, maxZoom: 16 })];
+      const ranges = [...footprintToTileRanges([first, second], { minZoom: 0, maxZoom: 16 })];
 
-      expect(ranges.length).toBeGreaterThan(0);
-      expect(expandToTileSet(ranges)).toEqual(oracleTileSet(first, second, 16, 16));
+      expect(new Set(ranges.map((range) => range.zoom)).size).toBe(17);
+      expect(expandToTileSet(ranges)).toEqual(oracleTileSet(first, second, 0, 16));
     });
 
-    it('should equal footprintToTileRanges when both footprints are the same', () => {
-      const footprint = squarePolygon(34.72, 31.23, 35.28, 31.87);
+    it('should equal the single footprint result when both footprints are the same', () => {
+      const footprint = square(34.72, 31.23, 35.28, 31.87);
 
-      const shared = expandToTileSet(footprintsSharedTileRanges(footprint, footprint, { minZoom: 0, maxZoom: 10 }));
+      const shared = expandToTileSet(footprintToTileRanges([footprint, footprint], { minZoom: 0, maxZoom: 10 }));
 
       expect(shared).toEqual(expandToTileSet(footprintToTileRanges(footprint, { minZoom: 0, maxZoom: 10 })));
     });
 
-    it('should equal footprintToTileRanges of the inner footprint when it lies strictly inside the outer one', () => {
-      const outer = squarePolygon(34.0, 31.0, 36.0, 33.0);
-      const inner = squarePolygon(34.72, 31.23, 35.28, 31.87);
+    it('should equal the single footprint result when given a list of one footprint', () => {
+      const footprint = square(34.72, 31.23, 35.28, 31.87);
 
-      const shared = expandToTileSet(footprintsSharedTileRanges(outer, inner, { minZoom: 0, maxZoom: 10 }));
+      const fromList = [...footprintToTileRanges([footprint], { minZoom: 0, maxZoom: 10 })];
+
+      expect(fromList).toEqual([...footprintToTileRanges(footprint, { minZoom: 0, maxZoom: 10 })]);
+    });
+
+    it('should equal the inner footprint result when it lies strictly inside the outer one', () => {
+      const outer = square(34.0, 31.0, 36.0, 33.0);
+      const inner = square(34.72, 31.23, 35.28, 31.87);
+
+      const shared = expandToTileSet(footprintToTileRanges([outer, inner], { minZoom: 0, maxZoom: 10 }));
 
       expect(shared).toEqual(expandToTileSet(footprintToTileRanges(inner, { minZoom: 0, maxZoom: 10 })));
     });
 
-    it('should not depend on the argument order', () => {
-      const first = squarePolygon(34.72, 31.23, 35.28, 31.87);
+    it('should not depend on the order of the footprints', () => {
+      const first = square(34.72, 31.23, 35.28, 31.87);
       const second = triangle([35.0, 31.5], [35.6, 31.5], [35.3, 32.2]);
 
-      const forward = expandToTileSet(footprintsSharedTileRanges(first, second, { minZoom: 0, maxZoom: 10 }));
-      const backward = expandToTileSet(footprintsSharedTileRanges(second, first, { minZoom: 0, maxZoom: 10 }));
+      const forward = expandToTileSet(footprintToTileRanges([first, second], { minZoom: 0, maxZoom: 10 }));
+      const backward = expandToTileSet(footprintToTileRanges([second, first], { minZoom: 0, maxZoom: 10 }));
 
       expect(backward).toEqual(forward);
     });
-  });
 
-  describe('brute-force parity', () => {
-    const donut: Polygon = {
-      type: 'Polygon',
-      coordinates: [
-        [
-          [34.7, 31.2],
-          [35.3, 31.2],
-          [35.3, 31.9],
-          [34.7, 31.9],
-          [34.7, 31.2],
-        ],
-        [
-          [34.9, 31.4],
-          [35.1, 31.4],
-          [35.1, 31.7],
-          [34.9, 31.7],
-          [34.9, 31.4],
-        ],
-      ],
-    };
+    it('should yield no deep tiles for a polygon entirely inside the hole of the other, away from its ring', () => {
+      // the square keeps a 0.05 degree gap from the hole's ring, wider than a zoom 14 tile (~0.011 degrees)
+      const insideHole = square(34.95, 31.45, 35.05, 31.65);
 
-    const twoParts: MultiPolygon = {
-      type: 'MultiPolygon',
-      coordinates: [squarePolygon(34.5, 31.3, 34.8, 31.6).coordinates, squarePolygon(35.0, 31.3, 35.3, 31.6).coordinates],
-    };
+      const ranges = [...footprintToTileRanges([donut, insideHole], { minZoom: 14, maxZoom: 14 })];
+
+      expect(ranges).toEqual([]);
+    });
 
     it.each<[string, Footprint, Footprint, number, number]>([
-      ['two overlapping rectangles', squarePolygon(34.72, 31.23, 35.28, 31.87), squarePolygon(35.0, 31.5, 35.6, 32.1), 0, 10],
+      ['two overlapping rectangles', square(34.72, 31.23, 35.28, 31.87), square(35.0, 31.5, 35.6, 32.1), 0, 10],
       [
         'mirrored triangles sharing a diagonal',
         triangle([34.5, 31.0], [35.0, 31.0], [34.5, 31.5]),
@@ -173,36 +181,39 @@ describe('footprintsSharedTileRanges', () => {
         0,
         12,
       ],
-      ['a square in a donut hole', donut, squarePolygon(34.95, 31.45, 35.05, 31.65), 0, 11],
-      ['a square across a donut ring', donut, squarePolygon(35.05, 31.5, 35.2, 31.6), 0, 11],
-      ['a strip over the gap of a MultiPolygon', twoParts, squarePolygon(34.7, 31.4, 35.1, 31.5), 0, 10],
-      ['two squares 0.001 degrees apart', squarePolygon(34.3, 31.3, 34.4, 31.4), squarePolygon(34.401, 31.3, 34.501, 31.4), 8, 16],
-    ])('should match the exhaustive oracle key-by-key for %s', (_name, first, second, minZoom, maxZoom) => {
-      const tiles = expandToTileSet(footprintsSharedTileRanges(first, second, { minZoom, maxZoom }));
+      ['a square in a donut hole', donut, square(34.95, 31.45, 35.05, 31.65), 0, 11],
+      ['a square across a donut ring', donut, square(35.05, 31.5, 35.2, 31.6), 0, 11],
+      ['a strip over the gap of a MultiPolygon', twoParts, square(34.7, 31.4, 35.1, 31.5), 0, 10],
+      ['a MultiPolygon against a MultiPolygon', twoParts, twoOtherParts, 0, 10],
+      ['two squares 0.001 degrees apart', square(34.3, 31.3, 34.4, 31.4), square(34.401, 31.3, 34.501, 31.4), 8, 16],
+    ])('should match the exhaustive oracle tile-by-tile for %s', (_name, first, second, minZoom, maxZoom) => {
+      const tiles = expandToTileSet(footprintToTileRanges([first, second], { minZoom, maxZoom }));
 
       expect(tiles).toEqual(oracleTileSet(first, second, minZoom, maxZoom));
     });
 
-    it('should emit disjoint ranges per zoom level', () => {
-      const ranges = [...footprintsSharedTileRanges(donut, squarePolygon(35.0, 31.3, 35.5, 31.8), { minZoom: 0, maxZoom: 10 })];
+    it('should not emit any tile twice', () => {
+      // the oracle comparisons above use sets, which hide duplicates; equal counts prove the ranges never overlap
+      const ranges = [...footprintToTileRanges([donut, square(35.0, 31.3, 35.5, 31.8)], { minZoom: 0, maxZoom: 10 })];
 
       expect(tileCount(ranges)).toBe(expandToTileSet(ranges).size);
     });
 
     it('should emit an interior block of both footprints as one range per zoom', () => {
       // both cover zoom 2 tile (4, 2) = [0, 45] x [0, 45] entirely, so its subtree comes out as blocks
-      const first = squarePolygon(-1, -1, 50, 50);
-      const second = squarePolygon(-2, -2, 46, 46);
+      const first = square(-1, -1, 50, 50);
+      const second = square(-2, -2, 46, 46);
 
-      const ranges = [...footprintsSharedTileRanges(first, second, { minZoom: 6, maxZoom: 6 })];
+      const ranges = [...footprintToTileRanges([first, second], { minZoom: 6, maxZoom: 6 })];
 
       expect(ranges).toContainEqual({ zoom: 6, minX: 64, maxX: 79, minY: 32, maxY: 47 });
     });
 
     it('should be deterministic across runs', () => {
-      const second = squarePolygon(35.0, 31.3, 35.5, 31.8);
-      const first = [...footprintsSharedTileRanges(donut, second, { minZoom: 0, maxZoom: 10 })];
-      const again = [...footprintsSharedTileRanges(donut, second, { minZoom: 0, maxZoom: 10 })];
+      const other = square(35.0, 31.3, 35.5, 31.8);
+
+      const first = [...footprintToTileRanges([donut, other], { minZoom: 0, maxZoom: 10 })];
+      const again = [...footprintToTileRanges([donut, other], { minZoom: 0, maxZoom: 10 })];
 
       expect(again).toEqual(first);
     });
