@@ -28,7 +28,9 @@ interface TileBounds {
   maxLat: number;
 }
 
-interface FootprintClip {
+// a footprint as the descent sees it at one tile: the edges still relevant there, and whether
+// the tile is already known to be fully inside
+interface FootprintState {
   flatRings: Float64Array[]; // the rings of the footprint as flat arrays of coordinates
   edges: Segment[]; // edges that crossed the parent tile
   inside: boolean; // whether the parent tile is fully inside the footprint
@@ -162,7 +164,7 @@ function* subtreeRanges(zoom: number, x: number, y: number, range: ZoomRange): G
 const toFlatRing = (ring: Position[]): Float64Array => Float64Array.from(ring.flat());
 
 // the descent's starting state for a footprint: all of its edges, not yet narrowed to any tile
-function prepareFootprint(footprint: Footprint): FootprintClip {
+function toFootprintState(footprint: Footprint): FootprintState {
   const rings = ringsOf(footprint);
   return {
     flatRings: rings.map(toFlatRing),
@@ -171,23 +173,23 @@ function prepareFootprint(footprint: Footprint): FootprintClip {
   };
 }
 
-// classifies the tile against one footprint: the clip for its children, or undefined when the
+// classifies the tile against one footprint: the state for its children, or undefined when the
 // tile lies entirely outside the footprint. A tile inside the footprint stays inside it all
 // the way down, so its edges are never filtered again
-function clipToTile(clip: FootprintClip, bounds: TileBounds): FootprintClip | undefined {
-  if (clip.inside) {
-    return clip;
+function clipToTile(state: FootprintState, bounds: TileBounds): FootprintState | undefined {
+  if (state.inside) {
+    return state;
   }
   // `edges` only holds edges that crossed the PARENT tile; re-filter for this tile, so the
   // list keeps shrinking as the descent narrows onto the boundary
-  const edges = clip.edges.filter((edge) => segmentIntersectsBounds(edge, bounds));
+  const edges = state.edges.filter((edge) => segmentIntersectsBounds(edge, bounds));
   if (edges.length > 0) {
-    return { flatRings: clip.flatRings, edges, inside: false };
+    return { flatRings: state.flatRings, edges, inside: false };
   }
   // the boundary does not pass through this tile, and a tile is a connected region — so it
   // lies entirely inside or entirely outside; any single interior point decides which
-  if (pointInRings(midpoint(bounds.minLon, bounds.maxLon), midpoint(bounds.minLat, bounds.maxLat), clip.flatRings)) {
-    return { flatRings: clip.flatRings, edges, inside: true };
+  if (pointInRings(midpoint(bounds.minLon, bounds.maxLon), midpoint(bounds.minLat, bounds.maxLat), state.flatRings)) {
+    return { flatRings: state.flatRings, edges, inside: true };
   }
   return undefined;
 }
@@ -197,18 +199,18 @@ function clipToTile(clip: FootprintClip, bounds: TileBounds): FootprintClip | un
 //   outside any footprint  -> prune the tile and its subtree
 //   inside every footprint -> emit the whole subtree arithmetically
 //   otherwise              -> a boundary crosses it: emit the tile and recurse into its 4 children
-function* descend(zoom: number, x: number, y: number, clips: FootprintClip[], range: ZoomRange): Generator<ITileRange> {
+function* descend(zoom: number, x: number, y: number, states: FootprintState[], range: ZoomRange): Generator<ITileRange> {
   const bounds = tileBounds(zoom, x, y);
-  const childClips: FootprintClip[] = [];
-  for (const clip of clips) {
-    const childClip = clipToTile(clip, bounds);
-    if (childClip === undefined) {
+  const childStates: FootprintState[] = [];
+  for (const state of states) {
+    const childState = clipToTile(state, bounds);
+    if (childState === undefined) {
       return;
     }
-    childClips.push(childClip);
+    childStates.push(childState);
   }
 
-  if (childClips.every((clip) => clip.inside)) {
+  if (childStates.every((state) => state.inside)) {
     yield* subtreeRanges(zoom, x, y, range);
     return;
   }
@@ -222,10 +224,10 @@ function* descend(zoom: number, x: number, y: number, clips: FootprintClip[], ra
   if (zoom < range.maxZoom) {
     const childX = SUBTILES_PER_AXIS * x; // children occupy the doubled coordinates:
     const childY = SUBTILES_PER_AXIS * y; // x' in {2x, 2x+1}, y' in {2y, 2y+1}
-    yield* descend(zoom + 1, childX, childY, childClips, range);
-    yield* descend(zoom + 1, childX + 1, childY, childClips, range);
-    yield* descend(zoom + 1, childX, childY + 1, childClips, range);
-    yield* descend(zoom + 1, childX + 1, childY + 1, childClips, range);
+    yield* descend(zoom + 1, childX, childY, childStates, range);
+    yield* descend(zoom + 1, childX + 1, childY, childStates, range);
+    yield* descend(zoom + 1, childX, childY + 1, childStates, range);
+    yield* descend(zoom + 1, childX + 1, childY + 1, childStates, range);
   }
 }
 
@@ -264,10 +266,10 @@ export function* footprintToTileRanges(footprints: Footprint | Footprint[], rang
   if (footprintList.length === 0) {
     throw new RangeError('at least one footprint is required');
   }
-  const clips = footprintList.map(prepareFootprint);
+  const states = footprintList.map(toFootprintState);
   // the descent starts from both root tiles of the 2x1 grid; the walk can only visit real grid tiles
-  yield* descend(0, 0, 0, clips, range);
-  yield* descend(0, 1, 0, clips, range);
+  yield* descend(0, 0, 0, states, range);
+  yield* descend(0, 1, 0, states, range);
 }
 
 export type { ZoomRange };
