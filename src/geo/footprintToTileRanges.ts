@@ -243,19 +243,15 @@ function validateZoomRange(range: ZoomRange): void {
 }
 
 /**
- * computes, for every zoom level in the range, the tile ranges of the tiles that touch the
- * given footprint, or every one of the given footprints, using hierarchical descent over the
- * WGS84 geodetic grid. That grid is 2x1 at zoom 0: two root tiles, the western (x=0) and
- * eastern (x=1) hemispheres, and each zoom level doubles both axes.
+ * computes the tile ranges of the tiles that touch the footprint, or every one of the given
+ * footprints, for each zoom level in the range, on the WGS84 geodetic grid (2x1 root tiles at zoom 0).
  *
- * A tile touching a footprint with zero overlap area counts as touching it. With several
- * footprints a tile counts even if they don't overlap inside it, so the result can be more
- * than the tiles of their intersection. The order of the footprints doesn't matter.
+ * Touching includes zero-area contact (a shared edge or corner). With several footprints, each
+ * tile only has to touch every footprint, not their intersection, so the result can be a superset
+ * of the intersection's tiles.
  *
  * Ranges of the same zoom are disjoint; their order is deterministic but otherwise unspecified.
- *
- * Footprints are not validated: they must be valid GeoJSON (closed rings, no self-intersections),
- * otherwise the result is unspecified.
+ * Footprints are not validated and must be valid GeoJSON, otherwise the result is unspecified.
  * @param footprints a footprint, or a non-empty list of footprints whose shared tiles to compute; holes are supported
  * @param range inclusive zoom range, must be within [0, 22] and minZoom <= maxZoom
  * @returns a generator of disjoint tile ranges, each with a single zoom level
