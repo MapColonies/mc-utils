@@ -94,6 +94,18 @@ describe('footprintToTileRanges', () => {
 
       expect(generate).toThrow(RangeError);
     });
+
+    it.each([
+      [1.5, 5],
+      [0, 4.2],
+      [Number.NaN, 5],
+    ])('should throw RangeError when the range [%p, %p] holds a non-integer zoom level', (minZoom, maxZoom) => {
+      const footprint = squarePolygon(0, 0, 90, 90);
+
+      const generate = () => [...footprintToTileRanges(footprint, { minZoom, maxZoom })];
+
+      expect(generate).toThrow(RangeError);
+    });
   });
 
   describe('tile coverage', () => {
@@ -223,6 +235,47 @@ describe('footprintToTileRanges', () => {
       const ranges = [...footprintToTileRanges(footprint, { minZoom: 0, maxZoom: 14 })];
 
       expect(hasNeighbouringSingleTiles(ranges)).toBe(false);
+    });
+  });
+
+  describe('held single tiles limit', () => {
+    const footprint: Footprint = {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [34.5, 31.0],
+          [35.2, 31.1],
+          [34.8, 31.9],
+          [34.5, 31.0],
+        ],
+      ],
+    };
+    const range = { minZoom: 0, maxZoom: 14 };
+    const tileCount = (ranges: ITileRange[]): number => ranges.reduce((sum, r) => sum + (r.maxX - r.minX + 1) * (r.maxY - r.minY + 1), 0);
+
+    it('should not change the output while the limit is never reached', () => {
+      const byDefault = [...footprintToTileRanges(footprint, range)];
+
+      const withHighLimit = [...footprintToTileRanges(footprint, range, { maxHeldSingleTiles: Number.MAX_SAFE_INTEGER })];
+
+      expect(withHighLimit).toEqual(byDefault);
+    });
+
+    it.each([1, 50])('should cover the same tiles exactly once when flushing every %i held tiles', (maxHeldSingleTiles) => {
+      const byDefault = [...footprintToTileRanges(footprint, range)];
+
+      const flushed = [...footprintToTileRanges(footprint, range, { maxHeldSingleTiles })];
+
+      expect(expandToTileSet(flushed)).toEqual(expandToTileSet(byDefault));
+      expect(tileCount(flushed)).toBe(expandToTileSet(flushed).size);
+      // flushing splits some merges, so it can only add ranges
+      expect(flushed.length).toBeGreaterThan(byDefault.length);
+    });
+
+    it.each([0, -1, 1.5, Number.NaN])('should throw RangeError when maxHeldSingleTiles is %p', (maxHeldSingleTiles) => {
+      const generate = () => [...footprintToTileRanges(footprint, range, { maxHeldSingleTiles })];
+
+      expect(generate).toThrow(RangeError);
     });
   });
 });
