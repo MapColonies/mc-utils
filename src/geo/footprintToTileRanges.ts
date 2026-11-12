@@ -8,10 +8,20 @@ import type { Position } from 'geojson';
 import { ITileRange } from '../models/interfaces/geo/iTile';
 import { Footprint } from './geoIntersection';
 import { degreesPerTile } from './tiles';
+import { SingleTileMerger } from './singleTileMerger';
+import { GRID_MIN_LAT, GRID_MIN_LON, SUBTILES_PER_AXIS } from './geodeticGrid';
 
 interface ZoomRange {
   minZoom: number;
   maxZoom: number;
+}
+
+interface TileRangesOptions {
+  /**
+   * how many single tiles of one zoom are held for merging before they are merged and yielded
+   * early. A positive integer, default 1,000,000
+   */
+  maxHeldSingleTiles?: number;
 }
 
 interface Segment {
@@ -38,10 +48,8 @@ interface FootprintState {
 
 const MIN_SUPPORTED_ZOOM = 0;
 const MAX_SUPPORTED_ZOOM = 22;
-const GRID_MIN_LON = -180;
-const GRID_MIN_LAT = -90;
-const SUBTILES_PER_AXIS = 2;
 const VALUES_PER_POINT = 2; // a flat ring stores lon, lat per point
+const DEFAULT_MAX_HELD_SINGLE_TILES = 1_000_000;
 
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers
 const midpoint = (a: number, b: number): number => (a + b) / 2;
@@ -151,9 +159,17 @@ function tileBounds(zoom: number, x: number, y: number): TileBounds {
 
 // emits the whole subtree of a tile proven fully inside the footprint — pure arithmetic,
 // no geometry tests: a coarse interior tile can stand in for millions of deep tiles
-function* subtreeRanges(zoom: number, x: number, y: number, range: ZoomRange): Generator<ITileRange> {
+function* subtreeRanges(zoom: number, x: number, y: number, range: ZoomRange, singles: SingleTileMerger): Generator<ITileRange> {
   // Math.max skips levels above the requested range; the block is still derived from THIS node
   for (let z = Math.max(zoom, range.minZoom); z <= range.maxZoom; z++) {
+    if (z === zoom) {
+      // at its own zoom the block is the tile itself, so it is merged with the other single tiles
+      const flushed = singles.add(zoom, x, y);
+      if (flushed !== undefined) {
+        yield* flushed;
+      }
+      continue;
+    }
     const factor = Math.pow(SUBTILES_PER_AXIS, z - zoom); // each level doubles both axes
     // the block this tile covers at level z: x' in [x * factor, (x + 1) * factor - 1], y' likewise
     yield { zoom: z, minX: x * factor, maxX: (x + 1) * factor - 1, minY: y * factor, maxY: (y + 1) * factor - 1 };
@@ -199,7 +215,7 @@ function clipToTile(state: FootprintState, bounds: TileBounds): FootprintState |
 //   outside any footprint  -> prune the tile and its subtree
 //   inside every footprint -> emit the whole subtree arithmetically
 //   otherwise              -> a boundary crosses it: emit the tile and recurse into its 4 children
-function* descend(zoom: number, x: number, y: number, states: FootprintState[], range: ZoomRange): Generator<ITileRange> {
+function* descend(zoom: number, x: number, y: number, states: FootprintState[], range: ZoomRange, singles: SingleTileMerger): Generator<ITileRange> {
   const bounds = tileBounds(zoom, x, y);
   const childStates: FootprintState[] = [];
   for (const state of states) {
@@ -211,27 +227,33 @@ function* descend(zoom: number, x: number, y: number, states: FootprintState[], 
   }
 
   if (childStates.every((state) => state.inside)) {
-    yield* subtreeRanges(zoom, x, y, range);
+    yield* subtreeRanges(zoom, x, y, range, singles);
     return;
   }
 
   if (zoom >= range.minZoom) {
     // a boundary passes through this tile and the tile is inside or on the boundary of every
-    // footprint (a polygon includes its boundary), so it touches them all; emit it as a 1x1
-    // range (only when inside the requested range)
-    yield { zoom, minX: x, maxX: x, minY: y, maxY: y };
+    // footprint (a polygon includes its boundary), so it touches them all; collect it as a
+    // single tile (only when inside the requested range)
+    const flushed = singles.add(zoom, x, y);
+    if (flushed !== undefined) {
+      yield* flushed;
+    }
   }
   if (zoom < range.maxZoom) {
     const childX = SUBTILES_PER_AXIS * x; // children occupy the doubled coordinates:
     const childY = SUBTILES_PER_AXIS * y; // x' in {2x, 2x+1}, y' in {2y, 2y+1}
-    yield* descend(zoom + 1, childX, childY, childStates, range);
-    yield* descend(zoom + 1, childX + 1, childY, childStates, range);
-    yield* descend(zoom + 1, childX, childY + 1, childStates, range);
-    yield* descend(zoom + 1, childX + 1, childY + 1, childStates, range);
+    yield* descend(zoom + 1, childX, childY, childStates, range, singles);
+    yield* descend(zoom + 1, childX + 1, childY, childStates, range, singles);
+    yield* descend(zoom + 1, childX, childY + 1, childStates, range, singles);
+    yield* descend(zoom + 1, childX + 1, childY + 1, childStates, range, singles);
   }
 }
 
 function validateZoomRange(range: ZoomRange): void {
+  if (!Number.isInteger(range.minZoom) || !Number.isInteger(range.maxZoom)) {
+    throw new RangeError(`zoom range [${range.minZoom}, ${range.maxZoom}] must hold integer zoom levels`);
+  }
   if (range.minZoom > range.maxZoom) {
     throw new RangeError(`minZoom [${range.minZoom}] must not be greater than maxZoom [${range.maxZoom}]`);
   }
@@ -252,20 +274,30 @@ function validateZoomRange(range: ZoomRange): void {
  *
  * Ranges of the same zoom are disjoint; their order is deterministic but otherwise unspecified.
  * Footprints are not validated and must be valid GeoJSON, otherwise the result is unspecified.
+ * Larger blocks are yielded during the walk; single tiles are held per zoom and yielded at
+ * the end, merged into row runs and blocks. A zoom holding `maxHeldSingleTiles` tiles is merged
+ * and yielded early, which bounds memory (~8 bytes per held tile) at the cost of some merging.
  * @param footprints a footprint, or a non-empty list of footprints whose shared tiles to compute; holes are supported
  * @param range inclusive zoom range, must be within [0, 22] and minZoom <= maxZoom
+ * @param options optional tuning, see {@link TileRangesOptions}
  * @returns a generator of disjoint tile ranges, each with a single zoom level
  */
-export function* footprintToTileRanges(footprints: Footprint | Footprint[], range: ZoomRange): Generator<ITileRange> {
+export function* footprintToTileRanges(
+  footprints: Footprint | Footprint[],
+  range: ZoomRange,
+  options: TileRangesOptions = {}
+): Generator<ITileRange> {
   validateZoomRange(range);
+  const singles = new SingleTileMerger(options.maxHeldSingleTiles ?? DEFAULT_MAX_HELD_SINGLE_TILES);
   const footprintList = Array.isArray(footprints) ? footprints : [footprints];
   if (footprintList.length === 0) {
     throw new RangeError('at least one footprint is required');
   }
   const states = footprintList.map(toFootprintState);
   // the descent starts from both root tiles of the 2x1 grid; the walk can only visit real grid tiles
-  yield* descend(0, 0, 0, states, range);
-  yield* descend(0, 1, 0, states, range);
+  yield* descend(0, 0, 0, states, range, singles);
+  yield* descend(0, 1, 0, states, range, singles);
+  yield* singles.drain();
 }
 
-export type { ZoomRange };
+export type { ZoomRange, TileRangesOptions };

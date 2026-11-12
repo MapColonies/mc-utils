@@ -207,6 +207,17 @@ describe('footprintToTileRanges with multiple footprints', () => {
       expect(ranges).toContainEqual({ zoom: 6, minX: 64, maxX: 79, minY: 32, maxY: 47 });
     });
 
+    it('should not emit neighbouring single-tile ranges of the same zoom', () => {
+      const ranges = [...footprintToTileRanges([donut, bboxPolygon([35.0, 31.3, 35.5, 31.8])], { minZoom: 0, maxZoom: 12 })];
+
+      const singles = new Set(ranges.filter((r) => r.minX === r.maxX && r.minY === r.maxY).map((r) => `${r.zoom}/${r.minX}/${r.minY}`));
+      const neighbours = [...singles].filter((key) => {
+        const [zoom, x, y] = key.split('/').map(Number);
+        return singles.has(`${zoom}/${x + 1}/${y}`) || singles.has(`${zoom}/${x}/${y + 1}`);
+      });
+      expect(neighbours).toEqual([]);
+    });
+
     it('should be deterministic across runs', () => {
       const other = bboxPolygon([35.0, 31.3, 35.5, 31.8]);
 

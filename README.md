@@ -9,7 +9,7 @@ this is general utilities for usage in Map Colonies project.
  ## footprint to tile ranges
  `footprintToTileRanges(footprint, { minZoom, maxZoom })` lazily computes the tile ranges intersecting a footprint (Polygon / MultiPolygon / Feature, holes supported) for every zoom level in the span, on the WGS84 geodetic 2:1 grid.
 
- it uses hierarchical descent (see `docs/adr/0001-hierarchical-precompute-in-mc-utils.md`): fully-interior subtrees are emitted as compressed ranges with no per-tile work, so memory stays flat regardless of how many tiles the footprint covers. a tile touching the footprint with zero overlap area counts as intersecting. ranges of the same zoom are disjoint; their order is deterministic but unspecified.
+ it uses hierarchical descent (see `docs/adr/0001-hierarchical-precompute-in-mc-utils.md`): fully-interior subtrees are emitted as compressed ranges with no per-tile work, as the walk finds them. boundary tiles are held per zoom (one number each) and emitted at the end, merged into row runs and blocks, so memory grows with the length of the footprint's boundary, not with the number of tiles it covers. a tile touching the footprint with zero overlap area counts as intersecting. ranges of the same zoom are disjoint; their order is deterministic but unspecified.
 
  typical use is tile-cache invalidation: expand each range to your cache's key format and batch-delete.
 
@@ -26,6 +26,8 @@ for (const range of footprintToTileRanges(footprint, { minZoom: 0, maxZoom: 18 }
 ```
 
  footprints are not validated: they must be valid GeoJSON (closed rings, no self-intersections), otherwise the result is unspecified. the zoom range must be within [0, 22] with `minZoom <= maxZoom`, otherwise a `RangeError` is thrown.
+
+ single tiles are held per zoom and merged once the walk ends. an optional third argument, `{ maxHeldSingleTiles }` (a positive integer, default `1_000_000`), caps how many are held per zoom: when a zoom reaches it, its tiles are merged and yielded early. this bounds memory to about 8 bytes per held tile per zoom, at the cost of a few more ranges for very large footprints.
 
  passing a list of footprints, `footprintToTileRanges([first, second, ...], { minZoom, maxZoom })`, yields in the same format the tiles that touch **every** footprint in the list, in a single descent over all of them. a tile counts even when the footprints don't overlap inside it (e.g. two areas sharing an edge, or both inside one coarse tile), so this is a superset of the tiles of their intersection. the order of the footprints does not matter. typical use is invalidating only the cached tiles of an existing layer that an update area can have changed.
 
