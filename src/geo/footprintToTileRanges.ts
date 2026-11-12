@@ -1,5 +1,5 @@
 /**
- * Hierarchical precompute of the tiles intersecting a footprint.
+ * Hierarchical precompute of the tiles intersecting a footprint (or shared by several footprints at once).
  * The tile pyramid is a quadtree — tile (z, x, y) contains tiles (z+1, 2x..2x+1, 2y..2y+1) -
  * so classifying one coarse tile can settle its entire subtree; the walk only recurses where
  * the footprint's boundary passes, making total work O(boundary tiles), not O(bbox area).
@@ -28,11 +28,20 @@ interface TileBounds {
   maxLat: number;
 }
 
+// a footprint as the descent sees it at one tile: the edges still relevant there, and whether
+// the tile is already known to be fully inside
+interface FootprintState {
+  flatRings: Float64Array[]; // the rings of the footprint as flat arrays of coordinates
+  edges: Segment[]; // edges that crossed the parent tile
+  inside: boolean; // whether the parent tile is fully inside the footprint
+}
+
 const MIN_SUPPORTED_ZOOM = 0;
 const MAX_SUPPORTED_ZOOM = 22;
 const GRID_MIN_LON = -180;
 const GRID_MIN_LAT = -90;
 const SUBTILES_PER_AXIS = 2;
+const VALUES_PER_POINT = 2; // a flat ring stores lon, lat per point
 
 // eslint-disable-next-line @typescript-eslint/no-magic-numbers
 const midpoint = (a: number, b: number): number => (a + b) / 2;
@@ -108,13 +117,15 @@ function segmentIntersectsBounds(segment: Segment, bounds: TileBounds): boolean 
 // even-odd (ray casting) point-in-polygon: cast a ray east from the point and count edge
 // crossings — odd total means inside. One shared toggle across all rings is what makes
 // holes and MultiPolygon parts work with no special casing (inside outer + inside hole
-// toggles twice = outside).
-function pointInRings(lon: number, lat: number, rings: Position[][]): boolean {
+// toggles twice = outside). Each ring is flat: [lon0, lat0, lon1, lat1, ...].
+function pointInRings(lon: number, lat: number, flatRings: Float64Array[]): boolean {
   let inside = false;
-  for (const ring of rings) {
-    for (let i = 0; i < ring.length - 1; i++) {
-      const [x1, y1] = ring[i];
-      const [x2, y2] = ring[i + 1];
+  for (const ring of flatRings) {
+    for (let i = 0; i < ring.length - VALUES_PER_POINT; i += VALUES_PER_POINT) {
+      const x1 = ring[i];
+      const y1 = ring[i + 1];
+      const x2 = ring[i + VALUES_PER_POINT];
+      const y2 = ring[i + VALUES_PER_POINT + 1];
       // half-open test (<= vs >): a shared vertex is counted for exactly one of its two
       // edges, and horizontal edges (y1 === y2) never match — both avoid double counting
       if ((y1 <= lat && y2 > lat) || (y2 <= lat && y1 > lat)) {
@@ -149,52 +160,78 @@ function* subtreeRanges(zoom: number, x: number, y: number, range: ZoomRange): G
   }
 }
 
-// the hierarchical descent: classify a tile into one of three outcomes —
-//   no edges cross + center inside  -> whole subtree is inside: emit it arithmetically
-//   no edges cross + center outside -> whole subtree is outside: prune it
-//   edges cross                     -> the tile intersects: emit it, recurse into 4 children
-function* descend(zoom: number, x: number, y: number, edges: Segment[], rings: Position[][], range: ZoomRange): Generator<ITileRange> {
-  const bounds = tileBounds(zoom, x, y);
+// [[lon, lat], ...] -> [lon, lat, lon, lat, ...]: a flat typed ring keeps the point test fast
+const toFlatRing = (ring: Position[]): Float64Array => Float64Array.from(ring.flat());
+
+// the descent's starting state for a footprint: all of its edges, not yet narrowed to any tile
+function toFootprintState(footprint: Footprint): FootprintState {
+  const rings = ringsOf(footprint);
+  return {
+    flatRings: rings.map(toFlatRing),
+    edges: ringsToEdges(rings),
+    inside: false,
+  };
+}
+
+// classifies the tile against one footprint: the state for its children, or undefined when the
+// tile lies entirely outside the footprint. A tile inside the footprint stays inside it all
+// the way down, so its edges are never filtered again
+function clipToTile(state: FootprintState, bounds: TileBounds): FootprintState | undefined {
+  if (state.inside) {
+    return state;
+  }
   // `edges` only holds edges that crossed the PARENT tile; re-filter for this tile, so the
   // list keeps shrinking as the descent narrows onto the boundary
-  const clipped = edges.filter((edge) => segmentIntersectsBounds(edge, bounds));
+  const edges = state.edges.filter((edge) => segmentIntersectsBounds(edge, bounds));
+  if (edges.length > 0) {
+    return { flatRings: state.flatRings, edges, inside: false };
+  }
+  // the boundary does not pass through this tile, and a tile is a connected region — so it
+  // lies entirely inside or entirely outside; any single interior point decides which
+  if (pointInRings(midpoint(bounds.minLon, bounds.maxLon), midpoint(bounds.minLat, bounds.maxLat), state.flatRings)) {
+    return { flatRings: state.flatRings, edges, inside: true };
+  }
+  return undefined;
+}
 
-  if (clipped.length === 0) {
-    // the boundary does not pass through this tile, and a tile is a connected region — so it
-    // lies uniformly inside or uniformly outside; any single interior point decides which
-    const centerLon = midpoint(bounds.minLon, bounds.maxLon);
-    const centerLat = midpoint(bounds.minLat, bounds.maxLat);
-    if (pointInRings(centerLon, centerLat, rings)) {
-      yield* subtreeRanges(zoom, x, y, range);
+// hierarchical descent over one or more footprints: a tile is kept only if it touches all of them.
+// Each footprint classifies the tile as outside, inside, or crossed by its boundary:
+//   outside any footprint  -> prune the tile and its subtree
+//   inside every footprint -> emit the whole subtree arithmetically
+//   otherwise              -> a boundary crosses it: emit the tile and recurse into its 4 children
+function* descend(zoom: number, x: number, y: number, states: FootprintState[], range: ZoomRange): Generator<ITileRange> {
+  const bounds = tileBounds(zoom, x, y);
+  const childStates: FootprintState[] = [];
+  for (const state of states) {
+    const childState = clipToTile(state, bounds);
+    if (childState === undefined) {
+      return;
     }
-    return; // center outside -> prune: no descendant can intersect
+    childStates.push(childState);
+  }
+
+  if (childStates.every((state) => state.inside)) {
+    yield* subtreeRanges(zoom, x, y, range);
+    return;
   }
 
   if (zoom >= range.minZoom) {
-    // the boundary passes through this tile, and a polygon includes its boundary -> the tile
-    // itself intersects; emit it as a 1x1 range (only when inside the requested range)
+    // a boundary passes through this tile and the tile is inside or on the boundary of every
+    // footprint (a polygon includes its boundary), so it touches them all; emit it as a 1x1
+    // range (only when inside the requested range)
     yield { zoom, minX: x, maxX: x, minY: y, maxY: y };
   }
   if (zoom < range.maxZoom) {
     const childX = SUBTILES_PER_AXIS * x; // children occupy the doubled coordinates:
     const childY = SUBTILES_PER_AXIS * y; // x' in {2x, 2x+1}, y' in {2y, 2y+1}
-    yield* descend(zoom + 1, childX, childY, clipped, rings, range);
-    yield* descend(zoom + 1, childX + 1, childY, clipped, rings, range);
-    yield* descend(zoom + 1, childX, childY + 1, clipped, rings, range);
-    yield* descend(zoom + 1, childX + 1, childY + 1, clipped, rings, range);
+    yield* descend(zoom + 1, childX, childY, childStates, range);
+    yield* descend(zoom + 1, childX + 1, childY, childStates, range);
+    yield* descend(zoom + 1, childX, childY + 1, childStates, range);
+    yield* descend(zoom + 1, childX + 1, childY + 1, childStates, range);
   }
 }
 
-/**
- * computes the tile ranges intersecting the given footprint for every zoom level in the
- * range, using hierarchical descent. Ranges of the same zoom are disjoint; their order is
- * deterministic but otherwise unspecified. A tile touching the footprint with zero overlap
- * area counts as intersecting.
- * @param footprint footprint to cover, holes are supported
- * @param range inclusive zoom range, must be within [0, 22] and minZoom <= maxZoom
- * @returns a generator of disjoint tile ranges, each with a single zoom level
- */
-export function* footprintToTileRanges(footprint: Footprint, range: ZoomRange): Generator<ITileRange> {
+function validateZoomRange(range: ZoomRange): void {
   if (range.minZoom > range.maxZoom) {
     throw new RangeError(`minZoom [${range.minZoom}] must not be greater than maxZoom [${range.maxZoom}]`);
   }
@@ -203,13 +240,32 @@ export function* footprintToTileRanges(footprint: Footprint, range: ZoomRange): 
       `zoom range [${range.minZoom}, ${range.maxZoom}] exceeds the supported range [${MIN_SUPPORTED_ZOOM}, ${MAX_SUPPORTED_ZOOM}]`
     );
   }
+}
 
-  const rings = ringsOf(footprint);
-  const edges = ringsToEdges(rings);
-  // the geodetic grid has two root tiles (2x1) at zoom 0 — west (x=0) and east (x=1)
-  // hemispheres — so the descent starts from both; the walk can only visit real grid tiles
-  yield* descend(0, 0, 0, edges, rings, range);
-  yield* descend(0, 1, 0, edges, rings, range);
+/**
+ * computes the tile ranges of the tiles that touch the footprint, or every one of the given
+ * footprints, for each zoom level in the range, on the WGS84 geodetic grid (2x1 root tiles at zoom 0).
+ *
+ * Touching includes zero-area contact (a shared edge or corner). With several footprints, each
+ * tile only has to touch every footprint, not their intersection, so the result can be a superset
+ * of the intersection's tiles.
+ *
+ * Ranges of the same zoom are disjoint; their order is deterministic but otherwise unspecified.
+ * Footprints are not validated and must be valid GeoJSON, otherwise the result is unspecified.
+ * @param footprints a footprint, or a non-empty list of footprints whose shared tiles to compute; holes are supported
+ * @param range inclusive zoom range, must be within [0, 22] and minZoom <= maxZoom
+ * @returns a generator of disjoint tile ranges, each with a single zoom level
+ */
+export function* footprintToTileRanges(footprints: Footprint | Footprint[], range: ZoomRange): Generator<ITileRange> {
+  validateZoomRange(range);
+  const footprintList = Array.isArray(footprints) ? footprints : [footprints];
+  if (footprintList.length === 0) {
+    throw new RangeError('at least one footprint is required');
+  }
+  const states = footprintList.map(toFootprintState);
+  // the descent starts from both root tiles of the 2x1 grid; the walk can only visit real grid tiles
+  yield* descend(0, 0, 0, states, range);
+  yield* descend(0, 1, 0, states, range);
 }
 
 export type { ZoomRange };
