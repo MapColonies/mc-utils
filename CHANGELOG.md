@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.2.0](https://github.com/MapColonies/mc-utils/compare/v6.1.0...v6.2.0) (2026-11-12)
+
+
+### Features
+
+* footprintToTileRanges accepts a list of footprints (MAPCO-12035) ([#105](https://github.com/MapColonies/mc-utils/issues/105)) ([27285ae](https://github.com/MapColonies/mc-utils/commit/27285ae737597b7f0e63171052d7e589d866c9d0))
+
 ## [6.1.0](https://github.com/MapColonies/mc-utils/compare/v6.0.1...v6.1.0) (2026-08-31)
 
 
