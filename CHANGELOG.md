@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [6.2.1](https://github.com/MapColonies/mc-utils/compare/v6.2.0...v6.2.1) (2026-11-12)
+
+
+### Bug Fixes
+
+* merge neighbouring boundary tile ranges (MAPCO-12039) ([#106](https://github.com/MapColonies/mc-utils/issues/106)) ([3442f8b](https://github.com/MapColonies/mc-utils/commit/3442f8b55b6ebb60c8a5855f3d5a57578b3eead1))
+
 ## [6.2.0](https://github.com/MapColonies/mc-utils/compare/v6.1.0...v6.2.0) (2026-11-12)
 
 
